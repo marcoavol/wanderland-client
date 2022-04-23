@@ -47,7 +47,8 @@ export class MapComponent implements OnInit {
             .attr('class', 'background')
             .on('click', (e: MouseEvent) => {
                 e.preventDefault()
-                console.warn('background clicked!')
+                D3.selectAll('.municipality-boundary').classed('active', false)
+                D3.selectAll('.canton-boundary').classed('active', false)
             })
 
         this.svg.append('g')
