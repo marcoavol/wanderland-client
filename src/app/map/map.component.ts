@@ -4,6 +4,7 @@ import * as TopoJSON from 'topojson-client';
 import { GeometryCollection } from 'topojson-specification';
 import GEMEINDEVERZEICHNIS from '../../assets/gemeindeverzeichnis.json';
 
+const locations = [[47.423728, 9.377264]] // Kloster SG (lat, lon)
 
 @Component({
     selector: 'app-map',
@@ -60,12 +61,20 @@ export class MapComponent implements OnInit {
         this.svg.append('g')
             .attr('class', 'cantons')
 
+        this.svg.append('g')
+            .attr('class', 'foreground')
+
         // Define pan and zoom behaviour
         const zoomBehaviour = D3.zoom<SVGSVGElement, unknown>()
             .scaleExtent([1, 5])
-            .on('zoom', e => {
+            .on('zoom', e => {      
                 D3.selectAll('path')
                     .attr('transform', e.transform)
+                D3.selectAll('circle')
+                    .attr('transform', (d: any) => e.transform + `translate(${this.projection([d[1],d[0]])})`)
+                    .attr('r', 8 / e.transform.k) // e.transform.k => 1 (zoomedOut) to 5 (zoomedIn), maxR => 8
+                    .attr('style', `stroke-width: ${1 / e.transform.k}`)
+
             })
         this.svg.call(zoomBehaviour)
 
@@ -127,12 +136,29 @@ export class MapComponent implements OnInit {
                     D3.selectAll('.canton-boundary').classed('active', false)
                     D3.select(this).classed('active', true)
                     // const lonLat = this.projection.invert!([e.pageX, e.pageY])
-                    // console.warn(lonLat![1], lonLat![0])
+                    // console.warn(lonLat![1], lonLat![0])                    
+                })
+
+            // Render locations
+            D3.select('.foreground').selectAll('circle')
+                .data(locations)
+                .enter()
+                .append('circle')
+                .attr('class', 'location')
+                .attr('r', 8)
+                .attr('transform', d => {
+                    return 'translate(' + this.projection([
+                      d[1],
+                      d[0]
+                    ]) + ')'
+                })
+                .on('click', (e: MouseEvent, d) => {
+                    console.warn(d)
                 })
         })
     }
 
-    // private transformPoint(topology: any, position: [number, number]): [number, number] {
+    // private transformLocation(topology: any, position: [number, number]): [number, number] {
     //     position[0] = position[0] * topology.transform.scale[0] + topology.transform.translate[0],
     //     position[1] = position[1] * topology.transform.scale[1] + topology.transform.translate[1]
     //     return position

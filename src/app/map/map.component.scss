@@ -7,10 +7,21 @@
     fill: #4BB6EF;
 }
 
+.municipality-boundary {
+    fill: white;
+    stroke: black;
+    stroke-width: 0.3;
+    cursor: pointer;
+}
+
+.municipality-boundary.active {
+    fill: green;
+}
+
 .canton-boundary {
     fill: white;
     stroke: black;
-    stroke-width: 0.5;
+    stroke-width: 0.3;
     opacity: 80%;
     cursor: pointer;
 }
@@ -20,13 +31,10 @@
     stroke-width: 1.5;
 }
 
-.municipality-boundary {
-    fill: white;
+.location {
+    fill: red;
     stroke: black;
-    stroke-width: 0.3;
+    stroke-width: 1;
     cursor: pointer;
 }
 
-.municipality-boundary.active {
-    fill: red;
-}
