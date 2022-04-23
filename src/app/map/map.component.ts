@@ -1,4 +1,6 @@
 import { Component, OnInit, ViewEncapsulation, ElementRef, ViewChild } from '@angular/core';
+import { lastValueFrom } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import * as D3 from 'd3';
 import * as TopoJSON from 'topojson-client';
 import { GeometryCollection } from 'topojson-specification';
@@ -21,18 +23,24 @@ export class MapComponent implements OnInit {
     private width: number
     private height: number
 
+    private projectionScale: number
     private projection: D3.GeoProjection
     private path: D3.GeoPath
-    private scale = 7
 
-    constructor() {
+    private zoomTransform: { k: number, x: number, y: number}
+    private zoomExtent: [number, number]
+
+    constructor(private http: HttpClient) {
         this.width = window.innerWidth
         this.height = window.innerHeight
+        this.projectionScale = 7
+        this.zoomExtent = [1, 5]
     }
 
     ngOnInit(): void {
         this.setup()
         this.render()
+        this.fetchDataAsync()
     }
 
     private setup(): void {
@@ -66,15 +74,15 @@ export class MapComponent implements OnInit {
 
         // Define pan and zoom behaviour
         const zoomBehaviour = D3.zoom<SVGSVGElement, unknown>()
-            .scaleExtent([1, 5])
-            .on('zoom', e => {      
+            .scaleExtent(this.zoomExtent)
+            .on('zoom', e => {   
+                this.zoomTransform = e.transform
                 D3.selectAll('path')
                     .attr('transform', e.transform)
                 D3.selectAll('circle')
                     .attr('transform', (d: any) => e.transform + `translate(${this.projection([d[1],d[0]])})`)
-                    .attr('r', 8 / e.transform.k) // e.transform.k => 1 (zoomedOut) to 5 (zoomedIn), maxR => 8
+                    .attr('r', 8 / e.transform.k) 
                     .attr('style', `stroke-width: ${1 / e.transform.k}`)
-
             })
         this.svg.call(zoomBehaviour)
 
@@ -83,10 +91,15 @@ export class MapComponent implements OnInit {
             this.width = window.innerWidth
             this.height = window.innerHeight
             this.projection
-                .scale((this.width + this.height / 2) * this.scale)
+                .scale((this.width + this.height / 2) * this.projectionScale)
                 .translate([this.width / 2, this.height / 2])
             this.svg.attr('width', this.width).attr('height', this.height)
-            this.svg.selectAll<SVGPathElement, any>('path').attr('d', this.path)
+            D3.selectAll<SVGPathElement, any>('path')
+                .attr('d', this.path)
+            D3.selectAll('circle')
+                .attr('transform', (d: any) => this.zoomTransform + `translate(${this.projection([d[1],d[0]])})`)
+                .attr('r', 8 / this.zoomTransform.k) 
+                .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
         }
     }
 
@@ -94,7 +107,7 @@ export class MapComponent implements OnInit {
         D3.json('./assets/swiss-topo.json').then((topology: any) => {
             // Set projection and path
             this.projection = D3.geoMercator()
-                .scale((this.width + this.height / 2) * this.scale)
+                .scale((this.width + this.height / 2) * this.projectionScale)
                 .translate([this.width / 2, this.height / 2])
                 .center(D3.geoCentroid(TopoJSON.feature(topology, topology.objects.cantons)))
 
@@ -158,10 +171,10 @@ export class MapComponent implements OnInit {
         })
     }
 
-    // private transformLocation(topology: any, position: [number, number]): [number, number] {
-    //     position[0] = position[0] * topology.transform.scale[0] + topology.transform.translate[0],
-    //     position[1] = position[1] * topology.transform.scale[1] + topology.transform.translate[1]
-    //     return position
-    // }
+    private async fetchDataAsync(): Promise<void> {
+        const path = 'https://api3.geo.admin.ch/rest/services/api/MapServer/ch.astra.wanderland'
+        const response = await lastValueFrom(this.http.get(path))
+        console.warn(response)
+    }
 
 }
