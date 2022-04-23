@@ -1,0 +1,32 @@
+.background {
+    fill: none;
+    pointer-events: visible;
+}
+
+.country {
+    fill: #4BB6EF;
+}
+
+.canton-boundary {
+    fill: white;
+    stroke: black;
+    stroke-width: 0.5;
+    opacity: 80%;
+    cursor: pointer;
+}
+
+.canton-boundary.active {
+    fill: none;
+    stroke-width: 1.5;
+}
+
+.municipality-boundary {
+    fill: white;
+    stroke: black;
+    stroke-width: 0.3;
+    cursor: pointer;
+}
+
+.municipality-boundary.active {
+    fill: red;
+}
