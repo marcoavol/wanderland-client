@@ -1,12 +1,10 @@
 import { Component, OnInit, ViewEncapsulation, ElementRef, ViewChild } from '@angular/core';
-import { lastValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
 import * as D3 from 'd3';
 import * as TopoJSON from 'topojson-client';
 import { GeometryCollection } from 'topojson-specification';
-import GEMEINDEVERZEICHNIS from '../../assets/gemeindeverzeichnis.json';
-
-const locations = [[47.423728, 9.377264]] // Kloster SG (lat, lon)
+import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 
 @Component({
     selector: 'app-map',
@@ -16,8 +14,8 @@ const locations = [[47.423728, 9.377264]] // Kloster SG (lat, lon)
 })
 export class MapComponent implements OnInit {
 
-    @ViewChild('map')
-    mapRef: ElementRef
+    // @ViewChild('map')
+    // mapRef: ElementRef
 
     private svg: D3.Selection<SVGSVGElement, unknown, HTMLElement, any>
     private width: number
@@ -29,6 +27,8 @@ export class MapComponent implements OnInit {
 
     private zoomTransform: D3.ZoomTransform
     private zoomExtent: [number, number]
+
+    private locations = [[9.377264, 47.423728]]  // [lon, lat]
 
     constructor(private http: HttpClient) {
         this.width = window.innerWidth
@@ -56,8 +56,7 @@ export class MapComponent implements OnInit {
             .attr('width', this.width)
             .attr('height', this.height)
             .attr('class', 'background')
-            .on('click', (e: MouseEvent) => {
-                e.preventDefault()
+            .on('click', (e: PointerEvent) => {
                 D3.selectAll('.municipality-boundary').classed('active', false)
                 D3.selectAll('.canton-boundary').classed('active', false)
             })
@@ -85,10 +84,11 @@ export class MapComponent implements OnInit {
                 D3.selectAll('path')
                     .attr('transform', e.transform)
                 D3.selectAll('circle')
-                    .attr('transform', (d: any) => e.transform + `translate(${this.projection([d[1],d[0]])})`)
+                    .attr('transform', (d: any) => e.transform + `translate(${this.projection([d[0], d[1]])})`)
                     .attr('r', 8 / e.transform.k) 
                     .attr('style', `stroke-width: ${1 / e.transform.k}`)
             })
+            
         this.svg.call(zoomBehaviour)
 
          // Make it responsive
@@ -98,12 +98,14 @@ export class MapComponent implements OnInit {
             this.projection
                 .scale((this.width + this.height / 2) * this.projectionScale)
                 .translate([this.width / 2, this.height / 2])
-            this.svg.attr('width', this.width).attr('height', this.height)
+            this.svg
+                .attr('width', this.width)
+                .attr('height', this.height)
             D3.selectAll<SVGPathElement, any>('path')
                 .attr('d', this.path)
             D3.selectAll('circle')
-                .attr('transform', (d: any) => this.zoomTransform + `translate(${this.projection([d[1],d[0]])})`)
-                .attr('r', 8 / this.zoomTransform.k) 
+                .attr('transform', (d: any) => this.zoomTransform + `translate(${this.projection([d[0],d[1]])})`)
+                .attr('r', 4 / this.zoomTransform.k) 
                 .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
         }
 
@@ -111,9 +113,10 @@ export class MapComponent implements OnInit {
 
     private async renderAsync(): Promise<void> {
 
-        const topology: any = await D3.json('./assets/swiss-topo.json')
+        const topology: any = await D3.json('./assets/topologie.json')
+        const routes: any = await D3.json('./assets/wanderland/kombiniert.json')
 
-        // Set projection and path
+        // Initialize projection and path to match topology
         this.projection = D3.geoMercator()
             .scale((this.width + this.height / 2) * this.projectionScale)
             .translate([this.width / 2, this.height / 2])
@@ -136,9 +139,8 @@ export class MapComponent implements OnInit {
             .append('path')
             .attr('d', this.path)
             .attr('class', d => `municipality-boundary m${d.id}`)
-            .on('click', function(e: MouseEvent, d) {
-                e.preventDefault()
-                console.warn(GEMEINDEVERZEICHNIS.GDE.find(gde => gde.GDENR === d.id)?.GDENAME)
+            .on('mouseover', function(e: PointerEvent, d) {
+                console.warn(Gemeindeverzeichnis.GDE.find(gde => gde.GDENR === d.id)?.GDENAME)
                 D3.selectAll('.municipality-boundary').classed('active', false)
                 D3.select(this).classed('active', true)
             })
@@ -150,9 +152,8 @@ export class MapComponent implements OnInit {
             .append('path')
             .attr('d', this.path)
             .attr('class', d => `canton-boundary c${d.id}`)
-            .on('click', function(e: MouseEvent, d) {
-                e.preventDefault()
-                console.warn(GEMEINDEVERZEICHNIS.KT.find(kt => kt.KTNR === d.id)?.GDEKT)
+            .on('click', function(e: PointerEvent, d) {
+                console.warn(Gemeindeverzeichnis.KT.find(kt => kt.KTNR === d.id)?.GDEKT)
                 D3.selectAll('.municipality-boundary').classed('active', false)
                 D3.selectAll('.canton-boundary').classed('active', false)
                 D3.select(this).classed('active', true)
@@ -160,36 +161,46 @@ export class MapComponent implements OnInit {
                 // console.warn(lonLat![1], lonLat![0])                    
             })
 
-        const routes: any = await D3.json('./assets/wanderland/Merged.json')
-
-        // Render routes   
+        // Render routes    
         D3.select('.routes').selectAll('path')
             .data(TopoJSON.feature(routes, routes.objects.Route as GeometryCollection).features)
             .enter()
             .append('path')
             .attr('d', this.path)
             .attr('class', 'route')
-            .on('click', function (e: MouseEvent, d) {
-                console.warn(d)
+            .on('click', (e: PointerEvent, d: any) => {
+                console.warn(d.properties)
                 D3.selectAll('.route').classed('active', false)
-                D3.select(this).classed('active', true)
+                D3.select(e.target as any).classed('active', true).raise()
+                this.renderSelectedRouteEndpoints(d)
             })
 
         // Render locations
         D3.select('.foreground').selectAll('circle')
-            .data(locations)
+            .data(this.locations)
             .enter()
             .append('circle')
             .attr('r', 8)
-            .attr('transform', d => {
-                return 'translate(' + this.projection([
-                    d[1],
-                    d[0]
-                ]) + ')'
-            })
+            .attr('transform', (d: any) => `translate(${this.projection([d[0], d[1]])})`)
             .attr('class', 'location')
-            .on('click', (e: MouseEvent, d) => {
+            .on('click', (e: PointerEvent, d) => {
                 console.warn(d)
+            })
+
+    }
+
+    private renderSelectedRouteEndpoints(dRoute: any): void {
+        D3.select('.routes').selectAll('circle').remove()
+        D3.select('.routes').selectAll('circle')
+            .data([dRoute.geometry.coordinates[0], dRoute.geometry.coordinates[dRoute.geometry.coordinates.length - 1]])
+            .enter()
+            .append('circle')
+            .attr('transform', (d: any) => this.zoomTransform + `translate(${this.projection([d[0], d[1]])})`)
+            .attr('r', 8 / this.zoomTransform.k)
+            .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
+            .attr('class', 'route-endpoint')
+            .on('click', (e: PointerEvent, dEndpoint) => {
+                console.warn(dEndpoint)
             })
     }
 

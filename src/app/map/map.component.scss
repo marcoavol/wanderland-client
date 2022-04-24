@@ -15,31 +15,38 @@
 }
 
 .municipality-boundary.active {
-    fill: green;
+    fill: lightgreen;
 }
 
 .canton-boundary {
-    fill: white;
+    fill: whitesmoke;
     stroke: black;
-    stroke-width: 0.3;
+    stroke-width: 0.5;
     opacity: 80%;
     cursor: pointer;
 }
 
 .canton-boundary.active {
     fill: none;
-    stroke-width: 1.5;
+    stroke-width: 1;
 }
 
 .route {
     fill: none;
-    stroke: orange;
-    stroke-width: 1;
+    stroke: darkorange;
+    stroke-width: 1.5;
     cursor: pointer;
 }
 
 .route.active {
     stroke: green;
+}
+
+.route-endpoint {
+    fill: green;
+    stroke: black;
+    stroke-width: 1;
+    cursor: pointer;
 }
 
 .location {
