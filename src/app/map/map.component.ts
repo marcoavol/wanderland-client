@@ -160,6 +160,9 @@ export class MapComponent implements OnInit {
                 // const lonLat = this.projection.invert!([e.pageX, e.pageY])
                 // console.warn(lonLat![1], lonLat![0])                    
             })
+            .on('mouseout', function(e: PointerEvent, d) {
+                D3.selectAll('.municipality-boundary').classed('active', false)                  
+            })
 
         // Render routes    
         D3.select('.routes').selectAll('path')
