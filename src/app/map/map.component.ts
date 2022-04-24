@@ -27,7 +27,7 @@ export class MapComponent implements OnInit {
     private projection: D3.GeoProjection
     private path: D3.GeoPath
 
-    private zoomTransform: { k: number, x: number, y: number}
+    private zoomTransform: D3.ZoomTransform
     private zoomExtent: [number, number]
 
     constructor(private http: HttpClient) {
@@ -35,15 +35,17 @@ export class MapComponent implements OnInit {
         this.height = window.innerHeight
         this.projectionScale = 7
         this.zoomExtent = [1, 5]
+        this.zoomTransform = D3.zoomIdentity
     }
 
     ngOnInit(): void {
         this.setup()
-        this.render()
-        this.fetchDataAsync()
+        this.renderAsync()
+        // this.fetchDataAsync()
     }
 
     private setup(): void {
+
         // Create SVG
         this.svg = D3.select('#map')
             .append('svg')
@@ -68,6 +70,9 @@ export class MapComponent implements OnInit {
 
         this.svg.append('g')
             .attr('class', 'cantons')
+
+        this.svg.append('g')
+            .attr('class', 'routes')
 
         this.svg.append('g')
             .attr('class', 'foreground')
@@ -101,80 +106,97 @@ export class MapComponent implements OnInit {
                 .attr('r', 8 / this.zoomTransform.k) 
                 .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
         }
+
     }
 
-    private render(): void {
-        D3.json('./assets/swiss-topo.json').then((topology: any) => {
-            // Set projection and path
-            this.projection = D3.geoMercator()
-                .scale((this.width + this.height / 2) * this.projectionScale)
-                .translate([this.width / 2, this.height / 2])
-                .center(D3.geoCentroid(TopoJSON.feature(topology, topology.objects.cantons)))
+    private async renderAsync(): Promise<void> {
 
-            this.path = D3.geoPath()
-                .projection(this.projection)
+        const topology: any = await D3.json('./assets/swiss-topo.json')
 
-            // Render country 
-            D3.select('.country').selectAll('path')
-                .data(TopoJSON.feature(topology, topology.objects.country as GeometryCollection).features)
-                .enter()
-                .append('path')
-                .attr('d', this.path)
+        // Set projection and path
+        this.projection = D3.geoMercator()
+            .scale((this.width + this.height / 2) * this.projectionScale)
+            .translate([this.width / 2, this.height / 2])
+            .center(D3.geoCentroid(TopoJSON.feature(topology, topology.objects.cantons)))
 
-            // Render municipalities
-            D3.select('.municipalities').selectAll('path')
-                .data(TopoJSON.feature(topology, topology.objects.municipalities as GeometryCollection).features)
-                .enter()
-                .append('path')
-                .attr('d', this.path)
-                .attr('class', d => `municipality-boundary m${d.id}`)
-                .on('click', function(e: MouseEvent, d) {
-                    e.preventDefault()
-                    console.warn(GEMEINDEVERZEICHNIS.GDE.find(gde => gde.GDENR === d.id)?.GDENAME)
-                    D3.selectAll('.municipality-boundary').classed('active', false)
-                    D3.select(this).classed('active', true)
-                })
+        this.path = D3.geoPath()
+            .projection(this.projection)
 
-            // Render cantons    
-            D3.select('.cantons').selectAll('path')
-                .data(TopoJSON.feature(topology, topology.objects.cantons as GeometryCollection).features)
-                .enter()
-                .append('path')
-                .attr('d', this.path)
-                .attr('class', d => `canton-boundary c${d.id}`)
-                .on('click', function(e: MouseEvent, d) {
-                    e.preventDefault()
-                    console.warn(GEMEINDEVERZEICHNIS.KT.find(kt => kt.KTNR === d.id)?.GDEKT)
-                    D3.selectAll('.municipality-boundary').classed('active', false)
-                    D3.selectAll('.canton-boundary').classed('active', false)
-                    D3.select(this).classed('active', true)
-                    // const lonLat = this.projection.invert!([e.pageX, e.pageY])
-                    // console.warn(lonLat![1], lonLat![0])                    
-                })
+        // Render country 
+        D3.select('.country').selectAll('path')
+            .data(TopoJSON.feature(topology, topology.objects.country as GeometryCollection).features)
+            .enter()
+            .append('path')
+            .attr('d', this.path)
 
-            // Render locations
-            D3.select('.foreground').selectAll('circle')
-                .data(locations)
-                .enter()
-                .append('circle')
-                .attr('class', 'location')
-                .attr('r', 8)
-                .attr('transform', d => {
-                    return 'translate(' + this.projection([
-                      d[1],
-                      d[0]
-                    ]) + ')'
-                })
-                .on('click', (e: MouseEvent, d) => {
-                    console.warn(d)
-                })
-        })
+        // Render municipalities
+        D3.select('.municipalities').selectAll('path')
+            .data(TopoJSON.feature(topology, topology.objects.municipalities as GeometryCollection).features)
+            .enter()
+            .append('path')
+            .attr('d', this.path)
+            .attr('class', d => `municipality-boundary m${d.id}`)
+            .on('click', function(e: MouseEvent, d) {
+                e.preventDefault()
+                console.warn(GEMEINDEVERZEICHNIS.GDE.find(gde => gde.GDENR === d.id)?.GDENAME)
+                D3.selectAll('.municipality-boundary').classed('active', false)
+                D3.select(this).classed('active', true)
+            })
+
+        // Render cantons    
+        D3.select('.cantons').selectAll('path')
+            .data(TopoJSON.feature(topology, topology.objects.cantons as GeometryCollection).features)
+            .enter()
+            .append('path')
+            .attr('d', this.path)
+            .attr('class', d => `canton-boundary c${d.id}`)
+            .on('click', function(e: MouseEvent, d) {
+                e.preventDefault()
+                console.warn(GEMEINDEVERZEICHNIS.KT.find(kt => kt.KTNR === d.id)?.GDEKT)
+                D3.selectAll('.municipality-boundary').classed('active', false)
+                D3.selectAll('.canton-boundary').classed('active', false)
+                D3.select(this).classed('active', true)
+                // const lonLat = this.projection.invert!([e.pageX, e.pageY])
+                // console.warn(lonLat![1], lonLat![0])                    
+            })
+
+        const routes: any = await D3.json('./assets/wanderland/Merged.json')
+
+        // Render routes   
+        D3.select('.routes').selectAll('path')
+            .data(TopoJSON.feature(routes, routes.objects.Route as GeometryCollection).features)
+            .enter()
+            .append('path')
+            .attr('d', this.path)
+            .attr('class', 'route')
+            .on('click', function (e: MouseEvent, d) {
+                console.warn(d)
+                D3.selectAll('.route').classed('active', false)
+                D3.select(this).classed('active', true)
+            })
+
+        // Render locations
+        D3.select('.foreground').selectAll('circle')
+            .data(locations)
+            .enter()
+            .append('circle')
+            .attr('r', 8)
+            .attr('transform', d => {
+                return 'translate(' + this.projection([
+                    d[1],
+                    d[0]
+                ]) + ')'
+            })
+            .attr('class', 'location')
+            .on('click', (e: MouseEvent, d) => {
+                console.warn(d)
+            })
     }
 
-    private async fetchDataAsync(): Promise<void> {
-        const path = 'https://api3.geo.admin.ch/rest/services/api/MapServer/ch.astra.wanderland'
-        const response = await lastValueFrom(this.http.get(path))
-        console.warn(response)
-    }
+    // private async fetchDataAsync(): Promise<void> {
+    //     const path = 'https://api3.geo.admin.ch/rest/services/api/MapServer'
+    //     const response = await lastValueFrom(this.http.get(path))
+    //     console.warn(response)
+    // }
 
 }

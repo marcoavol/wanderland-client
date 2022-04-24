@@ -31,10 +31,20 @@
     stroke-width: 1.5;
 }
 
+.route {
+    fill: none;
+    stroke: orange;
+    stroke-width: 1;
+    cursor: pointer;
+}
+
+.route.active {
+    stroke: green;
+}
+
 .location {
     fill: red;
     stroke: black;
     stroke-width: 1;
     cursor: pointer;
 }
-
