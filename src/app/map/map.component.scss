@@ -1,50 +1,59 @@
 .background {
-    fill: none;
+    fill: #1B3B6F;
     pointer-events: visible;
 }
 
 .country {
+    fill: none;
+}
+
+.lake {
     fill: #4BB6EF;
 }
 
-.municipality-boundary {
-    fill: white;
-    stroke: black;
-    stroke-width: 0.3;
-    cursor: pointer;
-}
-
-.municipality-boundary.active {
-    fill: lightgreen;
-}
-
-.canton-boundary {
+.municipality {
     fill: whitesmoke;
-    stroke: black;
-    stroke-width: 0.5;
-    opacity: 80%;
-    cursor: pointer;
+    stroke: grey;
+    stroke-width: 0.25;
 }
 
-.canton-boundary.active {
-    fill: none;
-    stroke-width: 1;
+.municipality.active {
+    fill: lightgreen;
+    stroke: green;
+    stroke-width: 0.5;
 }
+
+.canton {
+    fill: none;
+    // opacity: 80%;
+    stroke: #1B3B6F;
+    stroke-width: 0.75;
+    // cursor: pointer;
+}
+
+// .canton.active {
+//     fill: none;
+//     stroke-width: 1;
+// }
 
 .route {
     fill: none;
     stroke: darkorange;
-    stroke-width: 1.5;
+    stroke-width: 1;
     cursor: pointer;
 }
 
+.route:not(.active):hover {
+    stroke-width: 2;
+    transition: 0.075s;
+}
+
 .route.active {
-    stroke: green;
+    stroke: green !important;
 }
 
 .route-endpoint {
     fill: green;
-    stroke: black;
     stroke-width: 1;
     cursor: pointer;
 }
