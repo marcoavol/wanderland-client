@@ -8,6 +8,7 @@ import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 
 // TODO: Kantone einfärben mit leichtem Gradient in Farben des Kantonswappens
 // TODO: Auswahl welche Routen angezeigt werden sollen (national, regional, lokal, alle) über UI
+// TODO: Bei Auswahl einer spezifischen Route alle Gemeinden selektieren, durch welche die Route verläuft (anstatt nur Start und Ziel)
 
 @Component({
     selector: 'app-map',
@@ -118,29 +119,31 @@ export class MapComponent implements OnInit {
 
     private async renderAsync(): Promise<void> {
 
-        // Load topoloy and routes
-        const topology: Topology = (await D3.json('./assets/topologie/kombiniert.json')) as Topology
-        const routes: Topology = (await D3.json('./assets/wanderland/kombiniert.json')) as Topology
+        // Load map and routes topology
+        const [mapTopology, routesTopology] = (await Promise.all([
+            D3.json('./assets/topologie/kombiniert.json'),
+            D3.json('./assets/wanderland/kombiniert.json')
+        ])) as Topology[]
 
         // Initialize projection and path to match topology
         this.projection = D3.geoMercator()
             .scale((this.width + this.height / 2) * this.projectionScale)
             .translate([this.width / 2, this.height / 2])
-            .center(D3.geoCentroid(TopoJSON.feature(topology, topology.objects.cantons)))
+            .center(D3.geoCentroid(TopoJSON.feature(mapTopology, mapTopology.objects.cantons)))
 
         this.path = D3.geoPath()
             .projection(this.projection)
 
         // Render country 
         D3.select('.country').selectAll('path')
-            .data(TopoJSON.feature(topology, topology.objects.country as GeometryCollection).features)
+            .data(TopoJSON.feature(mapTopology, mapTopology.objects.country as GeometryCollection).features)
             .enter()
             .append('path')
             .attr('d', this.path)
 
         // Render lakes
         D3.select('.lakes').selectAll('path')
-            .data(TopoJSON.feature(topology, topology.objects.lakes as GeometryCollection).features)
+            .data(TopoJSON.feature(mapTopology, mapTopology.objects.lakes as GeometryCollection).features)
             .enter()
             .append('path')
             .attr('d', this.path)
@@ -151,7 +154,7 @@ export class MapComponent implements OnInit {
 
         // Render municipalities
         D3.select('.municipalities').selectAll('path')
-            .data(TopoJSON.feature(topology, topology.objects.municipalities as GeometryCollection).features)
+            .data(TopoJSON.feature(mapTopology, mapTopology.objects.municipalities as GeometryCollection).features)
             .enter()
             .append('path')
             .attr('d', this.path)
@@ -164,7 +167,7 @@ export class MapComponent implements OnInit {
      
         // Render cantons
         D3.select('.cantons').selectAll('path')
-            .data(TopoJSON.feature(topology, topology.objects.cantons as GeometryCollection).features)
+            .data(TopoJSON.feature(mapTopology, mapTopology.objects.cantons as GeometryCollection).features)
             .enter()
             .append('path')
             .attr('d', this.path)
@@ -179,7 +182,7 @@ export class MapComponent implements OnInit {
 
         // Render routes    
         D3.select('.routes').selectAll('path')
-            .data(TopoJSON.feature(routes, routes.objects.Route as GeometryCollection).features)
+            .data(TopoJSON.feature(routesTopology, routesTopology.objects.Route as GeometryCollection).features)
             .enter()
             .append('path')
             .attr('d', this.path)
