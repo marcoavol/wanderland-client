@@ -1,11 +1,10 @@
-import { Component, OnInit, ViewEncapsulation, ElementRef, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { lastValueFrom } from 'rxjs';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import * as D3 from 'd3';
 import * as TopoJSON from 'topojson-client';
 import { Topology, GeometryCollection } from 'topojson-specification';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 
+// TODO: Flexible Dimension für MapComponent, so dass immer Parent-Element füllt (auch bei Resize)
 // TODO: Kantone einfärben mit leichtem Gradient in Farben des Kantonswappens
 // TODO: Auswahl welche Routen angezeigt werden sollen (national, regional, lokal, alle) über UI
 // TODO: Bei Auswahl einer spezifischen Route alle Gemeinden selektieren, durch welche die Route verläuft (anstatt nur Start und Ziel)
@@ -31,7 +30,7 @@ export class MapComponent implements OnInit {
 
     private locations = [[9.377264, 47.423728]]  // [lon, lat]
 
-    constructor(private http: HttpClient) {
+    constructor() {
         this.width = window.innerWidth
         this.height = window.innerHeight
         this.projectionScale = 7
@@ -42,7 +41,6 @@ export class MapComponent implements OnInit {
     ngOnInit(): void {
         this.setup()
         this.renderAsync()
-        // this.fetchDataAsync()
     }
 
     private setup(): void {
@@ -105,6 +103,9 @@ export class MapComponent implements OnInit {
                 .scale((this.width + this.height / 2) * this.projectionScale)
                 .translate([this.width / 2, this.height / 2])
             this.svg 
+                .attr('width', this.width)
+                .attr('height', this.height)
+            D3.select('.background') 
                 .attr('width', this.width)
                 .attr('height', this.height)
             D3.selectAll<SVGPathElement, any>('path')
@@ -247,14 +248,5 @@ export class MapComponent implements OnInit {
             })
 
     }
-
-    // private async fetchDataAsync(): Promise<void> {
-    //
-    //     const path = 'https://api3.geo.admin.ch/rest/services/api/MapServer'
-    //     const response = await lastValueFrom(this.http.get(path))
-    //
-    //     console.warn(response)
-    //
-    // }
 
 }
