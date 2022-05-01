@@ -6,8 +6,7 @@ import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
 
 // TODO: Flexible Dimension für MapComponent, so dass immer Parent-Element füllt (auch bei Resize)
-// TODO: Kantone einfärben mit leichtem Gradient in Farben des Kantonswappens
-// TODO: Auswahl welche Routen angezeigt werden sollen (national, regional, lokal, alle) über UI
+// FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
 // FIXME: Gemeinden, welche von der Route durchquert werden ohne dass ein Wegpunkt in ihrem Gebiet zu liegen kommt, werden fälschlicherweise nicht selektiert bei Routenauswahl.
 
 @Component({
