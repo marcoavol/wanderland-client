@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import * as D3 from 'd3';
 import * as TopoJSON from 'topojson-client';
 import { Topology, GeometryCollection } from 'topojson-specification';
@@ -7,7 +7,7 @@ import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 // TODO: Flexible Dimension für MapComponent, so dass immer Parent-Element füllt (auch bei Resize)
 // TODO: Kantone einfärben mit leichtem Gradient in Farben des Kantonswappens
 // TODO: Auswahl welche Routen angezeigt werden sollen (national, regional, lokal, alle) über UI
-// TODO: Bei Auswahl einer spezifischen Route alle Gemeinden selektieren, durch welche die Route verläuft (anstatt nur Start und Ziel)
+// FIXME: Gemeinden, welche von der Route durchquert werden ohne dass ein Wegpunkt in ihrem Gebiet zu liegen kommt, werden fälschlicherweise nicht selektiert bei Routenauswahl.
 
 @Component({
     selector: 'app-map',
@@ -16,6 +16,13 @@ import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
     encapsulation: ViewEncapsulation.None
 })
 export class MapComponent implements OnInit {
+
+    @Input()
+    public set displayedRouteTypes(value: { national: boolean, regional: boolean, local: boolean }) {
+        this._displayedRouteTypes = value
+        this.updateDisplayedRouteTypes()
+    }
+    private _displayedRouteTypes: { national: boolean, regional: boolean, local: boolean }
 
     private svg: D3.Selection<SVGSVGElement, unknown, HTMLElement, any>
     private width: number
@@ -203,6 +210,8 @@ export class MapComponent implements OnInit {
                 }
             })
 
+        // this.updateDisplayedRouteTypes()
+
         // Render locations
         D3.select('.locations').selectAll('circle')
             .data(this.locations)
@@ -217,21 +226,29 @@ export class MapComponent implements OnInit {
 
     }
 
+    private updateDisplayedRouteTypes(): void {
+        D3.selectAll('.route').classed('hidden', (datum: any) => {
+            switch(datum?.properties.Typ_TR) {
+                case 'National': return !this._displayedRouteTypes.national
+                case 'Regional': return !this._displayedRouteTypes.regional
+                case 'Lokal': return !this._displayedRouteTypes.local
+                default: return true
+            }
+        })
+    }
+
     private renderSelectedRouteEndpoints(routeDatum: any): void {
 
-        const projectedStartPoint = this.projection(routeDatum.geometry.coordinates[0])
-        const projectedEndPoint = this.projection(routeDatum.geometry.coordinates[routeDatum.geometry.coordinates.length - 1])
-
-        const svgStartPoint = this.svg.node()!.createSVGPoint()
-        svgStartPoint.x = projectedStartPoint![0]
-        svgStartPoint.y = projectedStartPoint![1]
-
-        const svgEndPoint = this.svg.node()!.createSVGPoint()
-        svgEndPoint.x = projectedEndPoint![0]
-        svgEndPoint.y = projectedEndPoint![1]
+        // const svgStartPoint = this.getProjectedSVGPointFromCoordinates(routeDatum.geometry.coordinates[0])
+        // const svgEndPoint = this.getProjectedSVGPointFromCoordinates(routeDatum.geometry.coordinates[routeDatum.geometry.coordinates.length - 1])
 
         D3.selectAll('.municipality')
-            .classed('active', (_, index: number, nodes: any) => nodes[index].isPointInFill(svgStartPoint) || nodes[index].isPointInFill(svgEndPoint))
+            .classed('active', (_, index: number, nodes: any) => {
+                return routeDatum.geometry.coordinates.some((coordinate: [number, number]) => {
+                    const svgPoint = this.getProjectedSVGPointFromCoordinates(coordinate)
+                    return nodes[index].isPointInFill(svgPoint)
+                })
+            })
         D3.selectAll('.municipality.active')
             .raise()
         D3.select('.routes').selectAll('circle').remove()
@@ -247,6 +264,16 @@ export class MapComponent implements OnInit {
                 console.warn(datum)
             })
 
+    }
+
+    private getProjectedSVGPointFromCoordinates(coordinates: [number, number]): DOMPoint | null {
+        const projectedCoordinates = this.projection(coordinates)
+        const svgPoint = this.svg.node()?.createSVGPoint()
+        if (projectedCoordinates && svgPoint) {
+            svgPoint.x = projectedCoordinates[0]
+            svgPoint.y = projectedCoordinates[1]
+        }
+        return svgPoint || null
     }
 
 }

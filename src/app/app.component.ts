@@ -6,5 +6,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'D3Test';
+
+  title = 'D3Test'
+
+  public displayedRouteTypes: { national: boolean, regional: boolean, local: boolean }
+
 }
