@@ -24,10 +24,11 @@
 }
 
 .canton {
-    fill: none;
-    // opacity: 80%;
+    // fill: none;
+    fill-opacity: 10%;
     stroke: #1B3B6F;
     stroke-width: 0.75;
+    pointer-events: none;
     // cursor: pointer;
 }
 
@@ -38,7 +39,7 @@
 
 .route {
     fill: none;
-    stroke: darkorange;
+    stroke: red;
     stroke-width: 1;
     cursor: pointer;
 }
@@ -50,6 +51,7 @@
 
 .route.active {
     stroke: green !important;
+    stroke-width: 2;
 }
 
 .route.hidden {
@@ -59,7 +61,7 @@
 .route-endpoint {
     fill: green;
     stroke-width: 1;
-    cursor: pointer;
+    // cursor: pointer;
 }
 
 .location {

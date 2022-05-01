@@ -3,6 +3,7 @@ import * as D3 from 'd3';
 import * as TopoJSON from 'topojson-client';
 import { Topology, GeometryCollection } from 'topojson-specification';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
+import Kantonsfarben from '../../assets/kantonsfarben.json';
 
 // TODO: Flexible Dimension für MapComponent, so dass immer Parent-Element füllt (auch bei Resize)
 // TODO: Kantone einfärben mit leichtem Gradient in Farben des Kantonswappens
@@ -180,6 +181,10 @@ export class MapComponent implements OnInit {
             .append('path')
             .attr('d', this.path)
             .attr('class', (datum: any) => `canton c${datum.id}`)
+            .style('fill', (datum: any) => {
+                const cantonAbbreviation = Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)!.GDEKT
+                return (Kantonsfarben as {[key: string]: string})[cantonAbbreviation]
+            })
             // .on('click', (event: PointerEvent, datum: any) => {
             //     console.warn(Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)?.GDEKT)
             //     D3.selectAll('.canton').classed('active', false)
@@ -239,15 +244,16 @@ export class MapComponent implements OnInit {
 
     private renderSelectedRouteEndpoints(routeDatum: any): void {
 
-        // const svgStartPoint = this.getProjectedSVGPointFromCoordinates(routeDatum.geometry.coordinates[0])
-        // const svgEndPoint = this.getProjectedSVGPointFromCoordinates(routeDatum.geometry.coordinates[routeDatum.geometry.coordinates.length - 1])
+        const svgStartPoint = this.getProjectedSVGPointFromCoordinates(routeDatum.geometry.coordinates[0])
+        const svgEndPoint = this.getProjectedSVGPointFromCoordinates(routeDatum.geometry.coordinates[routeDatum.geometry.coordinates.length - 1])
 
         D3.selectAll('.municipality')
             .classed('active', (_, index: number, nodes: any) => {
-                return routeDatum.geometry.coordinates.some((coordinate: [number, number]) => {
-                    const svgPoint = this.getProjectedSVGPointFromCoordinates(coordinate)
-                    return nodes[index].isPointInFill(svgPoint)
-                })
+                return nodes[index].isPointInFill(svgStartPoint) || nodes[index].isPointInFill(svgEndPoint)
+                // return routeDatum.geometry.coordinates.some((coordinate: [number, number]) => {
+                //     const svgPoint = this.getProjectedSVGPointFromCoordinates(coordinate)
+                //     return nodes[index].isPointInFill(svgPoint)
+                // })
             })
         D3.selectAll('.municipality.active')
             .raise()
@@ -260,9 +266,9 @@ export class MapComponent implements OnInit {
             .attr('r', 8 / this.zoomTransform.k)
             .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
             .attr('class', 'route-endpoint')
-            .on('click', (event: PointerEvent, datum: any) => {
-                console.warn(datum)
-            })
+            // .on('mouseenter', (event: MouseEvent, datum: any) => {
+            //     console.warn(datum)
+            // })
 
     }
 
