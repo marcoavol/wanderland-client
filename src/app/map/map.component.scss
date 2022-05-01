@@ -27,7 +27,7 @@
     // fill: none;
     fill-opacity: 10%;
     stroke: #1B3B6F;
-    stroke-width: 0.75;
+    stroke-width: 1;
     pointer-events: none;
     // cursor: pointer;
 }
@@ -60,6 +60,7 @@
 
 .route-endpoint {
     fill: green;
+    stroke: black;
     stroke-width: 1;
     // cursor: pointer;
 }

@@ -207,7 +207,9 @@ export class MapComponent implements OnInit {
                 this.renderSelectedRouteEndpoints(datum)
             })
             .on('mouseenter', (event: MouseEvent) => {
-                D3.select(event.target as Element).raise()
+                if (!D3.select(event.target as Element).classed('active')) {
+                    D3.select(event.target as Element).raise()
+                }
             })
             .on('mouseout', (event: MouseEvent) => {
                 if (!D3.select(event.target as Element).classed('active')) {
@@ -266,6 +268,7 @@ export class MapComponent implements OnInit {
             .attr('r', 8 / this.zoomTransform.k)
             .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
             .attr('class', 'route-endpoint')
+            .raise()
             // .on('mouseenter', (event: MouseEvent, datum: any) => {
             //     console.warn(datum)
             // })
