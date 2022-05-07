@@ -7,7 +7,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
 
-  title = 'D3Test'
+  title = 'Wanderland'
 
   public displayedRouteTypes: { national: boolean, regional: boolean, local: boolean }
 
