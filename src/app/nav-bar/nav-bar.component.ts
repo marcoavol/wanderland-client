@@ -9,18 +9,15 @@ import { FormControl, FormGroup } from '@angular/forms';
 export class NavBarComponent implements OnInit {
 
   @Output()
-  onDisplayedRouteTypesChanged: EventEmitter<{ national: boolean, regional: boolean, local: boolean }>
+  onDisplayedRouteTypesChanged: EventEmitter<{ national: boolean, regional: boolean, local: boolean }> = new EventEmitter()
 
-  public displayedRouteTypeForm: FormGroup
+  public displayedRouteTypeForm = new FormGroup({
+    national: new FormControl(true),
+    regional: new FormControl(true),
+    local: new FormControl(true),
+  })
 
-  constructor() {
-    this.displayedRouteTypeForm = new FormGroup({
-      national: new FormControl(true),
-      regional: new FormControl(true),
-      local: new FormControl(true),
-    })
-    this.onDisplayedRouteTypesChanged = new EventEmitter()
-  }
+  constructor() { }
 
   ngOnInit(): void {
     this.displayedRouteTypesChanged()

@@ -133,7 +133,7 @@ export class MapComponent implements OnInit {
             D3.json('./assets/wanderland/kombiniert.json')
         ])) as Topology[]
 
-        // Initialize projection and path to match topology
+        // Set projection and according path
         this.projection = D3.geoMercator()
             .scale((this.width + this.height / 2) * this.projectionScale)
             .translate([this.width / 2, this.height / 2])
@@ -244,7 +244,7 @@ export class MapComponent implements OnInit {
     }
 
     private renderSelectedRouteEndpoints(routeDatum: any): void {
-
+        
         const svgStartPoint = this.getProjectedSVGPointFromCoordinates(routeDatum.geometry.coordinates[0])
         const svgEndPoint = this.getProjectedSVGPointFromCoordinates(routeDatum.geometry.coordinates[routeDatum.geometry.coordinates.length - 1])
 
@@ -274,6 +274,12 @@ export class MapComponent implements OnInit {
 
     }
 
+    /**
+     * Takes (WGS84) coordinates of a point and converts it (with the same projection as used for the topology) 
+     * to a DOMPoint representing the position of the given coordinates within the main SVG-Element.
+     * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
+     * @returns A DOMPoint within the main SVG-Element representing the projected input point or null if the input point is outside the clipping bounds of the projection.
+     */
     private getProjectedSVGPointFromCoordinates(coordinates: [number, number]): DOMPoint | null {
         const projectedCoordinates = this.projection(coordinates)
         const svgPoint = this.svg.node()?.createSVGPoint()
