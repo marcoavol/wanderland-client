@@ -8,6 +8,7 @@ import Kantonsfarben from '../../assets/kantonsfarben.json';
 // TODO: Suchfunktion nach Kantonen (gesuchten Kanton hervorheben, andere abdunkeln o.ä. und reinzoomen)
 // TODO: Flexible Dimension für MapComponent, so dass immer Parent-Element füllt (auch bei Resize)
 // FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
+// FIXME: Bei updateDisplayedRouteTypes ausgewählte Route abwählen, sofern der entsprechende Typ nicht mehr angezeigt wird
 
 @Component({
     selector: 'app-map',
