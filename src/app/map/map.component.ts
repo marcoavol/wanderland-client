@@ -130,8 +130,8 @@ export class MapComponent implements OnInit {
 
         // Load map and routes topology
         const [mapTopology, routesTopology] = (await Promise.all([
-            D3.json('./assets/topologie/kombiniert.json'),
-            D3.json('./assets/wanderland/kombiniert.json')
+            D3.json('./assets/karten-topologie/kombiniert.json'),
+            D3.json('./assets/routen-topologie/kombiniert.json')
         ])) as Topology[]
 
         // Set projection and according path
@@ -201,7 +201,7 @@ export class MapComponent implements OnInit {
             .attr('d', this.path)
             .attr('class', 'route')
             .on('click', (event: PointerEvent, datum: any) => {
-                console.warn(datum.properties)
+                console.warn(datum)
                 D3.selectAll('.route').classed('active', false)
                 D3.select(event.target as any).classed('active', true).raise()
                 this.renderSelectedRouteEndpoints(datum)
