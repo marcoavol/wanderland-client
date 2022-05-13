@@ -31,8 +31,8 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 - [x] Github Repos anlegen (janbirki, ikeller, marcoavol):
   - [x] Backend
   - [x] Frontend
-- [ ] Node/NPM (v12.22.7) und Angular CLI (v12.2.17) installieren
-- [ ] Sicherstellen, dass Entwicklungsumgebung bei allen korrekt eingerichtet ist
+- [X] Node/NPM (v12.22.7) und Angular CLI (v12.2.17) installieren
+- [X] Sicherstellen, dass Entwicklungsumgebung bei allen korrekt eingerichtet ist
 - [ ] Kick-Off Vorbereitung (schriftlich):
   - [ ] Ablauf
   - [ ] Ausgangslage (3 - 4 Sätze)  
