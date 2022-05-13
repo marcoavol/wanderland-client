@@ -32,18 +32,40 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
   - [x] Backend
   - [x] Frontend
 - [ ] Node/NPM (v12.22.7) und Angular CLI (v12.2.17) installieren
-- [ ] Sicherstellen, dass Entwicklungsumgebung bei allen korrekt eingerichtet ist
+- [ ] Sicherstellen, dass alle Zugriff und bestehender Code bei allen lokal verfügbar ist
+
+- [ ] MVP Funktionalität festlegen
+  - [ ] Client (Angular/Typescript/D3):
+    - [x] Interaktive Landkarte der Schweiz
+    - [x] Darstellung der Wanderrouten gem. Datensatz "Wanderland" des ASTRA
+    - [ ] Darstellung der (ausgewählten) Orts- und Routeninformationen in ansprechender Form
+    - [ ] Möglichkeit für Upload von Fotos (unterstütze Dateiformate noch klären!) => Upload nur erlauben, wenn Positionsdaten auf/an einem bekannten Wanderweg liegen
+    - [ ] Benutzerfotos von Server abfragen
+    - [ ] Benutzerfotos auf Karte darstellen
+  - [ ] Server (SpringBoot/Java):
+    - [ ] Neues SpringBoot-Projekt anlegen und konfigurieren
+    - [ ] Datenbank
+    - [ ] Rest-API mit vorerst zwei Endpunkten (GET und POST) für Upload u. Abfrage der Benutzerfotos
+- [ ] Aufgabenverteilung klären
 - [ ] Kick-Off Vorbereitung (schriftlich):
   - [ ] Ablauf
   - [ ] Ausgangslage (3 - 4 Sätze)  
-  - [ ]  Zielsetzung (3 - 4 Sätze)  
+  - [ ] Zielsetzung (3 - 4 Sätze)  
   - [ ] Teilaufgaben  
-  - [ ] Erwartete Resultate
-- [ ] MVP Funktionalität festlegen
-- [ ] Aufgabenverteilung klären
+  - [ ] Erwartete Resultate  
 
 - [ ] Ideen für zusätzliche Features:
   - [ ] Eigene Routen anhand von aufgezeichneten GPS-Daten hochladen (.gpx)
   - [ ] User-Authentifizierung
   - [ ] Weitere Datensätze integrieren (z.B. Biketrails, ...)
-  - [ ] SBB-Fahrplan integrieren (Start-/Zielort)
+  - [ ] SBB-Fahrplan integrieren (Start-/Zielort) => <https://developer-int.sbb.ch/apis/journey-service/documentation>
+
+## Quellenangaben
+
+- Geodaten:
+  - Karten: Bundesamt für Landestopografie swisstopo (<https://www.swisstopo.admin.ch/de/home.html>)
+  - Wanderwege: Bundesamt für Strassen ASTRA (<https://www.astra.admin.ch/astra/de/home.html>)
+
+- Konvertierung/Aufbereitung:
+  - Swiss Maps Generator von Interactive Things (<https://swiss-maps.vercel.app/>)
+  - Mapshaper (<https://mapshaper.org/>)
