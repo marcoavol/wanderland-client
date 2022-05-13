@@ -31,8 +31,8 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 - [x] Github Repos anlegen (janbirki, ikeller, marcoavol):
   - [x] Backend
   - [x] Frontend
-- [ ] Node/NPM (v12.22.7) und Angular CLI (v12.2.17) installieren
-- [ ] Sicherstellen, dass alle Zugriff und bestehender Code bei allen lokal verfügbar ist
+- [x] Node/NPM (v12.22.7) und Angular CLI (v12.2.17) installieren
+- [x] Sicherstellen, dass alle Zugriff und bestehender Code bei allen lokal verfügbar ist
 
 - [ ] MVP Funktionalität festlegen
   - [ ] Client (Angular/Typescript/D3):
