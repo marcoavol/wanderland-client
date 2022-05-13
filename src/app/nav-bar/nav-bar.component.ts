@@ -18,9 +18,7 @@ export class NavBarComponent implements OnInit {
     local: new FormControl(true),
   })
 
-  constructor(private router: Router) { 
-      console.warn(router.getCurrentNavigation)
-  }
+  constructor() { }
 
   ngOnInit(): void {
     this.displayedRouteTypesChanged()

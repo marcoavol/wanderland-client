@@ -26,25 +26,19 @@ export class MapComponent implements OnInit {
     private _displayedRouteTypes: { national: boolean, regional: boolean, local: boolean }
 
     private svg: D3.Selection<SVGSVGElement, unknown, HTMLElement, any>
-    private width: number
-    private height: number
+    private width: number = window.innerWidth
+    private height: number = window.innerHeight
 
-    private projectionScale: number
+    private projectionScale: number = 7
     private projection: D3.GeoProjection
     private path: D3.GeoPath
 
-    private zoomTransform: D3.ZoomTransform
-    private zoomExtent: [number, number]
+    private zoomTransform: D3.ZoomTransform = D3.zoomIdentity
+    private zoomExtent: [number, number] = [1, 5]
 
-    private locations = [[9.377264, 47.423728]]  // [lon, lat]
+    private locations: [number, number][] = [[9.377264, 47.423728], [9.277264, 47.423728], [9.277264, 47.493000]]  // [lon, lat]
 
-    constructor() {
-        this.width = window.innerWidth
-        this.height = window.innerHeight
-        this.projectionScale = 7
-        this.zoomExtent = [1, 5]
-        this.zoomTransform = D3.zoomIdentity
-    }
+    constructor() { }
 
     ngOnInit(): void {
         this.setup()
@@ -229,6 +223,7 @@ export class MapComponent implements OnInit {
             .attr('class', 'location')
             .on('click', (event: PointerEvent, datum: any) => {
                 console.warn(datum)
+                this.isNearKnownRoute(datum)
             })
 
     }
@@ -277,7 +272,7 @@ export class MapComponent implements OnInit {
 
     /**
      * Takes (WGS84) coordinates of a point and converts it (with the same projection as used for the topology) 
-     * to a DOMPoint representing the position of the given coordinates within the main SVG-Element.
+     * to a DOMPoint representing the position of the given coordinates within the main SVG element.
      * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
      * @returns A DOMPoint within the main SVG-Element representing the projected input point or null if the input point is outside the clipping bounds of the projection.
      */
@@ -289,6 +284,26 @@ export class MapComponent implements OnInit {
             svgPoint.y = projectedCoordinates[1]
         }
         return svgPoint || null
+    }
+
+    // TODO: Find more efficient solution (maybe with own calculations based on coordinates directly instead of projected SVG paths and point)
+    /**
+     * Takes (WGS84) coordinates of a point and checks if its projection within the main SVG element is near a known route (with some added threshold).
+     * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
+     * @returns True if the point is considered within acceptable distance of a known route, else false.
+     */
+    private isNearKnownRoute(coordinates: [number, number]): boolean {
+        let isNearKnownRoute = false
+        const svgPointForCoordinates = this.getProjectedSVGPointFromCoordinates(coordinates)
+        D3.select('.routes').selectAll('path').each((datum: any, index: number, nodes: any) => {
+            const invisibleRouteCloneWithIncreasedHitBox = D3.select(nodes[index]).clone().style('stroke', 'transparent').style('stroke-width', 5)
+            if (invisibleRouteCloneWithIncreasedHitBox.node().isPointInStroke(svgPointForCoordinates)) {
+                isNearKnownRoute = true
+                D3.select(nodes[index]).classed('active', true)
+            }
+            invisibleRouteCloneWithIncreasedHitBox.remove()
+        })
+        return isNearKnownRoute
     }
 
 }
