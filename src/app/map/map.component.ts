@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 import * as D3 from 'd3';
 import * as TopoJSON from 'topojson-client';
 import { Topology, GeometryCollection } from 'topojson-specification';
+import pointToLineDistance from '@turf/point-to-line-distance';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
 
@@ -36,7 +37,7 @@ export class MapComponent implements OnInit {
     private zoomTransform: D3.ZoomTransform = D3.zoomIdentity
     private zoomExtent: [number, number] = [1, 5]
 
-    private locations: [number, number][] = [[9.377264, 47.423728], [9.277264, 47.423728], [9.277264, 47.493000]]  // [lon, lat]
+    private locations: [number, number][] = [[9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]]  // [lon, lat]
 
     constructor() { }
 
@@ -85,36 +86,36 @@ export class MapComponent implements OnInit {
         // Define pan and zoom behaviour
         const zoomBehaviour: D3.ZoomBehavior<any, any> = D3.zoom()
             .scaleExtent(this.zoomExtent)
-            .on('zoom', (event: D3.D3ZoomEvent<any, any>) => {   
+            .on('zoom', (event: D3.D3ZoomEvent<any, any>) => {
                 this.zoomTransform = event.transform
                 D3.selectAll('path')
                     .attr('transform', event.transform.toString())
                 D3.selectAll('circle')
                     .attr('transform', (datum: any) => event.transform.toString() + `translate(${this.projection([datum[0], datum[1]])})`)
-                    .attr('r', 8 / event.transform.k) 
+                    .attr('r', 8 / event.transform.k)
                     .attr('style', `stroke-width: ${1 / event.transform.k}`)
             })
-            
+
         this.svg.call(zoomBehaviour)
 
-         // Make it responsive
-         window.onresize = () => {
+        // Make it responsive
+        window.onresize = () => {
             this.width = window.innerWidth
             this.height = window.innerHeight
             this.projection
                 .scale((this.width + this.height / 2) * this.projectionScale)
                 .translate([this.width / 2, this.height / 2])
-            this.svg 
+            this.svg
                 .attr('width', this.width)
                 .attr('height', this.height)
-            D3.select('.background') 
+            D3.select('.background')
                 .attr('width', this.width)
                 .attr('height', this.height)
             D3.selectAll<SVGPathElement, any>('path')
                 .attr('d', this.path)
             D3.selectAll('circle')
                 .attr('transform', (datum: any) => this.zoomTransform.toString() + `translate(${this.projection([datum[0], datum[1]])})`)
-                .attr('r', 8 / this.zoomTransform.k) 
+                .attr('r', 8 / this.zoomTransform.k)
                 .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
         }
 
@@ -167,7 +168,7 @@ export class MapComponent implements OnInit {
                 const cantonName = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDEKTNA
                 console.warn(municipalityName, cantonName)
             })
-     
+
         // Render cantons
         D3.select('.cantons').selectAll('path')
             .data(TopoJSON.feature(mapTopology, mapTopology.objects.cantons as GeometryCollection).features)
@@ -177,15 +178,15 @@ export class MapComponent implements OnInit {
             .attr('class', (datum: any) => `canton c${datum.id}`)
             .style('fill', (datum: any) => {
                 const cantonAbbreviation = Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)!.GDEKT
-                return (Kantonsfarben as {[key: string]: string})[cantonAbbreviation]
+                return (Kantonsfarben as { [key: string]: string })[cantonAbbreviation]
             })
-            // .on('click', (event: PointerEvent, datum: any) => {
-            //     console.warn(Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)?.GDEKT)
-            //     D3.selectAll('.canton').classed('active', false)
-            //     D3.select(event.target as Element).classed('active', true).raise()
-            //     // const lonLat = this.projection.invert!([e.pageX, e.pageY])
-            //     // console.warn(lonLat![1], lonLat![0])                    
-            // })
+        // .on('click', (event: PointerEvent, datum: any) => {
+        //     console.warn(Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)?.GDEKT)
+        //     D3.selectAll('.canton').classed('active', false)
+        //     D3.select(event.target as Element).classed('active', true).raise()
+        //     // const lonLat = this.projection.invert!([e.pageX, e.pageY])
+        //     // console.warn(lonLat![1], lonLat![0])                    
+        // })
 
         // Render routes    
         D3.select('.routes').selectAll('path')
@@ -230,7 +231,7 @@ export class MapComponent implements OnInit {
 
     private updateDisplayedRouteTypes(): void {
         D3.selectAll('.route').classed('hidden', (datum: any) => {
-            switch(datum?.properties.Typ_TR) {
+            switch (datum?.properties.Typ_TR) {
                 case 'National': return !this._displayedRouteTypes.national
                 case 'Regional': return !this._displayedRouteTypes.regional
                 case 'Lokal': return !this._displayedRouteTypes.local
@@ -240,7 +241,7 @@ export class MapComponent implements OnInit {
     }
 
     private renderSelectedRouteEndpoints(routeDatum: any): void {
-        
+
         const svgStartPoint = this.getProjectedSVGPointFromCoordinates(routeDatum.geometry.coordinates[0])
         const svgEndPoint = this.getProjectedSVGPointFromCoordinates(routeDatum.geometry.coordinates[routeDatum.geometry.coordinates.length - 1])
 
@@ -264,9 +265,9 @@ export class MapComponent implements OnInit {
             .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
             .attr('class', 'route-endpoint')
             .raise()
-            // .on('mouseenter', (event: MouseEvent, datum: any) => {
-            //     console.warn(datum)
-            // })
+        // .on('mouseenter', (event: MouseEvent, datum: any) => {
+        //     console.warn(datum)
+        // })
 
     }
 
@@ -286,22 +287,77 @@ export class MapComponent implements OnInit {
         return svgPoint || null
     }
 
-    // TODO: Find more efficient solution (maybe with own calculations based on coordinates directly instead of projected SVG paths and point)
+    // /**
+    //  * Takes (WGS84) coordinates of a point and checks if its projection within the main SVG element is near a known route (with some added threshold).
+    //  * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
+    //  * @returns True if the point is considered within acceptable distance of a known route, else false.
+    //  */
+    // private isNearKnownRoute(coordinates: [number, number]): boolean {
+    //     let isNearKnownRoute = false
+    //     const svgPointForCoordinates = this.getProjectedSVGPointFromCoordinates(coordinates)
+    //     D3.select('.routes').selectAll('path').each((datum: any, index: number, nodes: any) => {
+    //         const invisibleRouteCloneWithIncreasedHitBox = D3.select(nodes[index]).clone().style('stroke', 'transparent').style('stroke-width', 5)
+    //         if (invisibleRouteCloneWithIncreasedHitBox.node().isPointInStroke(svgPointForCoordinates)) {
+    //             isNearKnownRoute = true
+    //             D3.select(nodes[index]).classed('active', true)
+    //         }
+    //         invisibleRouteCloneWithIncreasedHitBox.remove()
+    //     })
+    //     return isNearKnownRoute
+    // }
+
+    // /**
+    //  * Takes (WGS84) coordinates of a point and checks if its projection within the main SVG element is near a known route (with some added threshold).
+    //  * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
+    //  * @returns True if the point is considered within acceptable distance of a known route, else false.
+    //  */
+    // private isNearKnownRoute(coordinates: [number, number]): boolean {
+    //     type Point = { x: number, y: number }
+    //     function sqr(x: number) { return x * x }
+    //     function distSquared(v: Point, w: Point) { return sqr(v.x - w.x) + sqr(v.y - w.y) }
+    //     function distToSegmentSquared(p: Point, v: Point, w: Point) {
+    //         var dSquare = distSquared(v, w);
+    //         if (dSquare == 0) {
+    //             return distSquared(p, v);
+    //         }
+    //         var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / dSquare;
+    //         t = Math.max(0, Math.min(1, t));
+    //         return distSquared(p, { x: v.x + t * (w.x - v.x), y: v.y + t * (w.y - v.y) });
+    //     }
+    //     function distToSegment(p: Point, v: Point, w: Point) { return Math.sqrt(distToSegmentSquared(p, v, w)); }
+    //     let isNearKnownRoute = false
+    //     D3.select('.routes').selectAll('path').each((datum: any, index: number, nodes: any) => {
+    //         datum.geometry?.coordinates?.forEach((coord: [number, number], i: number, arr: any) => {
+    //            if (i < arr.length - 1) {
+    //                 const p: Point = { x: coordinates[0], y: coordinates[1] }
+    //                 const v: Point = { x: coord[0], y: coord[1] }
+    //                 const w: Point = { x: arr[i+1][0], y: arr[i+1][1] }
+    //                 if (distToSegment(p, v, w) <= 0.01) { 
+    //                     isNearKnownRoute = true
+    //                     D3.select(nodes[index]).classed('active', true)
+    //                 }
+    //            }
+    //         })
+    //     })
+    //     return isNearKnownRoute
+    // }
+
     /**
      * Takes (WGS84) coordinates of a point and checks if its projection within the main SVG element is near a known route (with some added threshold).
      * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
      * @returns True if the point is considered within acceptable distance of a known route, else false.
      */
-    private isNearKnownRoute(coordinates: [number, number]): boolean {
+    private isNearKnownRoute(coordinates: [number, number], thresholdInMeters: number = 250): boolean {
         let isNearKnownRoute = false
-        const svgPointForCoordinates = this.getProjectedSVGPointFromCoordinates(coordinates)
         D3.select('.routes').selectAll('path').each((datum: any, index: number, nodes: any) => {
-            const invisibleRouteCloneWithIncreasedHitBox = D3.select(nodes[index]).clone().style('stroke', 'transparent').style('stroke-width', 5)
-            if (invisibleRouteCloneWithIncreasedHitBox.node().isPointInStroke(svgPointForCoordinates)) {
-                isNearKnownRoute = true
-                D3.select(nodes[index]).classed('active', true)
+            if (datum.geometry) {
+                const distance = pointToLineDistance(coordinates, datum.geometry.coordinates, { units: 'meters' })
+                if (distance <= thresholdInMeters) {
+                    isNearKnownRoute = true
+                    D3.select(nodes[index]).classed('active', true)
+                }
             }
-            invisibleRouteCloneWithIncreasedHitBox.remove()
+
         })
         return isNearKnownRoute
     }
