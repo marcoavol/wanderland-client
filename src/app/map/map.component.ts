@@ -6,10 +6,9 @@ import pointToLineDistance from '@turf/point-to-line-distance';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
 
-// TODO: Suchfunktion nach Kantonen (gesuchten Kanton hervorheben, andere abdunkeln o.ä. und reinzoomen)
-// TODO: Flexible Dimension für MapComponent, so dass immer Parent-Element füllt (auch bei Resize)
+// FIXME: Anstelle von Input für displayedRouteTypes ein Observable (für alle Filter- und Sucheinstellungen) anlegen (in Nav- oder Menu-Component), hier subscriben und bei Änderungen UI updaten
+// FIXME: Bei Änderung der angezeigten Routentypen bereits ausgewählte Route abwählen, sofern deren Typ nicht mehr angezeigt wird
 // FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
-// FIXME: Bei updateDisplayedRouteTypes ausgewählte Route abwählen, sofern der entsprechende Typ nicht mehr angezeigt wird
 
 @Component({
     selector: 'app-map',
@@ -180,13 +179,13 @@ export class MapComponent implements OnInit {
                 const cantonAbbreviation = Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)!.GDEKT
                 return (Kantonsfarben as { [key: string]: string })[cantonAbbreviation]
             })
-        // .on('click', (event: PointerEvent, datum: any) => {
-        //     console.warn(Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)?.GDEKT)
-        //     D3.selectAll('.canton').classed('active', false)
-        //     D3.select(event.target as Element).classed('active', true).raise()
-        //     // const lonLat = this.projection.invert!([e.pageX, e.pageY])
-        //     // console.warn(lonLat![1], lonLat![0])                    
-        // })
+            // .on('click', (event: PointerEvent, datum: any) => {
+            //     console.warn(Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)?.GDEKT)
+            //     D3.selectAll('.canton').classed('active', false)
+            //     D3.select(event.target as Element).classed('active', true).raise()
+            //     // const lonLat = this.projection.invert!([e.pageX, e.pageY])
+            //     // console.warn(lonLat![1], lonLat![0])                    
+            // })
 
         // Render routes    
         D3.select('.routes').selectAll('path')
@@ -248,10 +247,6 @@ export class MapComponent implements OnInit {
         D3.selectAll('.municipality')
             .classed('active', (_, index: number, nodes: any) => {
                 return nodes[index].isPointInFill(svgStartPoint) || nodes[index].isPointInFill(svgEndPoint)
-                // return routeDatum.geometry.coordinates.some((coordinate: [number, number]) => {
-                //     const svgPoint = this.getProjectedSVGPointFromCoordinates(coordinate)
-                //     return nodes[index].isPointInFill(svgPoint)
-                // })
             })
         D3.selectAll('.municipality.active')
             .raise()
@@ -265,9 +260,9 @@ export class MapComponent implements OnInit {
             .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
             .attr('class', 'route-endpoint')
             .raise()
-        // .on('mouseenter', (event: MouseEvent, datum: any) => {
-        //     console.warn(datum)
-        // })
+            // .on('mouseenter', (event: MouseEvent, datum: any) => {
+            //     console.warn(datum)
+            // })
 
     }
 
