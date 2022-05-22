@@ -4,11 +4,11 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { RouteOptions } from '../../types/settings.types';
 
 @Component({
-    selector: 'app-nav-bar',
-    templateUrl: './nav-bar.component.html',
-    styleUrls: ['./nav-bar.component.scss']
+    selector: 'app-settings-bar',
+    templateUrl: './settings-bar.component.html',
+    styleUrls: ['./settings-bar.component.scss']
 })
-export class NavBarComponent implements OnInit {
+export class SettingsBarComponent implements OnInit {
 
     @Output()
     onDisplayedRouteTypesChanged: EventEmitter<RouteOptions> = new EventEmitter()
