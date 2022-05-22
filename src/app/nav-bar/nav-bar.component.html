@@ -1,4 +1,8 @@
 <nav class="nav-bar">
+    <button class="btn btn-lg btn-outline-primary" (click)="open(content)">Settings</button>
+</nav>
+
+<ng-template #content let-offcanvas>
     <form [formGroup]="displayedRouteTypeForm" (change)="displayedRouteTypesChanged()" style="display: flex; justify-content: flex-start; align-items: center; flex-wrap: wrap;">
         <p style="padding-right: 8px; font-weight: bold;">Angezeigte Routen:</p>
         <div style="display: flex;">
@@ -16,4 +20,6 @@
             </div>
         </div>
     </form>
-</nav>
+    <button type="button" class="btn btn-outline-dark" style="width: 100px; margin: 0 auto" (click)="offcanvas.close('Close click')">Close</button>
+</ng-template>
+  
