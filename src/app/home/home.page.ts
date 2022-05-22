@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { RouteOptions } from '../../types/settings.types';
 
 @Component({
     templateUrl: './home.page.html',
@@ -6,7 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomePage implements OnInit {
 
-    public displayedRouteTypes: { national: boolean, regional: boolean, local: boolean }
+    public displayedRouteTypes: RouteOptions
 
     constructor() { }
 

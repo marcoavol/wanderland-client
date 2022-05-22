@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { RouteOptions } from '../../types/settings.types';
 
 @Component({
     selector: 'app-nav-bar',
@@ -10,7 +11,7 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 export class NavBarComponent implements OnInit {
 
     @Output()
-    onDisplayedRouteTypesChanged: EventEmitter<{ national: boolean, regional: boolean, local: boolean }> = new EventEmitter()
+    onDisplayedRouteTypesChanged: EventEmitter<RouteOptions> = new EventEmitter()
 
     public displayedRouteTypeForm = new FormGroup({
         national: new FormControl(true),

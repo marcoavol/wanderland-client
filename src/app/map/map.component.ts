@@ -5,6 +5,7 @@ import { Topology, GeometryCollection } from 'topojson-specification';
 import pointToLineDistance from '@turf/point-to-line-distance';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
+import { RouteOptions } from '../../types/settings.types';
 
 // FIXME: Anstelle von Input für displayedRouteTypes ein Observable (für alle Filter- und Sucheinstellungen) anlegen (in Nav- oder Menu-Component), hier subscriben und bei Änderungen UI updaten
 // FIXME: Bei Änderung der angezeigten Routentypen bereits ausgewählte Route abwählen, sofern deren Typ nicht mehr angezeigt wird
@@ -19,12 +20,11 @@ import Kantonsfarben from '../../assets/kantonsfarben.json';
 export class MapComponent implements OnInit {
 
     @Input()
-    public set displayedRouteTypes(value: { national: boolean, regional: boolean, local: boolean }) {
+    public set displayedRouteTypes(value: RouteOptions) {
         this._displayedRouteTypes = value
         this.updateDisplayedRouteTypes()
     }
-    private _displayedRouteTypes: { national: boolean, regional: boolean, local: boolean }
-
+    private _displayedRouteTypes: RouteOptions
     private svg: D3.Selection<SVGSVGElement, unknown, HTMLElement, any>
     private width: number = window.innerWidth
     private height: number = window.innerHeight
