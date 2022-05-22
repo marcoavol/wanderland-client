@@ -5,12 +5,14 @@ import { MapComponent } from '../map/map.component';
 import { NavBarComponent } from '../nav-bar/nav-bar.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { PhotoUploadComponent } from '../photo-upload/photo-upload.component';
 
 @NgModule({
     declarations: [
         HomePage,
         MapComponent,
         NavBarComponent,
+        PhotoUploadComponent,
     ],
     imports: [
         ReactiveFormsModule,
