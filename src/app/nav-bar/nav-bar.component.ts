@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-nav-bar',
