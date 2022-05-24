@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HomePage } from './home.page';
 import { MapComponent } from '../map/map.component';
-import { SettingsBarComponent } from '../settings-bar/settings-bar.component';
+import { SettingsBarComponent } from '../settings-bar/settings-bar';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 

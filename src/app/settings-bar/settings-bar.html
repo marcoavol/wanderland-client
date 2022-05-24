@@ -1,0 +1,25 @@
+<nav class="settings-bar">
+    <button class="btn btn-lg btn-outline-primary" (click)="open(content)">Settings</button>
+</nav>
+
+<ng-template #content let-offcanvas>
+    <form [formGroup]="displayedRouteTypeForm" (change)="displayedRouteTypesChanged()" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap;">
+        <p style="padding-right: 8px; font-weight: bold;">Angezeigte Routen:</p>
+        <div style="display: flex;">
+            <div style="padding-right: 0px; padding: 35px;" class="form-check form-switch">
+                <label style="padding: 0px">National</label>
+                <input formControlName="national" type="checkbox" class="form-check-input" id="flexSwitchCheckDefault"/>
+            </div>
+            <div style="padding: 35px" class="form-check form-switch">
+                <label style="padding: 0px">Regional</label>
+                <input formControlName="regional" type="checkbox" class="form-check-input" id="flexSwitchCheckDefault"/>
+            </div>
+            <div style="padding: 35px" class="form-check form-switch">
+                <label style="padding: 0px">Lokal</label>
+                <input formControlName="local" type="checkbox" class="form-check-input" id="flexSwitchCheckDefault"/>
+            </div>
+        </div>
+    </form>
+    <button type="button" class="btn btn-outline-dark" style="width: 100px; margin: 0 auto" (click)="offcanvas.close('Close click')">Close</button>
+</ng-template>
+  
