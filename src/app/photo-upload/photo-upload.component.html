@@ -6,11 +6,11 @@
             <h4 class="modal-title">Foto Upload</h4>
             <button type="button" class="btn-close" style="margin-right: 4px" aria-label="Schliessen" (click)="modal.dismiss()"></button>
         </div>
-        <div *ngIf="photoPreviewURL" class="" style="padding: 16px; display: flex; justify-content: center; align-items: center;">
-            <img [src]="photoPreviewURL" class="img-thumbnail" style="max-height: 180px;">
+        <div *ngIf="photoURL" class="" style="padding: 16px; display: flex; justify-content: center; align-items: center;">
+            <img [src]="photoURL" class="img-thumbnail" style="max-height: 180px;">
         </div>
         <div class="modal-body">
-            <input type="file" class="form-control" accept=".jpg, .jpeg," (change)="handlePhotoInput($event)" />
+            <input type="file" class="form-control" accept=".jpg, .jpeg," (change)="handlePhotoInputAsync($event)" />
         </div>
         <div class="modal-footer">
             <button type="submit" class="btn btn-light" [disabled]="!uploadForm.valid">Übermitteln</button>
