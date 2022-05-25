@@ -1,18 +1,21 @@
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
-import { RouteOptions } from '../../types/settings.types';
-import { Observable } from 'rxjs';
+import { takeWhile } from 'rxjs';
+import { TrailOptions } from '../../types/settings.types';
+import { TrailOptionsService } from './trail-options.service';
 
 @Component({
     selector: 'app-settings-bar',
     templateUrl: './settings-bar.html',
     styleUrls: ['./settings-bar.scss']
 })
-export class SettingsBarComponent implements OnInit {
+export class SettingsBarComponent implements OnInit, OnDestroy {
+
+    private isAlive: boolean
 
     @Output()
-    onDisplayedRouteTypesChanged: EventEmitter<RouteOptions> = new EventEmitter()
+    onDisplayedRouteTypesChanged: EventEmitter<TrailOptions> = new EventEmitter()
 
     public displayedRouteTypeForm = new FormGroup({
         national: new FormControl(true),
@@ -20,26 +23,24 @@ export class SettingsBarComponent implements OnInit {
         local: new FormControl(true),
     })
 
-    constructor(private offcanvasService: NgbOffcanvas) { }
+    constructor(
+        private offcanvasService: NgbOffcanvas, 
+        private trailOptService: TrailOptionsService ) { }
 
     ngOnInit(): void {
         this.displayedRouteTypesChanged()
+        this.isAlive = true
     }
 
     public displayedRouteTypesChanged(): void {
-        this.onDisplayedRouteTypesChanged.emit(this.displayedRouteTypeForm.value)
-    }
+        this.trailOptService.emitValues(this.displayedRouteTypeForm.value)
+    }    
 
     public open(content: any) {
         this.offcanvasService.open(content);
     }
 
-    public getValues(): any {
-        const obs = new Observable(observer => {
-            setTimeout(() => {
-                observer.next(1);
-            }, 2000);
-        });
+    ngOnDestroy(): void {
+       this.isAlive = false 
     }
-
 }

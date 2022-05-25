@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouteOptions } from '../../types/settings.types';
+import { TrailOptions } from '../../types/settings.types';
 
 @Component({
     templateUrl: './home.page.html',
@@ -7,7 +7,7 @@ import { RouteOptions } from '../../types/settings.types';
 })
 export class HomePage implements OnInit {
 
-    public displayedRouteTypes: RouteOptions
+    public displayedRouteTypes: TrailOptions
 
     constructor() { }
 

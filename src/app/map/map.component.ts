@@ -5,9 +5,12 @@ import { Topology, GeometryCollection } from 'topojson-specification';
 import pointToLineDistance from '@turf/point-to-line-distance';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
-import { RouteOptions } from '../../types/settings.types';
+import { TrailOptions } from '../../types/settings.types';
+import { TrailOptionsService } from '../settings-bar/trail-options.service';
+import { takeWhile } from 'rxjs';
 
-// FIXME: Anstelle von Input für displayedRouteTypes ein Observable (für alle Filter- und Sucheinstellungen) anlegen (in Nav- oder Menu-Component), hier subscriben und bei Änderungen UI updaten
+// FIXME: Anstelle von Input für displayedRouteTypes ein Observable (für alle Filter- und Sucheinstellungen) 
+//        anlegen (in Nav- oder Menu-Component), hier subscriben und bei Änderungen UI updaten
 // FIXME: Bei Änderung der angezeigten Routentypen bereits ausgewählte Route abwählen, sofern deren Typ nicht mehr angezeigt wird
 // FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
 
@@ -20,11 +23,11 @@ import { RouteOptions } from '../../types/settings.types';
 export class MapComponent implements OnInit {
 
     @Input()
-    public set displayedRouteTypes(value: RouteOptions) {
+    public set displayedRouteTypes(value: TrailOptions) {
         this._displayedRouteTypes = value
         this.updateDisplayedRouteTypes()
     }
-    private _displayedRouteTypes: RouteOptions
+    private _displayedRouteTypes: TrailOptions
     private svg: D3.Selection<SVGSVGElement, unknown, HTMLElement, any>
     private width: number = window.innerWidth
     private height: number = window.innerHeight
@@ -38,11 +41,15 @@ export class MapComponent implements OnInit {
 
     private locations: [number, number][] = [[9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]]  // [lon, lat]
 
-    constructor() { }
+
+    constructor(private trailOptService: TrailOptionsService) { }
 
     ngOnInit(): void {
         this.setup()
-        this.renderAsync()
+        this.renderAsync()      
+        this.trailOptService.trailOptionsObservable.pipe().subscribe(values => {
+            console.warn('currentValues:', values)
+        })
     }
 
     private setup(): void {
