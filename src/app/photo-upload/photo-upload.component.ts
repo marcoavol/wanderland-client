@@ -27,9 +27,9 @@ export class PhotoUploadComponent implements OnInit {
     }
 
     public handlePhotoInput(event: Event): void {
-        this.photoPreviewURL = undefined
         const file = (event.target as HTMLInputElement).files?.item(0)
         this.uploadForm.patchValue({ photo: file })
+        this.photoPreviewURL = undefined
         if (file) {
             const reader = new FileReader()
             reader.onload = () => this.photoPreviewURL = reader.result as string
