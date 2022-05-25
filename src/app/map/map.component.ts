@@ -7,10 +7,7 @@ import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
 import { TrailOptions } from '../../types/settings.types';
 import { TrailOptionsService } from '../settings-bar/trail-options.service';
-import { takeWhile } from 'rxjs';
 
-// FIXME: Anstelle von Input für displayedRouteTypes ein Observable (für alle Filter- und Sucheinstellungen) 
-//        anlegen (in Nav- oder Menu-Component), hier subscriben und bei Änderungen UI updaten
 // FIXME: Bei Änderung der angezeigten Routentypen bereits ausgewählte Route abwählen, sofern deren Typ nicht mehr angezeigt wird
 // FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
 
@@ -22,11 +19,11 @@ import { takeWhile } from 'rxjs';
 })
 export class MapComponent implements OnInit {
 
-    @Input()
-    public set displayedRouteTypes(value: TrailOptions) {
-        this._displayedRouteTypes = value
-        this.updateDisplayedRouteTypes()
-    }
+    // @Input()
+    // public set displayedRouteTypes(value: TrailOptions) {
+    //     this._displayedRouteTypes = value
+    //     this.updateDisplayedRouteTypes()
+    // }
     private _displayedRouteTypes: TrailOptions
     private svg: D3.Selection<SVGSVGElement, unknown, HTMLElement, any>
     private width: number = window.innerWidth
@@ -41,15 +38,12 @@ export class MapComponent implements OnInit {
 
     private locations: [number, number][] = [[9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]]  // [lon, lat]
 
-
     constructor(private trailOptService: TrailOptionsService) { }
 
     ngOnInit(): void {
         this.setup()
         this.renderAsync()      
-        this.trailOptService.trailOptionsObservable.pipe().subscribe(values => {
-            console.warn('currentValues:', values)
-        })
+        this.subscribeToTrailOptions()
     }
 
     private setup(): void {
@@ -218,8 +212,6 @@ export class MapComponent implements OnInit {
                 }
             })
 
-        // this.updateDisplayedRouteTypes()
-
         // Render locations
         D3.select('.locations').selectAll('circle')
             .data(this.locations)
@@ -243,6 +235,14 @@ export class MapComponent implements OnInit {
                 case 'Lokal': return !this._displayedRouteTypes.local
                 default: return true
             }
+        })
+    }
+
+    private subscribeToTrailOptions(): void {
+        // subscribe to trailOptions and update values if they new values are coming in
+        this.trailOptService.trailOptionsObservable.pipe().subscribe(values => {
+            this._displayedRouteTypes = values
+            this.updateDisplayedRouteTypes()
         })
     }
 
