@@ -9,7 +9,11 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class PhotoUploadComponent implements OnInit {
 
-    public photo: File | null
+    public photoPreviewURL: string | undefined
+
+    public uploadForm = new FormGroup({
+        photo: new FormControl(undefined, { validators: [Validators.required] })
+    })
 
     constructor(
         private modalService: NgbModal,
@@ -23,17 +27,20 @@ export class PhotoUploadComponent implements OnInit {
     }
 
     public handlePhotoInput(event: Event): void {
-        const files = (event.target as HTMLInputElement).files
-        this.photo = files?.length ? files[0] : null
+        this.photoPreviewURL = undefined
+        const file = (event.target as HTMLInputElement).files?.item(0)
+        this.uploadForm.patchValue({ photo: file })
+        if (file) {
+            const reader = new FileReader()
+            reader.onload = () => this.photoPreviewURL = reader.result as string
+            reader.readAsDataURL(file)
+        }
     }
 
-    public submit(event: Event): void {
-        event.preventDefault()
-        if (this.photo) {
-            const formData = new FormData()
-            formData.append(this.photo.name, this.photo, this.photo.name)
-        }
-        console.warn(this.photo)
+    public submit(): void {
+        const formData = new FormData()
+        formData.append('photo', this.uploadForm.value.photo, this.uploadForm.value.photo.name)
+        console.warn(formData.get('photo'))
     }
 
 }
