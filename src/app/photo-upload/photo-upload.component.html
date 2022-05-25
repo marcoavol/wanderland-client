@@ -1,14 +1,16 @@
 <button class="btn btn-lg btn-outline-primary" (click)="openModal(modalContent)">Foto-Upload</button>
 
 <ng-template #modalContent let-modal>
-    <div class="modal-header">
-      <h4 class="modal-title">Modal title</h4>
-      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-    </div>
-    <div class="modal-body">
-      <p>One fine body&hellip;</p>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-light" (click)="modal.close('Close click')">Close</button>
-    </div>
-  </ng-template>
+    <form (submit)="submit($event)">
+        <div class="modal-header">
+            <h4 class="modal-title">Foto Upload</h4>
+            <button type="button" class="btn-close" style="margin-right: 4px" aria-label="Schliessen" (click)="modal.dismiss()"></button>
+        </div>
+        <div class="modal-body">
+            <input type="file" class="form-control" accept=".jpg, .jpeg," (change)="handlePhotoInput($event)" />
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-light" [disabled]="!photo">Übermitteln</button>
+        </div>
+    </form>
+</ng-template>

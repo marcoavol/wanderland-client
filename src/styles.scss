@@ -4,6 +4,17 @@
     padding: 0;
 }
 
+/* Override Bootstrap styles here */
+// $theme-colors: (
+//   "primary":    $primary,
+//   "secondary":  $secondary,
+//   "success":    $success,
+//   "info":       $info,
+//   "warning":    $warning,
+//   "danger":     $danger,
+//   "light":      $light,
+//   "dark":       $dark
+// );
 
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
