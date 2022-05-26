@@ -10,3 +10,16 @@
     border-bottom: 1px solid rgba(245, 245, 245, 0.1);
     user-select: none;
 }
+
+.formgroup {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+.filters {
+    flex-direction: column;
+    margin-top: 20px;
+    width: 350px;
+}

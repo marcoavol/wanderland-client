@@ -3,10 +3,10 @@
 </nav>
 
 <ng-template #content let-offcanvas>
-    <form [formGroup]="displayedRouteTypeForm" (change)="displayedRouteTypesChanged()" style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap;">
-        <p style="padding-right: 8px; font-weight: bold;">Angezeigte Routen:</p>
+    <form [formGroup]="displayedRouteTypeForm" (change)="displayedRouteTypesChanged()" class="formgroup">
+        <p style="padding-top: 30px; font-weight: bold;">Angezeigte Routen</p>
         <div style="display: flex;">
-            <div style="padding-right: 0px; padding: 35px;" class="form-check form-switch">
+            <div style="padding: 35px;" class="form-check form-switch">
                 <label style="padding: 0px">National</label>
                 <input formControlName="national" type="checkbox" class="form-check-input" id="flexSwitchCheckDefault"/>
             </div>
@@ -19,7 +19,38 @@
                 <input formControlName="local" type="checkbox" class="form-check-input" id="flexSwitchCheckDefault"/>
             </div>
         </div>
+        
+        <p style="font-weight: bold;">Filter</p>
+        <div>
+            <div class="filters">
+                <label for="duration" class="form-label">Dauer</label>
+                <input type="range" class="form-control" min="0" id="duration">
+            </div>
+            <div class="filters">
+                <label for="length" class="form-label">Länge</label>
+                <input type="range" class="form-control" min="0" id="length">
+            </div>
+            <div class="filters">
+                <label for="elevation" class="form-label">Aufstieg</label>
+                <input type="range" class="form-control" min="0" id="elevation">
+            </div>
+            <div class="filters">
+                <label for="descending" class="form-label">Abstieg</label>
+                <input type="range" class="form-control" min="0" id="descending">
+            </div>
+            <div class="filters">
+                <label for="fitnessLevel" class="form-label">Kondition</label>
+                <input type="range" class="form-control" min="0" id="fitnessLevel">
+            </div>
+            <div class="filters">
+                <label for="difficulty" class="form-label">Schwierigkeitsgrad</label>
+                <input type="range" class="form-control" min="0" id="difficulty">
+            </div>
+        </div>
+
     </form>
-    <button type="button" class="btn btn-outline-dark" style="width: 100px; margin: 0 auto" (click)="offcanvas.close('Close click')">Close</button>
+    <div style="display: flex; align-items: center; margin-top: 100px;">
+        <button type="button" class="btn btn-outline-dark" style="width: 100px; margin: 0 auto;" (click)="offcanvas.close('Close click')">Close</button>
+    </div>
 </ng-template>
   
