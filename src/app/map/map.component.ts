@@ -5,8 +5,8 @@ import { Topology, GeometryCollection } from 'topojson-specification';
 import pointToLineDistance from '@turf/point-to-line-distance';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
-import { TrailOptions } from '../../types/settings.types';
-import { TrailOptionsService } from '../settings-bar/trail-options.service';
+import { RouteOptions } from '../../types/settings.types';
+import { RouteOptionsService } from '../settings-bar/route-options.service';
 
 // FIXME: Bei Änderung der angezeigten Routentypen bereits ausgewählte Route abwählen, sofern deren Typ nicht mehr angezeigt wird
 // FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
@@ -19,12 +19,7 @@ import { TrailOptionsService } from '../settings-bar/trail-options.service';
 })
 export class MapComponent implements OnInit {
 
-    // @Input()
-    // public set displayedRouteTypes(value: TrailOptions) {
-    //     this._displayedRouteTypes = value
-    //     this.updateDisplayedRouteTypes()
-    // }
-    private _displayedRouteTypes: TrailOptions
+    private _displayedRouteTypes: RouteOptions
     private svg: D3.Selection<SVGSVGElement, unknown, HTMLElement, any>
     private width: number = window.innerWidth
     private height: number = window.innerHeight
@@ -38,12 +33,12 @@ export class MapComponent implements OnInit {
 
     private locations: [number, number][] = [[9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]]  // [lon, lat]
 
-    constructor(private trailOptService: TrailOptionsService) { }
+    constructor(private routeOptService: RouteOptionsService) { }
 
     ngOnInit(): void {
         this.setup()
         this.renderAsync()      
-        this.subscribeToTrailOptions()
+        this.subscribeToRouteOptions()
     }
 
     private setup(): void {
@@ -238,9 +233,9 @@ export class MapComponent implements OnInit {
         })
     }
 
-    private subscribeToTrailOptions(): void {
-        // subscribe to trailOptions and update values if they new values are coming in
-        this.trailOptService.trailOptionsObservable.pipe().subscribe(values => {
+    private subscribeToRouteOptions(): void {
+        // subscribe to routeOptions and update values if they new values are coming in
+        this.routeOptService.routeOptionsObservable.pipe().subscribe(values => {
             this._displayedRouteTypes = values
             this.updateDisplayedRouteTypes()
         })

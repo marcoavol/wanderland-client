@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { TrailOptionsService } from './trail-options.service';
+import { RouteOptionsService } from './route-options.service';
 
-describe('TrailOptionsService', () => {
-  let service: TrailOptionsService;
+describe('RouteOptionsService', () => {
+  let service: RouteOptionsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(TrailOptionsService);
+    service = TestBed.inject(RouteOptionsService);
   });
 
   it('should be created', () => {

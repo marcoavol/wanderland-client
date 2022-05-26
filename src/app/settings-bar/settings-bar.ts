@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
-import { TrailOptionsService } from './trail-options.service';
+import { RouteOptionsService } from './route-options.service';
 
 @Component({
     selector: 'app-settings-bar',
@@ -20,7 +20,7 @@ export class SettingsBarComponent implements OnInit, OnDestroy {
 
     constructor(
         private offcanvasService: NgbOffcanvas, 
-        private trailOptService: TrailOptionsService ) { }
+        private routeOptService: RouteOptionsService ) { }
 
     ngOnInit(): void {
         this.displayedRouteTypesChanged()
@@ -28,7 +28,7 @@ export class SettingsBarComponent implements OnInit, OnDestroy {
     }
 
     public displayedRouteTypesChanged(): void {
-        this.trailOptService.emitValues(this.displayedRouteTypeForm.value)
+        this.routeOptService.emitValues(this.displayedRouteTypeForm.value)
     }    
 
     public open(content: any) {
