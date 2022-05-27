@@ -36,9 +36,11 @@ export class MapComponent implements OnInit {
     private zoomTransform: D3.ZoomTransform = D3.zoomIdentity
     private zoomExtent: [number, number] = [1, 5]
 
-    private locations: [number, number][] = [[9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]]  // [lon, lat]
+    private locations: [number, number][] = [[9.396352777777777 , 46.9688], ]  // [lon, lat] e.g. [9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]
 
-    constructor() { }
+    constructor(
+
+    ) { }
 
     ngOnInit(): void {
         this.setup()
@@ -223,9 +225,8 @@ export class MapComponent implements OnInit {
             .attr('class', 'location')
             .on('click', (event: PointerEvent, datum: any) => {
                 console.warn(datum)
-                this.isNearKnownRoute(datum)
             })
-
+            
     }
 
     private updateDisplayedRouteTypes(): void {
@@ -241,8 +242,8 @@ export class MapComponent implements OnInit {
 
     private renderSelectedRouteEndpoints(routeDatum: any): void {
 
-        const svgStartPoint = this.getProjectedSVGPointFromCoordinates(routeDatum.geometry.coordinates[0])
-        const svgEndPoint = this.getProjectedSVGPointFromCoordinates(routeDatum.geometry.coordinates[routeDatum.geometry.coordinates.length - 1])
+        const svgStartPoint = this.coordinatesToProjectedSVGPoint(routeDatum.geometry.coordinates[0])
+        const svgEndPoint = this.coordinatesToProjectedSVGPoint(routeDatum.geometry.coordinates[routeDatum.geometry.coordinates.length - 1])
 
         D3.selectAll('.municipality')
             .classed('active', (_, index: number, nodes: any) => {
@@ -272,7 +273,7 @@ export class MapComponent implements OnInit {
      * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
      * @returns A DOMPoint within the main SVG-Element representing the projected input point or null if the input point is outside the clipping bounds of the projection.
      */
-    private getProjectedSVGPointFromCoordinates(coordinates: [number, number]): DOMPoint | null {
+    private coordinatesToProjectedSVGPoint(coordinates: [number, number]): DOMPoint | null {
         const projectedCoordinates = this.projection(coordinates)
         const svgPoint = this.svg.node()?.createSVGPoint()
         if (projectedCoordinates && svgPoint) {
@@ -280,6 +281,26 @@ export class MapComponent implements OnInit {
             svgPoint.y = projectedCoordinates[1]
         }
         return svgPoint || null
+    }
+
+    /**
+     * Takes (WGS84) coordinates of a point and checks if its projection within the main SVG element is near a known route (with some added threshold).
+     * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
+     * @returns True if the point is considered within acceptable distance of a known route, else false.
+     */
+    public static nearKnownRoutes(coordinates: [number, number], thresholdInMeters: number = 1000): number[] {
+        const nearKnownRouteIds: number[] = []
+        D3.select('.routes').selectAll('path').each((datum: any, index: number, nodes: any) => {
+            if (datum.geometry) {
+                const distance = pointToLineDistance(coordinates, datum.geometry.coordinates, { units: 'meters' })
+                if (distance <= thresholdInMeters) {
+                    nearKnownRouteIds.push(datum.properties.OBJECTID)
+                    D3.select(nodes[index]).classed('active', true)
+                }
+            }
+
+        })
+        return nearKnownRouteIds
     }
 
     // /**
@@ -336,25 +357,5 @@ export class MapComponent implements OnInit {
     //     })
     //     return isNearKnownRoute
     // }
-
-    /**
-     * Takes (WGS84) coordinates of a point and checks if its projection within the main SVG element is near a known route (with some added threshold).
-     * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
-     * @returns True if the point is considered within acceptable distance of a known route, else false.
-     */
-    private isNearKnownRoute(coordinates: [number, number], thresholdInMeters: number = 250): boolean {
-        let isNearKnownRoute = false
-        D3.select('.routes').selectAll('path').each((datum: any, index: number, nodes: any) => {
-            if (datum.geometry) {
-                const distance = pointToLineDistance(coordinates, datum.geometry.coordinates, { units: 'meters' })
-                if (distance <= thresholdInMeters) {
-                    isNearKnownRoute = true
-                    D3.select(nodes[index]).classed('active', true)
-                }
-            }
-
-        })
-        return isNearKnownRoute
-    }
 
 }

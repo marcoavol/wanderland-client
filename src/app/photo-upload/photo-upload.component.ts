@@ -1,68 +1,58 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import ExifReader, { IccTags, Tags, XmpTags } from 'exifreader';
+import { PhotoUploadService } from './photo-upload.service';
+import { ToastsService } from '../toasts/toasts.service';
 
 @Component({
     selector: 'app-photo-upload',
     templateUrl: './photo-upload.component.html',
     styleUrls: ['./photo-upload.component.scss']
 })
-export class PhotoUploadComponent implements OnInit {
-
-    public uploadForm = new FormGroup({
-        photo: new FormControl(undefined, { validators: [Validators.required] })
-    })
-
-    public photoURL?: string
+export class PhotoUploadComponent {
+    
+    public fileInputValue?: string
+    public photoPreviewURL?: string
+    public errorMessage?: string
 
     constructor(
+        private photoUploadService: PhotoUploadService,
         private modalService: NgbModal,
+        private toastService: ToastsService,
     ) { }
-
-    ngOnInit(): void {
-    }
  
     public openModal(content: any) {
         this.modalService.open(content, { centered: true })
     }
 
+    public closeModal() {
+        this.modalService.dismissAll()
+        this.fileInputValue = undefined
+        this.reset()
+    }
+
     public async handlePhotoInputAsync(event: Event): Promise<void> {
         const file = (event.target as HTMLInputElement).files?.item(0)
-        if (!file) {
-            this.uploadForm.reset()
-            this.photoURL = undefined
-            return
+        if (!file) return 
+        this.reset()
+        const fileReader = new FileReader()
+        fileReader.readAsDataURL(file)
+        fileReader.onload = () => this.photoPreviewURL = fileReader.result as string
+        const { valid, errorMessage } = await this.photoUploadService.validatePhotoAsync(file)
+        if (!valid) {
+            this.errorMessage = errorMessage
         }
-
-        const urlReader = new FileReader()
-        urlReader.onload = () => this.photoURL = urlReader.result as string
-        urlReader.readAsDataURL(file)
-
-        const metatags: Tags & XmpTags & IccTags = await ExifReader.load(this.uploadForm.value.photo as File)
-        const location = { 
-            lon: metatags.GPSLongitude?.description, 
-            lat: metatags.GPSLatitude?.description 
-        }
-        console.warn(location)
-        if (!location.lat || !location.lon) {
-            // Display error message (photo doesn't include any gps data)
-            return
-        }
-
-        // Check if location is near route
-
-        // If location is on route, update form
-        this.uploadForm.patchValue({ photo: file })
-
-        // Else display error message (location is not near a known route)
-        return
     }
 
     public submit(): void {
-        const formData = new FormData()
-        formData.append('photo', this.uploadForm.value.photo, this.uploadForm.value.photo.name)
-        console.warn(formData.get('photo'))
+        this.photoUploadService.uploadPhotoAndDetailsAsync()
+        this.closeModal()
+        this.toastService.show('', 'Vielen Dank, Ihr Foto wurde übermittelt!', 'bg-success text-light')
+    }
+    
+    public reset(): void {
+        this.photoPreviewURL = undefined
+        this.errorMessage = undefined
     }
 
 }
+
