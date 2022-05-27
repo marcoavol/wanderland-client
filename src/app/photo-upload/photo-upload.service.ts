@@ -5,7 +5,7 @@ import ExifReader from 'exifreader';
 import imageCompression from 'browser-image-compression';
 import { lastValueFrom } from 'rxjs';
 
-export interface PhotoDetails {
+interface PhotoDetails {
     captureIsoDate: string;
     lon: number;
     lat: number;
