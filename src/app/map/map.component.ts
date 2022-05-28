@@ -295,7 +295,6 @@ export class MapComponent implements OnInit {
                 const distance = pointToLineDistance(coordinates, datum.geometry.coordinates, { units: 'meters' })
                 if (distance <= thresholdInMeters) {
                     nearKnownRouteIds.push(datum.properties.OBJECTID)
-                    D3.select(nodes[index]).classed('active', true)
                 }
             }
 
