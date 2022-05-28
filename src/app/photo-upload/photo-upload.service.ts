@@ -22,8 +22,8 @@ interface ValidationResult {
 })
 export class PhotoUploadService {
 
-    private readonly UPLOAD_PATH = ''
-
+    private readonly UPLOAD_PATH = 'http://localhost:8080/photos'
+    
     private readonly COMPRESSION_OPTIONS = {
         maxSizeMB: 1,
         maxWidthOrHeight: 1920,
@@ -36,6 +36,14 @@ export class PhotoUploadService {
     constructor(
         private http: HttpClient,
     ) { }
+
+    public async getPhotoPreviewURLAsync(photo: File): Promise<string> {
+        return new Promise((resolve, _) => {
+            const fileReader = new FileReader()
+            fileReader.readAsDataURL(photo)
+            fileReader.onload = () => resolve(fileReader.result as string)
+        })
+    }
 
     public async validatePhotoAsync(photo: File): Promise<ValidationResult> {
         this.photo = undefined
@@ -70,9 +78,7 @@ export class PhotoUploadService {
         const formData = new FormData()
         formData.append('photo', compressedPhoto, compressedPhoto.name)
         formData.append('photoDetails', JSON.stringify(this.photoDetails))
-        console.warn(formData.get('photo'))
-        console.warn(formData.get('photoDetails'))
-        await lastValueFrom(this.http.post(this.UPLOAD_PATH, formData))
+        await lastValueFrom(this.http.post(this.UPLOAD_PATH, formData)).catch(error => console.warn(error))
     }
     
     private exifDateToIsoString(exifDate: string): string {

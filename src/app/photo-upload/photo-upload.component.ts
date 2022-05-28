@@ -10,7 +10,6 @@ import { ToastsService } from '../toasts/toasts.service';
 })
 export class PhotoUploadComponent {
     
-    public fileInputValue?: string
     public photoPreviewURL?: string
     public errorMessage?: string
 
@@ -26,7 +25,6 @@ export class PhotoUploadComponent {
 
     public closeModal() {
         this.modalService.dismissAll()
-        this.fileInputValue = undefined
         this.reset()
     }
 
@@ -34,9 +32,7 @@ export class PhotoUploadComponent {
         const file = (event.target as HTMLInputElement).files?.item(0)
         if (!file) return 
         this.reset()
-        const fileReader = new FileReader()
-        fileReader.readAsDataURL(file)
-        fileReader.onload = () => this.photoPreviewURL = fileReader.result as string
+        this.photoPreviewURL = await this.photoUploadService.getPhotoPreviewURLAsync(file)
         const { valid, errorMessage } = await this.photoUploadService.validatePhotoAsync(file)
         if (!valid) {
             this.errorMessage = errorMessage
