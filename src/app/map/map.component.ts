@@ -38,6 +38,8 @@ export class MapComponent implements OnInit {
 
     private locations: [number, number][] = [[9.396352777777777 , 46.9688], ]  // [lon, lat] e.g. [9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]
 
+    private static readonly NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS = 1000
+
     constructor(
 
     ) { }
@@ -288,12 +290,12 @@ export class MapComponent implements OnInit {
      * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
      * @returns True if the point is considered within acceptable distance of a known route, else false.
      */
-    public static nearKnownRoutes(coordinates: [number, number], thresholdInMeters: number = 1000): number[] {
+    public static nearKnownRoutes(coordinates: [number, number]): number[] {
         const nearKnownRouteIds: number[] = []
         D3.select('.routes').selectAll('path').each((datum: any, index: number, nodes: any) => {
             if (datum.geometry) {
                 const distance = pointToLineDistance(coordinates, datum.geometry.coordinates, { units: 'meters' })
-                if (distance <= thresholdInMeters) {
+                if (distance <= MapComponent.NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS) {
                     nearKnownRouteIds.push(datum.properties.OBJECTID)
                 }
             }
@@ -301,60 +303,5 @@ export class MapComponent implements OnInit {
         })
         return nearKnownRouteIds
     }
-
-    // /**
-    //  * Takes (WGS84) coordinates of a point and checks if its projection within the main SVG element is near a known route (with some added threshold).
-    //  * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
-    //  * @returns True if the point is considered within acceptable distance of a known route, else false.
-    //  */
-    // private isNearKnownRoute(coordinates: [number, number]): boolean {
-    //     let isNearKnownRoute = false
-    //     const svgPointForCoordinates = this.getProjectedSVGPointFromCoordinates(coordinates)
-    //     D3.select('.routes').selectAll('path').each((datum: any, index: number, nodes: any) => {
-    //         const invisibleRouteCloneWithIncreasedHitBox = D3.select(nodes[index]).clone().style('stroke', 'transparent').style('stroke-width', 5)
-    //         if (invisibleRouteCloneWithIncreasedHitBox.node().isPointInStroke(svgPointForCoordinates)) {
-    //             isNearKnownRoute = true
-    //             D3.select(nodes[index]).classed('active', true)
-    //         }
-    //         invisibleRouteCloneWithIncreasedHitBox.remove()
-    //     })
-    //     return isNearKnownRoute
-    // }
-
-    // /**
-    //  * Takes (WGS84) coordinates of a point and checks if its projection within the main SVG element is near a known route (with some added threshold).
-    //  * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
-    //  * @returns True if the point is considered within acceptable distance of a known route, else false.
-    //  */
-    // private isNearKnownRoute(coordinates: [number, number]): boolean {
-    //     type Point = { x: number, y: number }
-    //     function sqr(x: number) { return x * x }
-    //     function distSquared(v: Point, w: Point) { return sqr(v.x - w.x) + sqr(v.y - w.y) }
-    //     function distToSegmentSquared(p: Point, v: Point, w: Point) {
-    //         var dSquare = distSquared(v, w);
-    //         if (dSquare == 0) {
-    //             return distSquared(p, v);
-    //         }
-    //         var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / dSquare;
-    //         t = Math.max(0, Math.min(1, t));
-    //         return distSquared(p, { x: v.x + t * (w.x - v.x), y: v.y + t * (w.y - v.y) });
-    //     }
-    //     function distToSegment(p: Point, v: Point, w: Point) { return Math.sqrt(distToSegmentSquared(p, v, w)); }
-    //     let isNearKnownRoute = false
-    //     D3.select('.routes').selectAll('path').each((datum: any, index: number, nodes: any) => {
-    //         datum.geometry?.coordinates?.forEach((coord: [number, number], i: number, arr: any) => {
-    //            if (i < arr.length - 1) {
-    //                 const p: Point = { x: coordinates[0], y: coordinates[1] }
-    //                 const v: Point = { x: coord[0], y: coord[1] }
-    //                 const w: Point = { x: arr[i+1][0], y: arr[i+1][1] }
-    //                 if (distToSegment(p, v, w) <= 0.01) { 
-    //                     isNearKnownRoute = true
-    //                     D3.select(nodes[index]).classed('active', true)
-    //                 }
-    //            }
-    //         })
-    //     })
-    //     return isNearKnownRoute
-    // }
 
 }
