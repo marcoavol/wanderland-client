@@ -23,10 +23,9 @@ interface ValidationResult {
 export class PhotoUploadService {
 
     private readonly UPLOAD_PATH = 'http://localhost:8080/photos'
-    
+
     private readonly COMPRESSION_OPTIONS = {
         maxSizeMB: 1,
-        maxWidthOrHeight: 1920,
         useWebWorker: true
     }
 
