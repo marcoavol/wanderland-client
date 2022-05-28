@@ -11,7 +11,8 @@ export class RouteOptionsService {
     national: true,
     regional: true,
     local: true,
-    duration: 30
+    durationMin: 30,
+    durationMax: 80
 }
 
   // init values => currentRouteOptions

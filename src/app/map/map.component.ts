@@ -19,7 +19,7 @@ import { RouteOptionsService } from '../settings-bar/route-options.service';
 })
 export class MapComponent implements OnInit {
 
-    private _displayedRouteTypes: RouteOptions
+    private displayedRouteTypes: RouteOptions
     private svg: D3.Selection<SVGSVGElement, unknown, HTMLElement, any>
     private width: number = window.innerWidth
     private height: number = window.innerHeight
@@ -225,9 +225,9 @@ export class MapComponent implements OnInit {
     private updateDisplayedRouteTypes(): void {
         D3.selectAll('.route').classed('hidden', (datum: any) => {
             switch (datum?.properties.Typ_TR) {
-                case 'National': return !this._displayedRouteTypes.national
-                case 'Regional': return !this._displayedRouteTypes.regional
-                case 'Lokal': return !this._displayedRouteTypes.local
+                case 'National': return !this.displayedRouteTypes.national
+                case 'Regional': return !this.displayedRouteTypes.regional
+                case 'Lokal': return !this.displayedRouteTypes.local
                 default: return true
             }
         })
@@ -236,7 +236,7 @@ export class MapComponent implements OnInit {
     private subscribeToRouteOptions(): void {
         // subscribe to routeOptions and update values if they new values are coming in
         this.routeOptService.routeOptionsObservable.pipe().subscribe(values => {
-            this._displayedRouteTypes = values
+            this.displayedRouteTypes = values
             this.updateDisplayedRouteTypes()
         })
     }
