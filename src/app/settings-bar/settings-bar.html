@@ -23,14 +23,18 @@
         <p style="font-weight: bold;">Filter</p>
         <div>
             <div class="filters">
-                <label for="duration" class="form-label">Dauer</label>
-                <input type="range" class="form-control" min="0" id="duration">
+                <label for="sliderDuration" class="form-label">Dauer</label>
+                <div class="slider-track">
+                    <input formControlName="duration" type="range" class="form-control" min="0" max="100" id="sliderDuration">
+                    <!-- <input type="range" class="form-control" min="0" max="100" value="70" id="duration_2"> -->
+                </div>
             </div>
+            <!--
             <div class="filters">
                 <label for="length" class="form-label">Länge</label>
                 <input type="range" class="form-control" min="0" id="length">
             </div>
-            <div class="filters">
+             <div class="filters">
                 <label for="elevation" class="form-label">Aufstieg</label>
                 <input type="range" class="form-control" min="0" id="elevation">
             </div>
@@ -45,7 +49,7 @@
             <div class="filters">
                 <label for="difficulty" class="form-label">Schwierigkeitsgrad</label>
                 <input type="range" class="form-control" min="0" id="difficulty">
-            </div>
+            </div> -->
         </div>
 
     </form>

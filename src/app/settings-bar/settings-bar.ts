@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { RouteOptionsService } from './route-options.service';
@@ -16,6 +16,12 @@ export class SettingsBarComponent implements OnInit, OnDestroy {
         national: new FormControl(true),
         regional: new FormControl(true),
         local: new FormControl(true),
+        duration: new FormControl(30),
+        // elevation: new FormControl(0),
+        // descending: new FormControl(0),
+        // length: new FormControl(0),
+        // fitnessLevel: new FormControl(0),
+        // difficulty: new FormControl(0),
     })
 
     constructor(
@@ -29,6 +35,7 @@ export class SettingsBarComponent implements OnInit, OnDestroy {
 
     public displayedRouteTypesChanged(): void {
         this.routeOptService.emitValues(this.displayedRouteTypeForm.value)
+        console.warn('RouteOptions:', this.displayedRouteTypeForm.value)
     }    
 
     public open(content: any) {

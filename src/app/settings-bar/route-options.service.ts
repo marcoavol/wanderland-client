@@ -10,7 +10,8 @@ export class RouteOptionsService {
   private currentRouteOptions: RouteOptions = {
     national: true,
     regional: true,
-    local: true
+    local: true,
+    duration: 30
 }
 
   // init values => currentRouteOptions
