@@ -7,8 +7,8 @@ import { RouteOptionsService } from './route-options.service';
 
 @Component({
     selector: 'app-settings-bar',
-    templateUrl: './settings-bar.html',
-    styleUrls: ['./settings-bar.scss']
+    templateUrl: './settings-bar.component.html',
+    styleUrls: ['./settings-bar.component.scss']
 })
 export class SettingsBarComponent implements OnInit, OnDestroy {
 
