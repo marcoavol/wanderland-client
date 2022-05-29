@@ -11,8 +11,8 @@ export class MapSettingsService {
         national: true,
         regional: true,
         local: true,
-        durationMin: 30,
-        durationMax: 80,
+        durationMin: 0,
+        durationMax: 100,
     }
 
     private mapSettingsBehaviorSubject = new BehaviorSubject<MapSettings>(this._currentSettings)

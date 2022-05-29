@@ -10,10 +10,18 @@ import { MapSettingsService } from '../map/map-settings.service';
 })
 export class SettingsBarComponent implements OnInit, AfterViewInit {
 
-    @ViewChild('rangeOneInput')
-    rangeOneInput: ElementRef
+    @ViewChild('spanFullRange')
+    spanFullRange: ElementRef
+    @ViewChild('spanSliderRange')
+    spanSliderRange: ElementRef
+    @ViewChild('rangeDurationMin')
+    rangeDurationMin: ElementRef
+    @ViewChild('rangeDurationMax')
+    rangeDurationMax: ElementRef
 
     private sliderMinGap: number
+
+    private viewInitDone: boolean
 
     public mapSettingsForm: FormGroup
 
@@ -23,6 +31,7 @@ export class SettingsBarComponent implements OnInit, AfterViewInit {
     ) { }
 
     ngOnInit(): void {
+        this.viewInitDone = false
         const currentSettings = this.mapSettingsService.currentSettings
         this.mapSettingsForm = new FormGroup({
             national: new FormControl(currentSettings.national),
@@ -40,21 +49,27 @@ export class SettingsBarComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        console.warn(this.rangeOneInput.nativeElement)
+        console.log(this.rangeDurationMin.nativeElement)
+        console.log(this.rangeDurationMax.nativeElement)
+        this.viewInitDone = true
     }
 
     public mapSettingsChanged(): void {
         this.mapSettingsService.currentSettings = this.mapSettingsForm.value
-        console.warn('RouteOptions:', this.mapSettingsForm.value)
-
+        
         const durationMinValue = this.mapSettingsForm.get('durationMin')?.value
         const durationMaxValue = this.mapSettingsForm.get('durationMax')?.value
-        //const sliderRangeElement = (this.sliderValueRange.nativeElement as HTMLElement)
-        console.log(durationMinValue, durationMaxValue)
-        // if (durationMinValue > durationMaxValue) {
-        //     sliderRangeElement.style.width = (durationMinValue - durationMaxValue) / 100 + '%'  
-        //     sliderRangeElement.style.left = durationMaxValue / 100 + '%'
-        // }
+        // const rangeDurationMinElement = (this.rangeDurationMin.nativeElement as HTMLElement)
+        // const rangeDurationMaxElement = (this.rangeDurationMax.nativeElement as HTMLElement)
+
+        if (this.viewInitDone) {
+            console.log(durationMinValue, durationMaxValue);
+            
+            (this.spanSliderRange.nativeElement as HTMLElement).style.width = (durationMaxValue - durationMinValue) / 100 * 100 + '%';
+            (this.spanSliderRange.nativeElement as HTMLElement).style.left = durationMinValue / 100 * 100 + '%';
+            
+        }
+      
         //     inclRange.style.width = (rangeOne.value - rangeTwo.value) / this.getAttribute('max') * 100 + '%';
         //     inclRange.style.left = rangeTwo.value / this.getAttribute('max') * 100 + '%';
         //   } else {

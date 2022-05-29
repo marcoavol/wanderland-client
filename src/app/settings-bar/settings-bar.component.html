@@ -21,10 +21,10 @@
             <div class="range-slider container">
             <!-- <span class="output outputOne"></span>
             <span class="output outputTwo"></span> -->
-            <span class="full-range"></span>
-            <span class="incl-range"></span>
-            <input #rangeOneInput type="range" name="rangeOne" value="10" min="0" max="100" step="5">
-            <input type="range" name="rangeTwo" value="90" min="0" max="100" step="5">
+            <span #spanFullRange class="full-range"></span>
+            <span #spanSliderRange class="incl-range"></span>
+            <input #rangeDurationMin formControlName="durationMin" type="range" min="0" max="100" step="5">
+            <input #rangeDurationMax formControlName="durationMax" type="range" min="0" max="100" step="5">
         </div>
             <!-- <div class="slider-track">
                 <input formControlName="durationMin" type="range" class="form-range" min="0" max="100" step="5" id="sliderDurationMin">
