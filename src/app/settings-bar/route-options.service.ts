@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { RouteOptions } from 'src/types/settings.types';
+import { RouteOptions } from '../types/settings.types';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +11,8 @@ export class RouteOptionsService {
     national: true,
     regional: true,
     local: true,
-    durationMin: 30,
-    durationMax: 80
+    durationMin: 300,
+    durationMax: 700
 }
 
   // init values => currentRouteOptions

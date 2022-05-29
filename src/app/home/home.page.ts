@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouteOptions } from '../../types/settings.types';
+import { RouteOptions } from '../types/settings.types';
 
 @Component({
     templateUrl: './home.page.html',

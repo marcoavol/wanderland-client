@@ -5,7 +5,7 @@ import { Topology, GeometryCollection } from 'topojson-specification';
 import pointToLineDistance from '@turf/point-to-line-distance';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
-import { RouteOptions } from '../../types/settings.types';
+import { RouteOptions } from '../types/settings.types';
 import { RouteOptionsService } from '../settings-bar/route-options.service';
 
 // FIXME: Bei Änderung der angezeigten Routentypen bereits ausgewählte Route abwählen, sofern deren Typ nicht mehr angezeigt wird
@@ -232,6 +232,15 @@ export class MapComponent implements OnInit {
                 case 'Regional': return !this.displayedRouteTypes.regional
                 case 'Lokal': return !this.displayedRouteTypes.local
                 default: return true
+            }
+        })
+        D3.selectAll('.route').classed('hidden', (datum: any) => {
+            if ( (datum?.properties.ZeitStZiR >= this.displayedRouteTypes.durationMin) &&
+                 (datum?.properties.ZeitStZiR <= this.displayedRouteTypes.durationMax) ) {
+                     return false
+            }
+            else {
+                return true
             }
         })
     }
