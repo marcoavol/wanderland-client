@@ -6,7 +6,6 @@ import pointToLineDistance from '@turf/point-to-line-distance';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
 import { MapSettings } from '../../types/settings.types';
-import { RouteOptionsService } from '../nav-bar/route-options.service';
 import { takeWhile } from 'rxjs';
 import { MapSettingsService } from './map-settings.service';
 
