@@ -1,12 +1,13 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
 import * as D3 from 'd3';
 import * as TopoJSON from 'topojson-client';
 import { Topology, GeometryCollection } from 'topojson-specification';
 import pointToLineDistance from '@turf/point-to-line-distance';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
-import { RouteOptions } from '../types/settings.types';
-import { RouteOptionsService } from '../settings-bar/route-options.service';
+import { MapSettings } from '../types/settings.types';
+import { takeWhile } from 'rxjs';
+import { MapSettingsService } from './map-settings.service';
 
 // FIXME: Bei Änderung der angezeigten Routentypen bereits ausgewählte Route abwählen, sofern deren Typ nicht mehr angezeigt wird
 // FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
@@ -17,9 +18,10 @@ import { RouteOptionsService } from '../settings-bar/route-options.service';
     styleUrls: ['./map.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
 
-    private displayedRouteTypes: RouteOptions
+    private static readonly NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS = 1000
+
     private svg: D3.Selection<SVGSVGElement, unknown, HTMLElement, any>
     private width: number = window.innerWidth
     private height: number = window.innerHeight
@@ -31,18 +33,20 @@ export class MapComponent implements OnInit {
     private zoomTransform: D3.ZoomTransform = D3.zoomIdentity
     private zoomExtent: [number, number] = [1, 5]
 
-    private locations: [number, number][] = [[9.396352777777777 , 46.9688], ]  // [lon, lat] e.g. [9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]
+    private photos: [number, number][] = [[9.396352777777777 , 46.9688], ]  // [lon, lat] e.g. [9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]
 
-    private static readonly NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS = 1000
+    private isAlive = true
 
     constructor(
-        private routeOptService: RouteOptionsService
+        private mapSettingsService: MapSettingsService,
     ) { }
 
     ngOnInit(): void {
         this.setup()
         this.renderAsync()      
-        this.subscribeToRouteOptions()
+        this.mapSettingsService.mapSettingsObservable.pipe(takeWhile(() => this.isAlive)).subscribe(settings => {
+            this.handleSettingsChange(settings)
+        })
     }
 
     private setup(): void {
@@ -213,7 +217,7 @@ export class MapComponent implements OnInit {
 
         // Render locations
         D3.select('.locations').selectAll('circle')
-            .data(this.locations)
+            .data(this.photos)
             .enter()
             .append('circle')
             .attr('r', 8)
@@ -225,31 +229,14 @@ export class MapComponent implements OnInit {
             
     }
 
-    private updateDisplayedRouteTypes(): void {
+    private handleSettingsChange(settings: MapSettings): void {
         D3.selectAll('.route').classed('hidden', (datum: any) => {
             switch (datum?.properties.Typ_TR) {
-                case 'National': return !this.displayedRouteTypes.national
-                case 'Regional': return !this.displayedRouteTypes.regional
-                case 'Lokal': return !this.displayedRouteTypes.local
+                case 'National': return !settings.national
+                case 'Regional': return !settings.regional
+                case 'Lokal': return !settings.local
                 default: return true
             }
-        })
-        D3.selectAll('.route').classed('hidden', (datum: any) => {
-            if ( (datum?.properties.ZeitStZiR >= this.displayedRouteTypes.durationMin) &&
-                 (datum?.properties.ZeitStZiR <= this.displayedRouteTypes.durationMax) ) {
-                     return false
-            }
-            else {
-                return true
-            }
-        })
-    }
-
-    private subscribeToRouteOptions(): void {
-        // subscribe to routeOptions and update values if they new values are coming in
-        this.routeOptService.routeOptionsObservable.pipe().subscribe(values => {
-            this.displayedRouteTypes = values
-            this.updateDisplayedRouteTypes()
         })
     }
 
@@ -297,9 +284,9 @@ export class MapComponent implements OnInit {
     }
 
     /**
-     * Takes (WGS84) coordinates of a point and checks if its projection within the main SVG element is near a known route (with some added threshold).
+     * Takes (WGS84) coordinates of a point and returns all near routes (within a given threshold in meters) from its projected point within the main SVG element.
      * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
-     * @returns True if the point is considered within acceptable distance of a known route, else false.
+     * @returns An array containing the ID of each route that is considered near.
      */
     public static nearKnownRoutes(coordinates: [number, number]): number[] {
         const nearKnownRouteIds: number[] = []
@@ -310,9 +297,12 @@ export class MapComponent implements OnInit {
                     nearKnownRouteIds.push(datum.properties.OBJECTID)
                 }
             }
-
         })
         return nearKnownRouteIds
+    }
+
+    ngOnDestroy(): void {
+        this.isAlive = false
     }
 
 }

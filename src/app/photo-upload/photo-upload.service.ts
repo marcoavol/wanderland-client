@@ -4,13 +4,7 @@ import { MapComponent } from '../map/map.component';
 import ExifReader from 'exifreader';
 import imageCompression from 'browser-image-compression';
 import { lastValueFrom } from 'rxjs';
-
-interface PhotoDetails {
-    captureIsoDate: string;
-    lon: number;
-    lat: number;
-    routeIds: number[];
-}
+import { PhotoDetails } from 'src/app/types/photo.types';
 
 interface ValidationResult {
     valid: boolean;
@@ -29,7 +23,7 @@ export class PhotoUploadService {
         useWebWorker: true
     }
 
-    private photo?: File // extends BLOB (Binary Large Object)
+    private photo?: File
     private photoDetails?: PhotoDetails
 
     constructor(
@@ -71,7 +65,7 @@ export class PhotoUploadService {
         return result
     }
 
-    public async uploadPhotoAndDetailsAsync(): Promise<void> {
+    public async uploadPhotoAsync(): Promise<void> {
         if (!this.photo || !this.photoDetails) return
         const compressedPhoto = await imageCompression(this.photo, this.COMPRESSION_OPTIONS)
         const formData = new FormData()
