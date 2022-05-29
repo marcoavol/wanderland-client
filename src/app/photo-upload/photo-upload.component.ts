@@ -40,7 +40,7 @@ export class PhotoUploadComponent {
     }
 
     public submit(): void {
-        this.photoUploadService.uploadPhotoAndDetailsAsync()
+        this.photoUploadService.uploadPhotoAsync()
         this.closeModal()
         this.toastService.show('', 'Vielen Dank, Ihr Foto wurde übermittelt!', 'bg-success text-light')
     }

@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { RouteOptionsService } from './route-options.service';
+import { MapSettingsService } from './map-settings.service';
 
-describe('RouteOptionsService', () => {
-  let service: RouteOptionsService;
+describe('MapSettingsService', () => {
+  let service: MapSettingsService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(RouteOptionsService);
+    service = TestBed.inject(MapSettingsService);
   });
 
   it('should be created', () => {
