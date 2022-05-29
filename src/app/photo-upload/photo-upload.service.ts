@@ -4,7 +4,7 @@ import { MapComponent } from '../map/map.component';
 import ExifReader from 'exifreader';
 import imageCompression from 'browser-image-compression';
 import { lastValueFrom } from 'rxjs';
-import { PhotoDetails } from 'src/types/photo.types';
+import { PhotoInfo } from 'src/types/photo.types';
 
 interface ValidationResult {
     valid: boolean;
@@ -16,7 +16,7 @@ interface ValidationResult {
 })
 export class PhotoUploadService {
 
-    private readonly UPLOAD_PATH = 'http://localhost:8080/photos'
+    private readonly FULL_PATH = 'http://localhost:8080/photos'
 
     private readonly COMPRESSION_OPTIONS = {
         maxSizeMB: 1,
@@ -24,7 +24,7 @@ export class PhotoUploadService {
     }
 
     private photo?: File
-    private photoDetails?: PhotoDetails
+    private photoInfo?: PhotoInfo
 
     constructor(
         private http: HttpClient,
@@ -40,7 +40,7 @@ export class PhotoUploadService {
 
     public async validatePhotoAsync(photo: File): Promise<ValidationResult> {
         this.photo = undefined
-        this.photoDetails = undefined
+        this.photoInfo = undefined
         const result: ValidationResult = { valid: false }
         const { DateTimeOriginal, GPSLongitude, GPSLatitude } = await ExifReader.load(photo)
         if (!DateTimeOriginal || !GPSLongitude || !GPSLatitude) {
@@ -55,7 +55,7 @@ export class PhotoUploadService {
             return result
         }
         this.photo = photo
-        this.photoDetails = {
+        this.photoInfo = {
             captureIsoDate: this.exifDateToIsoString(DateTimeOriginal.description),
             lon: lon,
             lat: lat,
@@ -66,12 +66,12 @@ export class PhotoUploadService {
     }
 
     public async uploadPhotoAsync(): Promise<void> {
-        if (!this.photo || !this.photoDetails) return
+        if (!this.photo || !this.photoInfo) return
         const compressedPhoto = await imageCompression(this.photo, this.COMPRESSION_OPTIONS)
         const formData = new FormData()
         formData.append('photo', compressedPhoto, compressedPhoto.name)
-        formData.append('photoDetails', JSON.stringify(this.photoDetails))
-        await lastValueFrom(this.http.post(this.UPLOAD_PATH, formData)).catch(error => console.warn(error))
+        formData.append('info', JSON.stringify(this.photoInfo))
+        await lastValueFrom(this.http.post(this.FULL_PATH, formData)).catch(error => console.warn(error))
     }
     
     private exifDateToIsoString(exifDate: string): string {
