@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { max } from 'd3';
 import { MapSettingsService } from '../map/map-settings.service';
 
 @Component({
@@ -59,23 +60,23 @@ export class SettingsBarComponent implements OnInit, AfterViewInit {
         
         const durationMinValue = this.mapSettingsForm.get('durationMin')?.value
         const durationMaxValue = this.mapSettingsForm.get('durationMax')?.value
+        
         // const rangeDurationMinElement = (this.rangeDurationMin.nativeElement as HTMLElement)
         // const rangeDurationMaxElement = (this.rangeDurationMax.nativeElement as HTMLElement)
 
         if (this.viewInitDone) {
             console.log(durationMinValue, durationMaxValue);
+            const spanSliderRangeElement = (this.spanSliderRange.nativeElement as HTMLElement)
+            const maxSliderValue: any = (this.rangeDurationMin.nativeElement as HTMLElement).getAttribute("max")
+            console.log(maxSliderValue);
+
+            if (maxSliderValue != null) {
+                spanSliderRangeElement.style.width = (durationMaxValue - durationMinValue) / maxSliderValue * 100 + '%';
+                spanSliderRangeElement.style.left = durationMinValue / maxSliderValue * 100 + '%';
+            }
             
-            (this.spanSliderRange.nativeElement as HTMLElement).style.width = (durationMaxValue - durationMinValue) / 100 * 100 + '%';
-            (this.spanSliderRange.nativeElement as HTMLElement).style.left = durationMinValue / 100 * 100 + '%';
             
         }
-      
-        //     inclRange.style.width = (rangeOne.value - rangeTwo.value) / this.getAttribute('max') * 100 + '%';
-        //     inclRange.style.left = rangeTwo.value / this.getAttribute('max') * 100 + '%';
-        //   } else {
-        //     inclRange.style.width = (rangeTwo.value - rangeOne.value) / this.getAttribute('max') * 100 + '%';
-        //     inclRange.style.left = rangeOne.value / this.getAttribute('max') * 100 + '%';
-        //   }
         
     }
 
