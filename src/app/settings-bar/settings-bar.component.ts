@@ -11,6 +11,10 @@ import { MapSettingsService } from '../map/map-settings.service';
 })
 export class SettingsBarComponent implements OnInit, AfterViewInit {
 
+    @ViewChild('outMinValue')
+    outMinValue: ElementRef
+    @ViewChild('outMaxValue')
+    outMaxValue: ElementRef
     @ViewChild('spanFullRange')
     spanFullRange: ElementRef
     @ViewChild('spanSliderRange')
@@ -50,8 +54,6 @@ export class SettingsBarComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        console.log(this.rangeDurationMin.nativeElement)
-        console.log(this.rangeDurationMax.nativeElement)
         this.viewInitDone = true
     }
 
@@ -68,16 +70,18 @@ export class SettingsBarComponent implements OnInit, AfterViewInit {
             console.log(durationMinValue, durationMaxValue);
             const spanSliderRangeElement = (this.spanSliderRange.nativeElement as HTMLElement)
             const maxSliderValue: any = (this.rangeDurationMin.nativeElement as HTMLElement).getAttribute("max")
-            console.log(maxSliderValue);
 
             if (maxSliderValue != null) {
                 spanSliderRangeElement.style.width = (durationMaxValue - durationMinValue) / maxSliderValue * 100 + '%';
                 spanSliderRangeElement.style.left = durationMinValue / maxSliderValue * 100 + '%';
+
+                this.outMinValue.nativeElement.innerHTML = durationMinValue
+                this.outMinValue.nativeElement.style.left = durationMinValue / maxSliderValue * 100 + '%'
+
+                this.outMaxValue.nativeElement.innerHTML = durationMaxValue
+                this.outMaxValue.nativeElement.style.left = durationMaxValue / maxSliderValue * 100 + '%'
             }
-            
-            
         }
-        
     }
 
 }
