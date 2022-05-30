@@ -4,6 +4,8 @@ import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { max } from 'd3';
 import { MapSettingsService } from '../map/map-settings.service';
 
+// TODO: stop sliderMin from going over sliderMax => use minGap between
+
 @Component({
     selector: 'app-settings-bar',
     templateUrl: './settings-bar.component.html',
@@ -23,8 +25,6 @@ export class SettingsBarComponent implements OnInit, AfterViewInit {
     rangeDurationMin: ElementRef
     @ViewChild('rangeDurationMax')
     rangeDurationMax: ElementRef
-
-    private sliderMinGap: number
 
     private viewInitDone: boolean
 
@@ -62,9 +62,6 @@ export class SettingsBarComponent implements OnInit, AfterViewInit {
         
         const durationMinValue = this.mapSettingsForm.get('durationMin')?.value
         const durationMaxValue = this.mapSettingsForm.get('durationMax')?.value
-        
-        // const rangeDurationMinElement = (this.rangeDurationMin.nativeElement as HTMLElement)
-        // const rangeDurationMaxElement = (this.rangeDurationMax.nativeElement as HTMLElement)
 
         if (this.viewInitDone) {
             console.log(durationMinValue, durationMaxValue);
