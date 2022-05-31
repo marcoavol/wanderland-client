@@ -55,16 +55,19 @@ export class SettingsBarComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.viewInitDone = true
+        this.updateTwoRangeSlider()
     }
 
     public mapSettingsChanged(): void {
         this.mapSettingsService.currentSettings = this.mapSettingsForm.value
-        
+        this.updateTwoRangeSlider()
+    }
+
+    private updateTwoRangeSlider(): void {
         const durationMinValue = this.mapSettingsForm.get('durationMin')?.value
         const durationMaxValue = this.mapSettingsForm.get('durationMax')?.value
 
         if (this.viewInitDone) {
-            console.log(durationMinValue, durationMaxValue);
             const spanSliderRangeElement = (this.spanSliderRange.nativeElement as HTMLElement)
             const maxSliderValue: any = (this.rangeDurationMin.nativeElement as HTMLElement).getAttribute("max")
 
