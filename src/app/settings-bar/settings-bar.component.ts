@@ -69,8 +69,13 @@ export class SettingsBarComponent implements OnInit, AfterViewInit {
             const maxSliderValue: any = (this.rangeDurationMin.nativeElement as HTMLElement).getAttribute("max")
 
             if (maxSliderValue != null) {
-                spanSliderRangeElement.style.width = (durationMaxValue - durationMinValue) / maxSliderValue * 100 + '%';
-                spanSliderRangeElement.style.left = durationMinValue / maxSliderValue * 100 + '%';
+                if (durationMinValue < durationMaxValue) {
+                    spanSliderRangeElement.style.width = (durationMaxValue - durationMinValue) / maxSliderValue * 100 + '%';
+                    spanSliderRangeElement.style.left = durationMinValue / maxSliderValue * 100 + '%';
+                } else {
+                    spanSliderRangeElement.style.width = 0 + '%';
+                    spanSliderRangeElement.style.left = 0 + '%';
+                }
 
                 this.outMinValue.nativeElement.innerHTML = durationMinValue
                 this.outMinValue.nativeElement.style.left = durationMinValue / maxSliderValue * 100 + '%'
