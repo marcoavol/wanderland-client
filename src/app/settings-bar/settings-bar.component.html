@@ -18,14 +18,7 @@
     <p style="font-weight: bold;">Filter</p>
     <div>
         <div class="filters">
-            <div class="range-slider">
-                <span #outMinValue class="output outputOne"></span>
-                <span #outMaxValue class="output outputTwo"></span>
-                <span #spanFullRange class="full-range"></span>
-                <span #spanSliderRange class="incl-range"></span>
-                <input #rangeDurationMin formControlName="durationMin" type="range" min="0" max="1000" step="10">
-                <input #rangeDurationMax formControlName="durationMax" type="range" min="0" max="1000" step="10">
-            </div>
+            <app-range-slider [min]="mapSettingsForm.get('durationMin')?.value" [max]="mapSettingsForm.get('durationMax')?.value" (onLowerChanged)="handleLowerDurationChange($event)" (onUpperChanged)="handleUpperDurationChange($event)"></app-range-slider>
         </div>
         
         

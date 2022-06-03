@@ -9,6 +9,7 @@ import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ToastsComponent } from '../toasts/toasts.component';
+import { RangeSliderComponent } from '../range-slider/range-slider.component';
 
 @NgModule({
     declarations: [
@@ -18,6 +19,7 @@ import { ToastsComponent } from '../toasts/toasts.component';
         NavBarComponent,
         SettingsBarComponent,
         PhotoUploadComponent,
+        RangeSliderComponent,
     ],
     imports: [
         CommonModule,
