@@ -1,6 +1,8 @@
-<form [formGroup]="rangeForm" class="range-slider" (input)="rangeSliderChanged()">
-    <span #outMinValue class="output outputOne"></span>
-    <span #outMaxValue class="output outputTwo"></span>
+<form [formGroup]="rangeForm" (input)="rangeSliderChanged()">
+    <div class="valueDisplayContainer">
+        <span #lowerValueOutput class="output lowerValueOutput"></span>
+        <span #upperValueOutput class="output upperValueOutput"></span>
+    </div>
     <span #spanFullRange class="full-range"></span>
     <span #spanSliderRange class="incl-range"></span>
     <input formControlName="limitOne" type="range" [min]="min" [max]="max" [step]="step">

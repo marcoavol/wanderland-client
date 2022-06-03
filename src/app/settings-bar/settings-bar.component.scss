@@ -1,15 +1,24 @@
 form {
+    width: 100%;
+    padding: 16px !important;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
-    margin-left: 20px;
 
     input {
         cursor: pointer;
     }
 }
 
+section {
+    margin: 16px 0;
+    p {
+        font-weight: bold;
+    }
+}
+
 .filters {
+    display: flex;
     flex-direction: column;
     margin-top: 20px;
     //width: 350px;

@@ -9,10 +9,10 @@ import { FormGroup, FormControl } from '@angular/forms';
 })
 export class RangeSliderComponent implements OnInit, AfterViewInit {
 
-    @ViewChild('outMinValue')
-    outMinValue: ElementRef
-    @ViewChild('outMaxValue')
-    outMaxValue: ElementRef
+    @ViewChild('lowerValueOutput')
+    lowerValueOutput: ElementRef
+    @ViewChild('upperValueOutput')
+    upperValueOutput: ElementRef
     @ViewChild('spanFullRange')
     spanFullRange: ElementRef
     @ViewChild('spanSliderRange')
@@ -67,11 +67,23 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
             spanSliderRangeElement.style.left = 0 + '%';
         }
 
-        this.outMinValue.nativeElement.innerHTML = lowerValue
-        this.outMinValue.nativeElement.style.left = lowerValue / this.max * 100 + '%'
+        this.lowerValueOutput.nativeElement.innerHTML = lowerValue
+        if (lowerValue <= this.max / 2) {
+            this.lowerValueOutput.nativeElement.style.right = 'unset'
+            this.lowerValueOutput.nativeElement.style.left = lowerValue / this.max * 100 + '%'
+        } else {
+            this.lowerValueOutput.nativeElement.style.left = 'unset'
+            this.lowerValueOutput.nativeElement.style.right = 100 - (lowerValue / this.max * 100) + '%'
+        }
 
-        this.outMaxValue.nativeElement.innerHTML = upperValue
-        this.outMaxValue.nativeElement.style.left = upperValue / this.max * 100 + '%'
+        this.upperValueOutput.nativeElement.innerHTML = upperValue
+        if (upperValue > this.max / 2) {
+            this.upperValueOutput.nativeElement.style.left = 'unset'
+            this.upperValueOutput.nativeElement.style.right = 100 - (upperValue / this.max * 100) + '%'
+        } else {
+            this.upperValueOutput.nativeElement.style.right = 'unset'
+            this.upperValueOutput.nativeElement.style.left = upperValue / this.max * 100 + '%'
+        }
     }
 
 }
