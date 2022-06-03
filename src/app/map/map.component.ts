@@ -5,7 +5,7 @@ import { Topology, GeometryCollection } from 'topojson-specification';
 import pointToLineDistance from '@turf/point-to-line-distance';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
-import { MapSettings } from '../../types/settings.types';
+import { MapSettings } from '../types/settings.types';
 import { takeWhile } from 'rxjs';
 import { MapSettingsService } from './map-settings.service';
 

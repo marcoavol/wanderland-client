@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MapSettings } from 'src/types/settings.types';
+import { MapSettings } from '../types/settings.types';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -11,8 +11,8 @@ export class MapSettingsService {
         national: true,
         regional: true,
         local: true,
-        durationMin: 30,
-        durationMax: 80,
+        durationMin: 0,
+        durationMax: 1000,
     }
 
     private mapSettingsBehaviorSubject = new BehaviorSubject<MapSettings>(this._currentSettings)
@@ -27,6 +27,7 @@ export class MapSettingsService {
     set currentSettings(updatedSettings: Partial<MapSettings>) {
         this._currentSettings = { ...this._currentSettings, ...updatedSettings }
         this.mapSettingsBehaviorSubject.next(this._currentSettings) 
+        console.warn(this.currentSettings)
     }
 
 }

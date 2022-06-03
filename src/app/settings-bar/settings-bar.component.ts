@@ -1,19 +1,16 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MapSettingsService } from '../map/map-settings.service';
+
+// TODO: stop sliderMin from going over sliderMax => use minGap between
 
 @Component({
     selector: 'app-settings-bar',
     templateUrl: './settings-bar.component.html',
     styleUrls: ['./settings-bar.component.scss']
 })
-export class SettingsBarComponent implements OnInit, AfterViewInit {
-
-    @ViewChild('rangeOneInput')
-    rangeOneInput: ElementRef
-
-    private sliderMinGap: number
+export class SettingsBarComponent implements OnInit {
 
     public mapSettingsForm: FormGroup
 
@@ -39,13 +36,12 @@ export class SettingsBarComponent implements OnInit, AfterViewInit {
         this.mapSettingsChanged()
     }
 
-    ngAfterViewInit(): void {
-        console.warn(this.rangeOneInput.nativeElement)
-    }
-
     public mapSettingsChanged(): void {
         this.mapSettingsService.currentSettings = this.mapSettingsForm.value
-        console.warn('RouteOptions:', this.mapSettingsForm.value)
+    }
+
+    public handleRangeChange(range: { lower: number, upper: number }): void {
+        this.mapSettingsForm.patchValue({ durationMin: range.lower, durationMax: range.upper })
     }
 
 }

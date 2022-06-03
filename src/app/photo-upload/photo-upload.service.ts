@@ -4,7 +4,7 @@ import { MapComponent } from '../map/map.component';
 import ExifReader from 'exifreader';
 import imageCompression from 'browser-image-compression';
 import { lastValueFrom } from 'rxjs';
-import { PhotoInfo } from 'src/types/photo.types';
+import { PhotoInfo } from 'src/app/types/photo.types';
 
 interface ValidationResult {
     valid: boolean;

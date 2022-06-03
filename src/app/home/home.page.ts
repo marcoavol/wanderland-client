@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MapSettings } from '../../types/settings.types';
+import { MapSettings } from '../types/settings.types';
 
 @Component({
     templateUrl: './home.page.html',
