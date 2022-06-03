@@ -27,6 +27,7 @@ export class MapSettingsService {
     set currentSettings(updatedSettings: Partial<MapSettings>) {
         this._currentSettings = { ...this._currentSettings, ...updatedSettings }
         this.mapSettingsBehaviorSubject.next(this._currentSettings) 
+        console.warn(this.currentSettings)
     }
 
 }

@@ -1,28 +1,30 @@
-<form [formGroup]="mapSettingsForm" (change)="mapSettingsChanged()" class="formgroup">
+<form [formGroup]="mapSettingsForm" (change)="mapSettingsChanged()">
     <p style="padding-top: 30px; font-weight: bold;">Angezeigte Routen</p>
     <div style="display: flex;">
         <div style="padding: 35px;" class="form-check form-switch">
             <label style="padding: 0px">National</label>
-            <input formControlName="national" type="checkbox" class="form-check-input" id="flexSwitchCheckDefault"/>
+            <input formControlName="national" type="checkbox" class="form-check-input"/>
         </div>
         <div style="padding: 35px" class="form-check form-switch">
             <label style="padding: 0px">Regional</label>
-            <input formControlName="regional" type="checkbox" class="form-check-input" id="flexSwitchCheckDefault"/>
+            <input formControlName="regional" type="checkbox" class="form-check-input"/>
         </div>
         <div style="padding: 35px" class="form-check form-switch">
             <label style="padding: 0px">Lokal</label>
-            <input formControlName="local" type="checkbox" class="form-check-input" id="flexSwitchCheckDefault"/>
+            <input formControlName="local" type="checkbox" class="form-check-input" />
         </div>
     </div>
     
     <p style="font-weight: bold;">Filter</p>
-    <div>
-        <div class="filters">
-            <app-range-slider [min]="mapSettingsForm.get('durationMin')?.value" [max]="mapSettingsForm.get('durationMax')?.value" (onLowerChanged)="handleLowerDurationChange($event)" (onUpperChanged)="handleUpperDurationChange($event)"></app-range-slider>
-        </div>
-        
-        
-        <!--
+    <div class="filters">
+        <app-range-slider
+            [min]="0" [max]="1000" [step]="10" 
+            [initialLower]="mapSettingsForm.value.durationMin" 
+            [initialUpper]="mapSettingsForm.value.durationMax" 
+            (onRangeChanged)="handleRangeChange($event)">
+        </app-range-slider>
+
+            <!--
         <div class="filters">
             <label for="length" class="form-label">Länge</label>
             <input type="range" class="form-range" min="0" id="length">
@@ -43,7 +45,8 @@
             <label for="difficulty" class="form-label">Schwierigkeitsgrad</label>
             <input type="range" class="form-range" min="0" id="difficulty">
         </div> -->
-    </div>
+
+    </div> 
 </form>
 <div style="display: flex; align-items: center; margin-top: 100px;">
     <button type="button" class="btn btn-outline-dark" style="width: 100px; margin: 0 auto;" (click)="offcanvas.close('Close click')">Close</button>

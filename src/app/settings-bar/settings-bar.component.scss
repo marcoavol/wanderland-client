@@ -1,9 +1,12 @@
-
-.formgroup {
+form {
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
     margin-left: 20px;
+
+    input {
+        cursor: pointer;
+    }
 }
 
 .filters {

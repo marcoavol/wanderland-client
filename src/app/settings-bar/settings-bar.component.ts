@@ -12,7 +12,6 @@ import { MapSettingsService } from '../map/map-settings.service';
 })
 export class SettingsBarComponent implements OnInit {
 
-   
     public mapSettingsForm: FormGroup
 
     constructor(
@@ -41,12 +40,8 @@ export class SettingsBarComponent implements OnInit {
         this.mapSettingsService.currentSettings = this.mapSettingsForm.value
     }
 
-    public handleLowerDurationChange(value: number): void {
-        this.mapSettingsForm.patchValue({durationMin: value})
-    }
-
-    public handleUpperDurationChange(value: number): void {
-        this.mapSettingsForm.patchValue({durationMax: value})
+    public handleRangeChange(range: { lower: number, upper: number }): void {
+        this.mapSettingsForm.patchValue({ durationMin: range.lower, durationMax: range.upper })
     }
 
 }

@@ -3,10 +3,12 @@
     width: 350px;
     height: 35px;
 //    text-align: center;
+    user-select: none;
 }
 
 .range-slider input {
     pointer-events: none;
+    cursor: pointer;
     position: absolute;
     overflow: hidden;
     left: 0px;

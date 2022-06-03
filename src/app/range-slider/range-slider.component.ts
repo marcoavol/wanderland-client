@@ -1,12 +1,13 @@
-import { Component, ViewChild, ElementRef, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ViewChild, ElementRef, Input, Output, EventEmitter, OnInit, AfterViewInit } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 
 
 @Component({
-  selector: 'app-range-slider',
-  templateUrl: './range-slider.component.html',
-  styleUrls: ['./range-slider.component.scss']
+    selector: 'app-range-slider',
+    templateUrl: './range-slider.component.html',
+    styleUrls: ['./range-slider.component.scss']
 })
-export class RangeSliderComponent implements OnInit {
+export class RangeSliderComponent implements OnInit, AfterViewInit {
 
     @ViewChild('outMinValue')
     outMinValue: ElementRef
@@ -16,10 +17,6 @@ export class RangeSliderComponent implements OnInit {
     spanFullRange: ElementRef
     @ViewChild('spanSliderRange')
     spanSliderRange: ElementRef
-    @ViewChild('rangeMin')
-    rangeMin: ElementRef
-    @ViewChild('rangeMax')
-    rangeMax: ElementRef
 
     @Input()
     min: number
@@ -27,53 +24,54 @@ export class RangeSliderComponent implements OnInit {
     @Input()
     max: number
 
-    @Output()
-    onLowerChanged = new EventEmitter<number>()
+    @Input()
+    step: number
+
+    @Input()
+    initialLower: number
+
+    @Input()
+    initialUpper: number
 
     @Output()
-    onUpperChanged = new EventEmitter<number>()
+    onRangeChanged = new EventEmitter<{ lower: number, upper: number }>()
 
-    private viewInitDone: boolean
+    public rangeForm: FormGroup
 
+    constructor() { }
 
-  constructor() { }
-
-  ngOnInit(): void {
-    this.viewInitDone = false
-}
-
-ngAfterViewInit(): void {
-    this.viewInitDone = true
-    this.updateTwoRangeSlider()
-}
-
-  private updateTwoRangeSlider(): void {
-
-    const minValue = parseFloat((this.rangeMin.nativeElement as HTMLInputElement).value)
-    const maxValue = parseFloat((this.rangeMax.nativeElement as HTMLInputElement).value)
-    
-    if (this.viewInitDone) {
-        const spanSliderRangeElement = (this.spanSliderRange.nativeElement as HTMLElement)
-        const maxSliderValue: any = (this.rangeMin.nativeElement as HTMLElement).getAttribute("max")
-
-        if (maxSliderValue != null) {
-            if (minValue < maxValue) {
-                spanSliderRangeElement.style.width = (maxValue - minValue) / maxSliderValue * 100 + '%';
-                spanSliderRangeElement.style.left = minValue / maxSliderValue * 100 + '%';
-            } else {
-                spanSliderRangeElement.style.width = 0 + '%';
-                spanSliderRangeElement.style.left = 0 + '%';
-            }
-
-            this.outMinValue.nativeElement.innerHTML = minValue
-            this.outMinValue.nativeElement.style.left = minValue / maxSliderValue * 100 + '%'
-
-            this.outMaxValue.nativeElement.innerHTML = maxValue
-            this.outMaxValue.nativeElement.style.left = maxValue / maxSliderValue * 100 + '%'
-        
-        }
-        this.onLowerChanged.emit(minValue)
-        this.onUpperChanged.emit(maxValue)
+    ngOnInit(): void {
+        this.rangeForm = new FormGroup({
+            limitOne: new FormControl(this.initialLower),
+            limitTwo: new FormControl(this.initialUpper)
+        })
     }
-  }
+
+    ngAfterViewInit(): void {
+        this.rangeSliderChanged()
+    }
+
+    public rangeSliderChanged(): void {
+        const lowerValue = Math.min(this.rangeForm.value.limitOne, this.rangeForm.value.limitTwo)
+        const upperValue = Math.max(this.rangeForm.value.limitOne, this.rangeForm.value.limitTwo)
+
+        this.onRangeChanged.emit({ lower: lowerValue, upper: upperValue })
+
+        const spanSliderRangeElement = (this.spanSliderRange.nativeElement as HTMLElement)
+      
+        if (lowerValue < upperValue) {
+            spanSliderRangeElement.style.width = (upperValue - lowerValue) / this.max * 100 + '%';
+            spanSliderRangeElement.style.left = lowerValue / this.max * 100 + '%';
+        } else {
+            spanSliderRangeElement.style.width = 0 + '%';
+            spanSliderRangeElement.style.left = 0 + '%';
+        }
+
+        this.outMinValue.nativeElement.innerHTML = lowerValue
+        this.outMinValue.nativeElement.style.left = lowerValue / this.max * 100 + '%'
+
+        this.outMaxValue.nativeElement.innerHTML = upperValue
+        this.outMaxValue.nativeElement.style.left = upperValue / this.max * 100 + '%'
+    }
+
 }
