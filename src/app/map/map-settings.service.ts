@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MapSettings } from '../types/settings.types';
 import { BehaviorSubject } from 'rxjs';
+import { descending } from 'd3';
 
 @Injectable({
     providedIn: 'root'
@@ -40,7 +41,9 @@ export class MapSettingsService {
         const result =  
             this.routeMeetsRouteTypeSetting(routeDatum?.properties.Typ_TR) && 
             this.routeMeetsDurationSetting(routeDatum?.properties.ZeitStZiR) &&
-            this.routeMeetsElevationSetting(routeDatum?.properties.HoeheAufR)
+            this.routeMeetsElevationSetting(routeDatum?.properties.HoeheAufR) &&
+            this.routeMeetsDescendingSetting(routeDatum?.properties.HoeheAbR) &&
+            this.routeMeetsLengthSetting(routeDatum?.properties.LaengeR) 
         return result
     }
 
@@ -59,5 +62,13 @@ export class MapSettingsService {
 
     private routeMeetsElevationSetting(elevation: number): boolean {
         return elevation >= this.currentSettings.elevationMin && elevation <= this.currentSettings.elevationMax
+    } 
+
+    private routeMeetsDescendingSetting(descending: number): boolean {
+        return descending >= this.currentSettings.descendingMin && descending <= this.currentSettings.elevationMax
+    }
+
+    private routeMeetsLengthSetting(length: number): boolean {
+        return length >= this.currentSettings.lengthMin && length <= this.currentSettings.lengthMax
     } 
 }
