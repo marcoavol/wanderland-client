@@ -1,6 +1,6 @@
 <form [formGroup]="mapSettingsForm" (change)="mapSettingsChanged()">
     <section>
-        <p>Steckentypen</p>
+        <p>Streckentypen</p>
         <div style="display: flex; justify-content: space-between;">
             <div  class="form-check form-switch">
                 <label style="padding: 0">
@@ -27,35 +27,36 @@
         <p>Zeitdauer</p>
         <div>
             <app-range-slider
-                [min]="0" [max]="1000" [step]="10" 
+                [min]="0" [max]="10000" [step]="15" 
                 [initialLower]="mapSettingsForm.value.durationMin" 
                 [initialUpper]="mapSettingsForm.value.durationMax" 
-                (onRangeChanged)="handleRangeChange($event)">
+                [convertToHoursMinutes]="true"
+                (onRangeChanged)="handleDurationRangeChange($event)">
             </app-range-slider>
         </div>
     </section>
 
-    <!--
-        <div class="filters">
-            <label for="length" class="form-label">Länge</label>
-            <input type="range" class="form-range" min="0" id="length">
+    <!-- <section>
+        <p>Aufstieg</p>
+        <div>
+            <app-range-slider
+                [min]="0" [max]="10000" [step]="15" 
+                [initialLower]="mapSettingsForm.value.elevationMin" 
+                [initialUpper]="mapSettingsForm.value.elevationMax" 
+                [convertToHoursMinutes]="false"
+                (onRangeChanged)="handleElevationRangeChange($event)">
+            </app-range-slider>
         </div>
-            <div class="filters">
-            <label for="elevation" class="form-label">Aufstieg</label>
-            <input type="range" class="form-range" min="0" id="elevation">
-        </div>
-        <div class="filters">
-            <label for="descending" class="form-label">Abstieg</label>
-            <input type="range" class="form-range" min="0" id="descending">
-        </div>
-        <div class="filters">
-            <label for="fitnessLevel" class="form-label">Kondition</label>
-            <input type="range" class="form-range" min="0" id="fitnessLevel">
-        </div>
-        <div class="filters">
-            <label for="difficulty" class="form-label">Schwierigkeitsgrad</label>
-            <input type="range" class="form-range" min="0" id="difficulty">
-        </div> -->
+    </section> -->
+
+     <!-- 
+        <app-range-slider
+            [min]="0" [max]="2000" [step]="10" 
+            [initialLower]="mapSettingsForm.value.descendingMin" 
+            [initialUpper]="mapSettingsForm.value.descendingMax" 
+            [convertToHoursMinutes]="false"
+            (onRangeChanged)="handleRangeChange($event)">
+        </app-range-slider> -->
 </form>
 <div style="display: flex; align-items: center; margin-top: 100px;">
     <button type="button" class="btn btn-outline-dark" style="width: 100px; margin: 0 auto;" (click)="offcanvas.close('Close click')">Close</button>

@@ -12,7 +12,11 @@ export class MapSettingsService {
         regional: true,
         local: true,
         durationMin: 0,
-        durationMax: 1000,
+        durationMax: 10000,
+        elevationMin: 0,
+        elevationMax: 2000,
+        descendingMin: 0,
+        descendingMax: 2000,
     }
 
     private mapSettingsBehaviorSubject = new BehaviorSubject<MapSettings>(this._currentSettings)
@@ -33,7 +37,8 @@ export class MapSettingsService {
     public routeMeetsCurrentSettings(routeDatum: any): boolean {
         const result =  
             this.routeMeetsRouteTypeSetting(routeDatum?.properties.Typ_TR) && 
-            this.routeMeetsDurationSetting(routeDatum?.properties.ZeitStZiR)
+            this.routeMeetsDurationSetting(routeDatum?.properties.ZeitStZiR) &&
+            this.routeMeetsElevationSetting(routeDatum?.properties.HoeheAufR)
         return result
     }
 
@@ -50,4 +55,7 @@ export class MapSettingsService {
         return duration >= this.currentSettings.durationMin && duration <= this.currentSettings.durationMax
     } 
 
+    private routeMeetsElevationSetting(elevation: number): boolean {
+        return elevation >= this.currentSettings.elevationMin && elevation <= this.currentSettings.elevationMax
+    } 
 }

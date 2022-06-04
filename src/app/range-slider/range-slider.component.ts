@@ -33,6 +33,9 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
     @Input()
     initialUpper: number
 
+    @Input()
+    convertToHoursMinutes: boolean
+
     @Output()
     onRangeChanged = new EventEmitter<{ lower: number, upper: number }>()
 
@@ -67,7 +70,7 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
             spanSliderRangeElement.style.left = 0 + '%';
         }
 
-        this.lowerValueOutput.nativeElement.innerHTML = lowerValue
+        this.lowerValueOutput.nativeElement.innerHTML = this.convertInDaysHoursMinutes(lowerValue)
         if (lowerValue <= this.max / 2) {
             this.lowerValueOutput.nativeElement.style.right = 'unset'
             this.lowerValueOutput.nativeElement.style.left = lowerValue / this.max * 100 + '%'
@@ -76,7 +79,7 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
             this.lowerValueOutput.nativeElement.style.right = 100 - (lowerValue / this.max * 100) + '%'
         }
 
-        this.upperValueOutput.nativeElement.innerHTML = upperValue
+        this.upperValueOutput.nativeElement.innerHTML = this.convertInDaysHoursMinutes(upperValue)
         if (upperValue > this.max / 2) {
             this.upperValueOutput.nativeElement.style.left = 'unset'
             this.upperValueOutput.nativeElement.style.right = 100 - (upperValue / this.max * 100) + '%'
@@ -86,4 +89,13 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
         }
     }
 
+    private convertInDaysHoursMinutes(minutes: number): String {
+        let d = Math.floor(minutes / (60 * 24))
+        let h = (Math.floor(minutes / 60)) % 24
+        let m = minutes % 60
+        let days = d < 10 ? '0' + d : d 
+        let hrs = h < 10 ? '0' + h : h 
+        let mins = m < 10 ? '0' + m : m 
+        return d > 0 ? `${days}:${hrs}:${mins}` : `${hrs}:${mins}`
+    }
 }
