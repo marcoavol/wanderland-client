@@ -9,7 +9,7 @@ export class Photo extends PhotoInfo {
     src: string;
 }
 
-export class PhotoDTO {
-    src: string;
-    info: PhotoInfo;
+export class CreatePhotoDTO {
+    photo: File;
+    info: PhotoInfo
 }

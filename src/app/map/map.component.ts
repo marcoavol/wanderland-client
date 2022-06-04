@@ -1,12 +1,14 @@
 import { Component, OnInit, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { takeWhile } from 'rxjs';
 import * as D3 from 'd3';
 import * as TopoJSON from 'topojson-client';
 import { Topology, GeometryCollection } from 'topojson-specification';
 import pointToLineDistance from '@turf/point-to-line-distance';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
-import { takeWhile } from 'rxjs';
 import { MapSettingsService } from './map-settings.service';
+import { MapPhotosService } from './map-photos.service';
+import { Photo } from '../types/photo.types';
 
 // FIXME: Bei Änderung der angezeigten Routentypen bereits ausgewählte Route abwählen, sofern deren Typ nicht mehr angezeigt wird
 // FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
@@ -32,12 +34,13 @@ export class MapComponent implements OnInit, OnDestroy {
     private zoomTransform: D3.ZoomTransform = D3.zoomIdentity
     private zoomExtent: [number, number] = [1, 5]
 
-    private photos: [number, number][] = [[9.396352777777777, 46.9688],]  // [lon, lat] e.g. [9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]
+    // private photos: [number, number][] = [[9.396352777777777, 46.9688],]  // [lon, lat] e.g. [9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]
 
     private isAlive = true
 
     constructor(
         private mapSettingsService: MapSettingsService,
+        private mapPhotosService: MapPhotosService,
     ) { }
 
     ngOnInit(): void {
@@ -105,7 +108,7 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('class', 'routes')
 
         this.svg.append('g')
-            .attr('class', 'locations')
+            .attr('class', 'photo-locations')
     }
 
     private setZoomAndPanBehavior(): void {
@@ -223,7 +226,8 @@ export class MapComponent implements OnInit, OnDestroy {
                 console.warn(datum)
                 D3.selectAll('.route').classed('active', false)
                 D3.select(event.target as any).classed('active', true).raise()
-                this.renderSelectedRouteEndpoints(datum)
+                this.renderSelectedRouteEndpoints(datum.geometry.coordinates)
+                this.renderPhotoLocationsAsync(datum.properties.OBJECTID)
             })
             .on('mouseenter', (event: MouseEvent) => {
                 if (!D3.select(event.target as Element).classed('active')) {
@@ -236,24 +240,12 @@ export class MapComponent implements OnInit, OnDestroy {
                 }
             })
 
-        // Render locations
-        D3.select('.locations').selectAll('circle')
-            .data(this.photos)
-            .enter()
-            .append('circle')
-            .attr('r', 8)
-            .attr('transform', (datum: any) => `translate(${this.projection([datum[0], datum[1]])})`)
-            .attr('class', 'location')
-            .on('click', (event: PointerEvent, datum: any) => {
-                console.warn(datum)
-            })
-
     }
 
-    private renderSelectedRouteEndpoints(routeDatum: any): void {
+    private renderSelectedRouteEndpoints(routeCoordinates: [number, number][]): void {
 
-        const svgStartPoint = this.coordinatesToProjectedSVGPoint(routeDatum.geometry.coordinates[0])
-        const svgEndPoint = this.coordinatesToProjectedSVGPoint(routeDatum.geometry.coordinates[routeDatum.geometry.coordinates.length - 1])
+        const svgStartPoint = this.coordinatesToProjectedSVGPoint(routeCoordinates[0])
+        const svgEndPoint = this.coordinatesToProjectedSVGPoint(routeCoordinates[routeCoordinates.length - 1])
 
         D3.selectAll('.municipality')
             .classed('active', (_, index: number, nodes: any) => {
@@ -263,7 +255,7 @@ export class MapComponent implements OnInit, OnDestroy {
             .raise()
         D3.select('.routes').selectAll('circle').remove()
         D3.select('.routes').selectAll('circle')
-            .data([routeDatum.geometry.coordinates[0], routeDatum.geometry.coordinates[routeDatum.geometry.coordinates.length - 1]])
+            .data([routeCoordinates[0], routeCoordinates[routeCoordinates.length - 1]])
             .enter()
             .append('circle')
             .attr('transform', (datum: any) => this.zoomTransform.toString() + `translate(${this.projection([datum[0], datum[1]])})`)
@@ -275,6 +267,21 @@ export class MapComponent implements OnInit, OnDestroy {
         //     console.warn(datum)
         // })
 
+    }
+
+    private async renderPhotoLocationsAsync(routeId: number): Promise<void> {
+        const photos = await this.mapPhotosService.getPhotosByRouteId(routeId)
+        console.warn(photos)
+        D3.select('.photo-locations').selectAll('circle')
+            .data(photos)
+            .enter()
+            .append('circle')
+            .attr('r', 8)
+            .attr('transform', (datum: Photo) => `translate(${this.projection([datum.lon, datum.lat])})`)
+            .attr('class', 'location')
+            .on('click', (event: PointerEvent, datum: any) => {
+                console.warn(datum)
+            })
     }
 
     /**

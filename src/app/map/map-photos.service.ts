@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Photo } from '../../types/photo.types';
+import { Photo } from '../types/photo.types';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable({
