@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, Input, Output, EventEmitter, OnInit, AfterViewInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
+import { units } from '../types/settings.types';
 
 
 @Component({
@@ -34,7 +35,7 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
     initialUpper: number
 
     @Input()
-    convertToHoursMinutes: boolean
+    unit: units
 
     @Output()
     onRangeChanged = new EventEmitter<{ lower: number, upper: number }>()
@@ -70,7 +71,7 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
             spanSliderRangeElement.style.left = 0 + '%';
         }
 
-        this.lowerValueOutput.nativeElement.innerHTML = this.convertInDaysHoursMinutes(lowerValue)
+        this.lowerValueOutput.nativeElement.innerHTML = this.convertToUnit(lowerValue)
         if (lowerValue <= this.max / 2) {
             this.lowerValueOutput.nativeElement.style.right = 'unset'
             this.lowerValueOutput.nativeElement.style.left = lowerValue / this.max * 100 + '%'
@@ -79,7 +80,7 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
             this.lowerValueOutput.nativeElement.style.right = 100 - (lowerValue / this.max * 100) + '%'
         }
 
-        this.upperValueOutput.nativeElement.innerHTML = this.convertInDaysHoursMinutes(upperValue)
+        this.upperValueOutput.nativeElement.innerHTML = this.convertToUnit(upperValue)
         if (upperValue > this.max / 2) {
             this.upperValueOutput.nativeElement.style.left = 'unset'
             this.upperValueOutput.nativeElement.style.right = 100 - (upperValue / this.max * 100) + '%'
@@ -89,7 +90,17 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
         }
     }
 
-    private convertInDaysHoursMinutes(minutes: number): String {
+
+    private convertToUnit(value: number): string {
+        switch (this.unit) {
+            case 'Meters': return String(value)
+            case 'Kilometers': return String(value/1000)
+            case 'DaysHoursMinutes': return this.convertInDaysHoursMinutes(value)
+            default: return ''   
+        }
+    }
+
+    private convertInDaysHoursMinutes(minutes: number): string {
         let d = Math.floor(minutes / (60 * 24))
         let h = (Math.floor(minutes / 60)) % 24
         let m = minutes % 60

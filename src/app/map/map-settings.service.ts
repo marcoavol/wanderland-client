@@ -17,6 +17,8 @@ export class MapSettingsService {
         elevationMax: 2000,
         descendingMin: 0,
         descendingMax: 2000,
+        lengthMin: 0,
+        lengthMax: 100000,
     }
 
     private mapSettingsBehaviorSubject = new BehaviorSubject<MapSettings>(this._currentSettings)

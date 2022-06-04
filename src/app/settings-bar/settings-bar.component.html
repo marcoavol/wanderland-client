@@ -24,39 +24,57 @@
     </section>
     
     <section>
-        <p>Zeitdauer</p>
+        <p>Zeitdauer [DD:HH:MM]</p>
         <div>
             <app-range-slider
                 [min]="0" [max]="10000" [step]="15" 
                 [initialLower]="mapSettingsForm.value.durationMin" 
                 [initialUpper]="mapSettingsForm.value.durationMax" 
-                [convertToHoursMinutes]="true"
+                [unit]="durationUnit"
                 (onRangeChanged)="handleDurationRangeChange($event)">
             </app-range-slider>
         </div>
     </section>
 
-    <!-- <section>
-        <p>Aufstieg</p>
+    <section>
+        <p>Aufstieg [m]</p>
         <div>
             <app-range-slider
-                [min]="0" [max]="10000" [step]="15" 
+                [min]="0" [max]="2000" [step]="50" 
                 [initialLower]="mapSettingsForm.value.elevationMin" 
                 [initialUpper]="mapSettingsForm.value.elevationMax" 
-                [convertToHoursMinutes]="false"
+                [unit]="elevationUnit"
                 (onRangeChanged)="handleElevationRangeChange($event)">
             </app-range-slider>
         </div>
-    </section> -->
+    </section>
 
-     <!-- 
-        <app-range-slider
-            [min]="0" [max]="2000" [step]="10" 
-            [initialLower]="mapSettingsForm.value.descendingMin" 
-            [initialUpper]="mapSettingsForm.value.descendingMax" 
-            [convertToHoursMinutes]="false"
-            (onRangeChanged)="handleRangeChange($event)">
-        </app-range-slider> -->
+    <section>
+        <p>Abstieg [m]</p>
+        <div>
+            <app-range-slider
+                [min]="0" [max]="2000" [step]="50" 
+                [initialLower]="mapSettingsForm.value.descendingMin" 
+                [initialUpper]="mapSettingsForm.value.descendingMax" 
+                [unit]="descendingUnit"
+                (onRangeChanged)="handleDescendingRangeChange($event)">
+            </app-range-slider>
+        </div>
+    </section>
+
+    <section>
+        <p>Länge [km]</p>
+        <div>
+            <app-range-slider
+                [min]="0" [max]="100000" [step]="500" 
+                [initialLower]="mapSettingsForm.value.lengthMin" 
+                [initialUpper]="mapSettingsForm.value.lengthMax" 
+                [unit]="lengthUnit"
+                (onRangeChanged)="handleLengthRangeChange($event)">
+            </app-range-slider>
+        </div>
+    </section>
+
 </form>
 <div style="display: flex; align-items: center; margin-top: 100px;">
     <button type="button" class="btn btn-outline-dark" style="width: 100px; margin: 0 auto;" (click)="offcanvas.close('Close click')">Close</button>
