@@ -5,7 +5,6 @@ import { Topology, GeometryCollection } from 'topojson-specification';
 import pointToLineDistance from '@turf/point-to-line-distance';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
-import { MapSettings } from '../types/settings.types';
 import { takeWhile } from 'rxjs';
 import { MapSettingsService } from './map-settings.service';
 
@@ -33,7 +32,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private zoomTransform: D3.ZoomTransform = D3.zoomIdentity
     private zoomExtent: [number, number] = [1, 5]
 
-    private photos: [number, number][] = [[9.396352777777777 , 46.9688], ]  // [lon, lat] e.g. [9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]
+    private photos: [number, number][] = [[9.396352777777777, 46.9688],]  // [lon, lat] e.g. [9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]
 
     private isAlive = true
 
@@ -42,16 +41,38 @@ export class MapComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        this.setup()
-        this.renderAsync()      
-        this.mapSettingsService.mapSettingsObservable.pipe(takeWhile(() => this.isAlive)).subscribe(settings => {
-            this.handleSettingsChange(settings)
+        this.setupAsync()
+    }
+
+    /**
+     * Takes (WGS84) coordinates of a point and returns all near routes (within a given threshold in meters) from its projected point within the main SVG element.
+     * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
+     * @returns An array containing the ID of each route that is considered near.
+     */
+     public static nearKnownRoutes(coordinates: [number, number]): number[] {
+        const nearKnownRouteIds: number[] = []
+        D3.select('.routes').selectAll('path').each((datum: any, index: number, nodes: any) => {
+            if (datum.geometry) {
+                const distance = pointToLineDistance(coordinates, datum.geometry.coordinates, { units: 'meters' })
+                if (distance <= MapComponent.NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS) {
+                    nearKnownRouteIds.push(datum.properties.OBJECTID)
+                }
+            }
+        })
+        return nearKnownRouteIds
+    }
+
+    private async setupAsync(): Promise<void> {
+        this.createSVG()
+        this.setZoomAndPanBehavior()
+        this.setResizeBehavior()
+        await this.renderAsync()
+        this.mapSettingsService.mapSettingsObservable.pipe(takeWhile(() => this.isAlive)).subscribe(_ => {
+            this.handleSettingsChange()
         })
     }
 
-    private setup(): void {
-
-        // Create SVG
+    private createSVG(): void {
         this.svg = D3.select('#map')
             .append('svg')
             .attr('width', this.width)
@@ -85,8 +106,9 @@ export class MapComponent implements OnInit, OnDestroy {
 
         this.svg.append('g')
             .attr('class', 'locations')
+    }
 
-        // Define pan and zoom behaviour
+    private setZoomAndPanBehavior(): void {
         const zoomBehaviour: D3.ZoomBehavior<any, any> = D3.zoom()
             .scaleExtent(this.zoomExtent)
             .on('zoom', (event: D3.D3ZoomEvent<any, any>) => {
@@ -98,10 +120,10 @@ export class MapComponent implements OnInit, OnDestroy {
                     .attr('r', 8 / event.transform.k)
                     .attr('style', `stroke-width: ${1 / event.transform.k}`)
             })
-
         this.svg.call(zoomBehaviour)
+    }
 
-        // Make it responsive
+    private setResizeBehavior(): void {
         window.onresize = () => {
             this.width = window.innerWidth
             this.height = window.innerHeight
@@ -121,7 +143,6 @@ export class MapComponent implements OnInit, OnDestroy {
                 .attr('r', 8 / this.zoomTransform.k)
                 .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
         }
-
     }
 
     private async renderAsync(): Promise<void> {
@@ -132,7 +153,7 @@ export class MapComponent implements OnInit, OnDestroy {
             D3.json('./assets/routen-topologie/kombiniert.json')
         ])) as Topology[]
 
-        // Set projection and according path
+        // Set projection and path objects
         this.projection = D3.geoMercator()
             .scale((this.width + this.height / 2) * this.projectionScale)
             .translate([this.width / 2, this.height / 2])
@@ -183,13 +204,13 @@ export class MapComponent implements OnInit, OnDestroy {
                 const cantonAbbreviation = Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)!.GDEKT
                 return (Kantonsfarben as { [key: string]: string })[cantonAbbreviation]
             })
-            // .on('click', (event: PointerEvent, datum: any) => {
-            //     console.warn(Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)?.GDEKT)
-            //     D3.selectAll('.canton').classed('active', false)
-            //     D3.select(event.target as Element).classed('active', true).raise()
-            //     // const lonLat = this.projection.invert!([e.pageX, e.pageY])
-            //     // console.warn(lonLat![1], lonLat![0])                    
-            // })
+        // .on('click', (event: PointerEvent, datum: any) => {
+        //     console.warn(Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)?.GDEKT)
+        //     D3.selectAll('.canton').classed('active', false)
+        //     D3.select(event.target as Element).classed('active', true).raise()
+        //     // const lonLat = this.projection.invert!([e.pageX, e.pageY])
+        //     // console.warn(lonLat![1], lonLat![0])                    
+        // })
 
         // Render routes    
         D3.select('.routes').selectAll('path')
@@ -226,18 +247,7 @@ export class MapComponent implements OnInit, OnDestroy {
             .on('click', (event: PointerEvent, datum: any) => {
                 console.warn(datum)
             })
-            
-    }
 
-    private handleSettingsChange(settings: MapSettings): void {
-        D3.selectAll('.route').classed('hidden', (datum: any) => {
-            switch (datum?.properties.Typ_TR) {
-                case 'National': return !settings.national
-                case 'Regional': return !settings.regional
-                case 'Lokal': return !settings.local
-                default: return true
-            }
-        })
     }
 
     private renderSelectedRouteEndpoints(routeDatum: any): void {
@@ -261,9 +271,9 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
             .attr('class', 'route-endpoint')
             .raise()
-            // .on('mouseenter', (event: MouseEvent, datum: any) => {
-            //     console.warn(datum)
-            // })
+        // .on('mouseenter', (event: MouseEvent, datum: any) => {
+        //     console.warn(datum)
+        // })
 
     }
 
@@ -283,22 +293,10 @@ export class MapComponent implements OnInit, OnDestroy {
         return svgPoint || null
     }
 
-    /**
-     * Takes (WGS84) coordinates of a point and returns all near routes (within a given threshold in meters) from its projected point within the main SVG element.
-     * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
-     * @returns An array containing the ID of each route that is considered near.
-     */
-    public static nearKnownRoutes(coordinates: [number, number]): number[] {
-        const nearKnownRouteIds: number[] = []
-        D3.select('.routes').selectAll('path').each((datum: any, index: number, nodes: any) => {
-            if (datum.geometry) {
-                const distance = pointToLineDistance(coordinates, datum.geometry.coordinates, { units: 'meters' })
-                if (distance <= MapComponent.NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS) {
-                    nearKnownRouteIds.push(datum.properties.OBJECTID)
-                }
-            }
+    private handleSettingsChange(): void {
+        D3.selectAll('.route').classed('hidden', (datum: any) => {
+            return !this.mapSettingsService.routeMeetsCurrentSettings(datum)
         })
-        return nearKnownRouteIds
     }
 
     ngOnDestroy(): void {

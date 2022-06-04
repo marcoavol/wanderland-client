@@ -20,7 +20,7 @@ export class MapSettingsService {
 
     constructor() { }
 
-    get currentSettings() {
+    get currentSettings(): MapSettings {
         return this._currentSettings
     }
 
@@ -29,5 +29,25 @@ export class MapSettingsService {
         this.mapSettingsBehaviorSubject.next(this._currentSettings) 
         console.warn(this.currentSettings)
     }
+
+    public routeMeetsCurrentSettings(routeDatum: any): boolean {
+        const result =  
+            this.routeMeetsRouteTypeSetting(routeDatum?.properties.Typ_TR) && 
+            this.routeMeetsDurationSetting(routeDatum?.properties.ZeitStZiR)
+        return result
+    }
+
+    private routeMeetsRouteTypeSetting(routeType: 'National' | 'Regional' | 'Lokal'): boolean {
+        switch (routeType) {
+            case 'National': return this.currentSettings.national
+            case 'Regional': return this.currentSettings.regional
+            case 'Lokal': return this.currentSettings.local
+            default: return false
+        }
+    }
+
+    private routeMeetsDurationSetting(duration: number): boolean {
+        return duration >= this.currentSettings.durationMin && duration <= this.currentSettings.durationMax
+    } 
 
 }
