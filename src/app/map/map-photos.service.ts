@@ -10,7 +10,7 @@ export class MapPhotosService {
 
     private readonly BASE_PATH = 'http://localhost:8080/photos/'
 
-    private cachedPhotosByRouteId = new Map<number, Photo[]>()
+    private cachedPhotosByRouteId = new Map<number, Photo[]>() // TODO: May need cache-busting for routeId on user-upload to display new photos 
 
     constructor(
         private http: HttpClient,
