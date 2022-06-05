@@ -10,6 +10,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ToastsComponent } from '../toasts/toasts.component';
 import { RangeSliderComponent } from '../range-slider/range-slider.component';
+import { PhotoCarouselComponent } from '../photo-carousel/photo-carousel.component';
 
 @NgModule({
     declarations: [
@@ -20,6 +21,7 @@ import { RangeSliderComponent } from '../range-slider/range-slider.component';
         SettingsBarComponent,
         PhotoUploadComponent,
         RangeSliderComponent,
+        PhotoCarouselComponent,
     ],
     imports: [
         CommonModule,

@@ -5,6 +5,8 @@ import { lastValueFrom, Subject } from 'rxjs';
 import { MapComponent } from './map.component';
 import ExifReader from 'exifreader';
 import imageCompression from 'browser-image-compression';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { PhotoCarouselComponent } from '../photo-carousel/photo-carousel.component';
 
 interface ValidationResult {
     valid: boolean;
@@ -32,6 +34,7 @@ export class MapPhotosService {
 
     constructor(
         private http: HttpClient,
+        private modalService: NgbModal,
     ) { }
 
     public async getPhotoPreviewURLAsync(photo: File): Promise<string> {
@@ -100,6 +103,15 @@ export class MapPhotosService {
         const dateStringFormatted = dateAndTimeStrings[0].replace(/:/g, "-")
         const date = new Date(dateStringFormatted + " " + dateAndTimeStrings[1])
         return date.toISOString()
+    }
+
+    public openCarouselModal(photos: Photo[]): void {
+        const modalRef = this.modalService.open(PhotoCarouselComponent, { centered: true })
+        modalRef.componentInstance.photos = photos
+    }
+
+    public closeCarouselModal(): void {
+        this.modalService.dismissAll()
     }
 
 }

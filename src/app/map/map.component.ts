@@ -296,7 +296,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
     private async renderSelectedRoutePhotoLocationsAsync(routeId: number): Promise<void> {
         const photos = await this.mapPhotosService.getPhotosByRouteId(routeId)
-        console.warn(photos)
         D3.selectAll(this.PHOTO_LOCATION_SELECTOR)
             .remove()
         D3.select(this.PHOTO_LOCATIONS_CONTAINER_SELECTOR).selectAll('circle')
@@ -309,6 +308,8 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
             .on('click', (event: PointerEvent, datum: any) => {
                 console.warn(datum)
+                // open modal
+                this.mapPhotosService.openCarouselModal([datum])
             })
     }
 
