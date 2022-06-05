@@ -8,6 +8,7 @@ import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
 import { MapSettingsService } from './map-settings.service';
 import { MapPhotosService } from './map-photos.service';
+import { RouteDatum } from '../types/map.types';
 
 // FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
 
@@ -18,6 +19,8 @@ import { MapPhotosService } from './map-photos.service';
     encapsulation: ViewEncapsulation.None
 })
 export class MapComponent implements OnInit, OnDestroy {
+
+    private static readonly NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS = 1000
 
     private readonly COUTRY_CONTAINER_SELECTOR = '.country-container'
     private readonly LAKES_CONTAINER_SELECTOR = '.lakes-container'
@@ -35,8 +38,6 @@ export class MapComponent implements OnInit, OnDestroy {
     private readonly ROUTE_SELECTOR = '.route'
     private readonly ROUTE_ENDPOINT_SELECTOR = '.route-endpoint'
     private readonly PHOTO_LOCATION_SELECTOR = '.photo-location'
-
-    private static readonly NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS = 1000
 
     private svg: D3.Selection<SVGSVGElement, unknown, HTMLElement, any>
     private width: number = window.innerWidth
@@ -87,6 +88,12 @@ export class MapComponent implements OnInit, OnDestroy {
         await this.renderAsync()
         this.mapSettingsService.mapSettingsObservable.pipe(takeWhile(() => this.isAlive)).subscribe(_ => {
             this.handleSettingsChange()
+        })
+        this.mapPhotosService.uploadObservable.pipe(takeWhile(() => this.isAlive)).subscribe(_ => {
+            const currentlySelectedRoute = D3.select(`${this.ROUTE_SELECTOR}.active`)
+            if (!currentlySelectedRoute.empty()) {
+                this.renderSelectedRoutePhotoLocationsAsync((currentlySelectedRoute.datum() as RouteDatum).properties.OBJECTID)
+            }
         })
     }
 
@@ -289,6 +296,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     private async renderSelectedRoutePhotoLocationsAsync(routeId: number): Promise<void> {
         const photos = await this.mapPhotosService.getPhotosByRouteId(routeId)
+        console.warn(photos)
         D3.selectAll(this.PHOTO_LOCATION_SELECTOR)
             .remove()
         D3.select(this.PHOTO_LOCATIONS_CONTAINER_SELECTOR).selectAll('circle')

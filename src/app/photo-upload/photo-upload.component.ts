@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { PhotoUploadService } from './photo-upload.service';
 import { ToastsService } from '../toasts/toasts.service';
+import { MapPhotosService } from '../map/map-photos.service';
 
 @Component({
     selector: 'app-photo-upload',
@@ -14,7 +14,7 @@ export class PhotoUploadComponent {
     public errorMessage?: string
 
     constructor(
-        private photoUploadService: PhotoUploadService,
+        private mapPhotosService: MapPhotosService,
         private modalService: NgbModal,
         private toastService: ToastsService,
     ) { }
@@ -32,15 +32,15 @@ export class PhotoUploadComponent {
         const file = (event.target as HTMLInputElement).files?.item(0)
         if (!file) return 
         this.reset()
-        this.photoPreviewURL = await this.photoUploadService.getPhotoPreviewURLAsync(file)
-        const { valid, errorMessage } = await this.photoUploadService.validatePhotoAsync(file)
+        this.photoPreviewURL = await this.mapPhotosService.getPhotoPreviewURLAsync(file)
+        const { valid, errorMessage } = await this.mapPhotosService.validatePhotoAsync(file)
         if (!valid) {
             this.errorMessage = errorMessage
         }
     }
 
     public submit(): void {
-        this.photoUploadService.uploadPhotoAsync()
+        this.mapPhotosService.uploadPhotoAsync()
         this.closeModal()
         this.toastService.show('', 'Vielen Dank, Ihr Foto wurde übermittelt!', 'bg-success text-light')
     }

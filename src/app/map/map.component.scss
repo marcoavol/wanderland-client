@@ -44,14 +44,14 @@
     cursor: pointer;
 }
 
-.route:not(.active):hover {
-    stroke-width: 2;
-    transition: 0.075s;
-}
-
 .route.active {
     stroke: green !important;
     stroke-width: 2;
+}
+
+.route:not(.active):hover {
+    stroke-width: 2;
+    transition: 0.075s;
 }
 
 .route.hidden {
