@@ -20,7 +20,7 @@ export class MapSettingsService {
     }
 
     private mapSettingsBehaviorSubject = new BehaviorSubject<MapSettings>(this._currentSettings)
-    public mapSettingsObservable = this.mapSettingsBehaviorSubject.pipe()
+    public mapSettingsObservable = this.mapSettingsBehaviorSubject.asObservable()
 
     constructor() { }
 

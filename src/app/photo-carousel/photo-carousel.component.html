@@ -1,0 +1,16 @@
+<div class="modal-body">
+    <ngb-carousel>
+        <ng-template ngbSlide *ngFor="let photo of photos; let i = index">
+            <div class="picsum-img-wrapper">
+                <img [src]="'/Users/marco/IT/ZHAW/OOP/Projektarbeit/Wanderland/wanderland-server/src/main/resources/photos/1654412851287-pizol-fünf-seen.jpeg'" [alt]="'Foto '+(i+1)">
+                <p>{{photo.src}}</p>
+            </div>
+            <div class="carousel-caption">
+                <h3>First slide label</h3>
+                <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+            </div>
+        </ng-template>
+    </ngb-carousel>
+</div>
+
+        
