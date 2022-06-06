@@ -71,30 +71,7 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
             spanSliderRangeElement.style.left = 0 + '%';
         }
 
-        this.lowerValueOutput.nativeElement.innerHTML = this.convertToUnit(lowerValue)
-        if (lowerValue <= this.max / 2) {
-            this.lowerValueOutput.nativeElement.style.right = 'unset'
-            this.lowerValueOutput.nativeElement.style.left = lowerValue / this.max * 100 + '%'
-        } else {
-            this.lowerValueOutput.nativeElement.style.left = 'unset'
-            this.lowerValueOutput.nativeElement.style.right = 100 - (lowerValue / this.max * 100) + '%'
-        }
-        
-        if (upperValue > this.max / 2) {
-            this.upperValueOutput.nativeElement.style.left = 'unset'
-            this.upperValueOutput.nativeElement.style.right = 100 - (upperValue / this.max * 100) + '%'
-        } else {
-            this.upperValueOutput.nativeElement.style.right = 'unset'
-            this.upperValueOutput.nativeElement.style.left = upperValue / this.max * 100 + '%'
-        }
-
-        if ((upperValue - lowerValue) / this.max * 100 <= 20) {
-            this.upperValueOutput.nativeElement.style.display = 'none'
-            this.lowerValueOutput.nativeElement.innerHTML = this.convertToUnit(lowerValue) + " - " + this.convertToUnit(upperValue)
-        } else {
-            this.upperValueOutput.nativeElement.style.display = 'block'
-            this.upperValueOutput.nativeElement.innerHTML = this.convertToUnit(upperValue)
-        }
+        this.showOutputValues(lowerValue, upperValue)
     }
 
 
@@ -115,5 +92,38 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
         let hrs = h < 10 ? '0' + h : h 
         let mins = m < 10 ? '0' + m : m 
         return d > 0 ? `${days}:${hrs}:${mins}` : `${hrs}:${mins}`
+    }
+
+    private showOutputValues(lowerValue: number, upperValue: number): void {
+
+        this.lowerValueOutput.nativeElement.innerHTML = this.convertToUnit(lowerValue)
+        if (lowerValue <= this.max / 2) {
+            this.lowerValueOutput.nativeElement.style.right = 'unset'
+            this.lowerValueOutput.nativeElement.style.left = lowerValue / this.max * 100 + '%'
+        } else {
+            this.lowerValueOutput.nativeElement.style.left = 'unset'
+            this.lowerValueOutput.nativeElement.style.right = 100 - (lowerValue / this.max * 100) + '%'
+        }
+        
+        if (upperValue > this.max / 2) {
+            this.upperValueOutput.nativeElement.style.left = 'unset'
+            this.upperValueOutput.nativeElement.style.right = 100 - (upperValue / this.max * 100) + '%'
+        } else {
+            this.upperValueOutput.nativeElement.style.right = 'unset'
+            this.upperValueOutput.nativeElement.style.left = upperValue / this.max * 100 + '%'
+        }
+
+        const distanceBetweenOutputs = this.spanSliderRange.nativeElement.offsetWidth - 
+                                        this.lowerValueOutput.nativeElement.offsetWidth - 
+                                        this.upperValueOutput.nativeElement.offsetWidth
+        
+        if (distanceBetweenOutputs <= 25) {
+            this.upperValueOutput.nativeElement.style.visibility = 'hidden'
+            this.lowerValueOutput.nativeElement.innerHTML = this.convertToUnit(lowerValue) + " - " + 
+                                                            this.convertToUnit(upperValue)
+        } else {
+            this.upperValueOutput.nativeElement.style.visibility = 'visible'
+            this.upperValueOutput.nativeElement.innerHTML = this.convertToUnit(upperValue)
+        }
     }
 }
