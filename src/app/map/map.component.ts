@@ -11,6 +11,7 @@ import { MapPhotosService } from './map-photos.service';
 import { RouteDatum } from '../types/map.types';
 
 // FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
+// FIXME: Einige Routen haben keine Properties (TopoJSONs überprüfen!)
 
 @Component({
     selector: 'app-map',
@@ -27,7 +28,6 @@ export class MapComponent implements OnInit, OnDestroy {
     private readonly MUNICIPALITIES_CONTAINER_SELECTOR = '.municipalities-container'
     private readonly CANTONS_CONTAINER_SELECTOR = '.cantons-container'
     private readonly ROUTES_CONTAINER_SELECTOR = '.routes-container'
-    private readonly ROUTE_ENPOINTS_CONTAINER_SELECTOR = '.route-endpoints-container'
     private readonly PHOTO_LOCATIONS_CONTAINER_SELECTOR = '.photo-locations-container'
 
     private readonly BACKGROUND_SELECTOR = '.background'
@@ -48,7 +48,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private path: D3.GeoPath
 
     private zoomTransform: D3.ZoomTransform = D3.zoomIdentity
-    private zoomExtent: [number, number] = [1, 5]
+    private zoomExtent: [number, number] = [1, 8]
 
     // private photos: [number, number][] = [[9.396352777777777, 46.9688],]  // [lon, lat] e.g. [9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]
 
@@ -130,9 +130,6 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('class', this.ROUTES_CONTAINER_SELECTOR.slice(1))
 
         this.svg.append('g')
-            .attr('class', this.ROUTE_ENPOINTS_CONTAINER_SELECTOR.slice(1))
-
-        this.svg.append('g')
             .attr('class', this.PHOTO_LOCATIONS_CONTAINER_SELECTOR.slice(1))
     }
 
@@ -142,7 +139,7 @@ export class MapComponent implements OnInit, OnDestroy {
             .on('zoom', (event: D3.D3ZoomEvent<any, any>) => {
                 this.zoomTransform = event.transform
                 D3.selectAll('path')
-                    .attr('transform', event.transform.toString())
+                    .attr('transform', event.transform.toString()) 
                 D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR)
                     .attr('transform', (datum: any) => event.transform.toString() + `translate(${this.projection([datum[0], datum[1]])})`)
                     .attr('r', 8 / event.transform.k)
@@ -151,7 +148,6 @@ export class MapComponent implements OnInit, OnDestroy {
                     .attr('transform', (datum: any) => event.transform.toString() + `translate(${this.projection([datum.lon, datum.lat])})`)
                     .attr('r', 8 / event.transform.k)
                     .attr('style', `stroke-width: ${1 / event.transform.k}`)
-                
             })
         this.svg.call(zoomBehaviour)
     }
@@ -283,7 +279,7 @@ export class MapComponent implements OnInit, OnDestroy {
             .raise()
         D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR)
             .remove()
-        D3.select(this.ROUTE_ENPOINTS_CONTAINER_SELECTOR).selectAll('circle')
+        D3.select(this.ROUTES_CONTAINER_SELECTOR).selectAll('circle')
             .data([routeCoordinates[0], routeCoordinates[routeCoordinates.length - 1]])
             .enter()
             .append('circle')
@@ -296,6 +292,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     private async renderSelectedRoutePhotoLocationsAsync(routeId: number): Promise<void> {
         const photos = await this.mapPhotosService.getPhotosByRouteId(routeId)
+        console.warn(photos)
         D3.selectAll(this.PHOTO_LOCATION_SELECTOR)
             .remove()
         D3.select(this.PHOTO_LOCATIONS_CONTAINER_SELECTOR).selectAll('circle')

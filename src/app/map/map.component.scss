@@ -46,11 +46,11 @@
 
 .route.active {
     stroke: green !important;
-    stroke-width: 2;
+    // stroke-width: 2;
 }
 
 .route:not(.active):hover {
-    stroke-width: 2;
+    stroke-width: 1.5;
     transition: 0.075s;
 }
 
