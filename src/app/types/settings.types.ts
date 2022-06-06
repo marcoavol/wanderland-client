@@ -13,6 +13,9 @@ export interface MapSettings {
     easy: boolean;
     medium: boolean;
     hard: boolean;
+    lowFitness: boolean;
+    mediumFitness: boolean;
+    goodFitness: boolean;
     canton?: string;
 } 
 

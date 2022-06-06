@@ -99,6 +99,30 @@
         </div>
     </section>
 
+    <section>
+        <p>Kondition</p>
+        <div style="display: flex; justify-content: space-between;">
+            <div  class="form-check form-switch">
+                <label style="padding: 0">
+                    leicht
+                    <input formControlName="lowFitness" type="checkbox" class="form-check-input"/>
+                </label>
+            </div>
+            <div class="form-check form-switch">
+                <label style="padding: 0">
+                    mittel
+                    <input formControlName="mediumFitness" type="checkbox" class="form-check-input"/>
+                </label>
+            </div>
+            <div class="form-check form-switch">
+                <label style="padding: 0">
+                    schwer
+                    <input formControlName="goodFitness" type="checkbox" class="form-check-input" />
+                </label>
+            </div>
+        </div>
+    </section>
+
 </form>
 <div style="display: flex; align-items: center; margin-top: 100px;">
     <button type="button" class="btn btn-outline-dark" style="width: 100px; margin: 0 auto;" (click)="offcanvas.close('Close click')">Close</button>

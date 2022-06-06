@@ -16,7 +16,6 @@ export class SettingsBarComponent implements OnInit {
     public elevationUnit: units
     public descendingUnit: units
     public lengthUnit: units
-    public fitnessLevel: units
 
     constructor(
         readonly offcanvas: NgbActiveOffcanvas,
@@ -45,6 +44,9 @@ export class SettingsBarComponent implements OnInit {
             easy: new FormControl(currentSettings.easy),
             medium: new FormControl(currentSettings.medium),
             hard: new FormControl(currentSettings.hard),
+            lowFitness: new FormControl(currentSettings.lowFitness),
+            mediumFitness: new FormControl(currentSettings.mediumFitness),
+            goodFitness: new FormControl(currentSettings.goodFitness),
         })
         this.mapSettingsChanged()
     }

@@ -22,7 +22,10 @@ export class MapSettingsService {
         lengthMax: 700000,
         easy: true,
         medium: true,
-        hard: true
+        hard: true,
+        lowFitness: true,
+        mediumFitness: true,
+        goodFitness: true
     }
 
     private mapSettingsBehaviorSubject = new BehaviorSubject<MapSettings>(this._currentSettings)
@@ -47,7 +50,8 @@ export class MapSettingsService {
             this.routeMeetsElevationSetting(routeDatum?.properties.HoeheAufR) &&
             this.routeMeetsDescendingSetting(routeDatum?.properties.HoeheAbR) &&
             this.routeMeetsLengthSetting(routeDatum?.properties.LaengeR) &&
-            this.routeMeetsTechniqueTypeSetting(routeDatum?.properties.TechnikR)
+            this.routeMeetsTechniqueTypeSetting(routeDatum?.properties.TechnikR) &&
+            this.routeMeetsFitnessLevelTypeSetting(routeDatum?.properties.KonditionR)
         return result
     }
 
@@ -81,6 +85,15 @@ export class MapSettingsService {
             case 'leicht': return this.currentSettings.easy
             case 'mittel': return this.currentSettings.medium
             case 'schwer': return this.currentSettings.hard
+            default: return false
+        }
+    }
+
+    private routeMeetsFitnessLevelTypeSetting(fitnessLevelType: 'leicht' | 'mittel' | 'schwer'): boolean {
+        switch (fitnessLevelType) {
+            case 'leicht': return this.currentSettings.lowFitness
+            case 'mittel': return this.currentSettings.mediumFitness
+            case 'schwer': return this.currentSettings.goodFitness
             default: return false
         }
     }
