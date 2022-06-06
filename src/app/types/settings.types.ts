@@ -10,6 +10,9 @@ export interface MapSettings {
     descendingMax: number;
     lengthMin: number;
     lengthMax: number;
+    easy: boolean;
+    medium: boolean;
+    hard: boolean;
     canton?: string;
 } 
 

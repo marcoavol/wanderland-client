@@ -20,6 +20,9 @@ export class MapSettingsService {
         descendingMax: 50000,
         lengthMin: 0,
         lengthMax: 700000,
+        easy: true,
+        medium: true,
+        hard: true
     }
 
     private mapSettingsBehaviorSubject = new BehaviorSubject<MapSettings>(this._currentSettings)
@@ -43,7 +46,8 @@ export class MapSettingsService {
             this.routeMeetsDurationSetting(routeDatum?.properties.ZeitStZiR) &&
             this.routeMeetsElevationSetting(routeDatum?.properties.HoeheAufR) &&
             this.routeMeetsDescendingSetting(routeDatum?.properties.HoeheAbR) &&
-            this.routeMeetsLengthSetting(routeDatum?.properties.LaengeR) 
+            this.routeMeetsLengthSetting(routeDatum?.properties.LaengeR) &&
+            this.routeMeetsTechniqueTypeSetting(routeDatum?.properties.TechnikR)
         return result
     }
 
@@ -71,4 +75,13 @@ export class MapSettingsService {
     private routeMeetsLengthSetting(length: number): boolean {
         return length >= this.currentSettings.lengthMin && length <= this.currentSettings.lengthMax
     } 
+
+    private routeMeetsTechniqueTypeSetting(techniqueType: 'leicht' | 'mittel' | 'schwer'): boolean {
+        switch (techniqueType) {
+            case 'leicht': return this.currentSettings.easy
+            case 'mittel': return this.currentSettings.medium
+            case 'schwer': return this.currentSettings.hard
+            default: return false
+        }
+    }
 }

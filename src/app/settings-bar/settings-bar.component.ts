@@ -42,6 +42,9 @@ export class SettingsBarComponent implements OnInit {
             descendingMax: new FormControl(currentSettings.descendingMax),
             lengthMin: new FormControl(currentSettings.lengthMin),
             lengthMax: new FormControl(currentSettings.lengthMax),
+            easy: new FormControl(currentSettings.easy),
+            medium: new FormControl(currentSettings.medium),
+            hard: new FormControl(currentSettings.hard),
         })
         this.mapSettingsChanged()
     }
