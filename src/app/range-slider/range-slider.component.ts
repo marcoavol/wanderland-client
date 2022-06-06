@@ -79,14 +79,21 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
             this.lowerValueOutput.nativeElement.style.left = 'unset'
             this.lowerValueOutput.nativeElement.style.right = 100 - (lowerValue / this.max * 100) + '%'
         }
-
-        this.upperValueOutput.nativeElement.innerHTML = this.convertToUnit(upperValue)
+        
         if (upperValue > this.max / 2) {
             this.upperValueOutput.nativeElement.style.left = 'unset'
             this.upperValueOutput.nativeElement.style.right = 100 - (upperValue / this.max * 100) + '%'
         } else {
             this.upperValueOutput.nativeElement.style.right = 'unset'
             this.upperValueOutput.nativeElement.style.left = upperValue / this.max * 100 + '%'
+        }
+
+        if ((upperValue - lowerValue) / this.max * 100 <= 20) {
+            this.upperValueOutput.nativeElement.style.display = 'none'
+            this.lowerValueOutput.nativeElement.innerHTML = this.convertToUnit(lowerValue) + " - " + this.convertToUnit(upperValue)
+        } else {
+            this.upperValueOutput.nativeElement.style.display = 'block'
+            this.upperValueOutput.nativeElement.innerHTML = this.convertToUnit(upperValue)
         }
     }
 

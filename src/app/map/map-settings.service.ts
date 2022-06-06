@@ -40,10 +40,10 @@ export class MapSettingsService {
     public routeMeetsCurrentSettings(routeDatum: any): boolean {
         const result =  
             this.routeMeetsRouteTypeSetting(routeDatum?.properties.Typ_TR) && 
-            this.routeMeetsDurationSetting(routeDatum?.properties.ZeitStZiR) &&
+            this.routeMeetsDurationSetting(routeDatum?.properties.ZeitStZiR) /*&&
             this.routeMeetsElevationSetting(routeDatum?.properties.HoeheAufR) &&
             this.routeMeetsDescendingSetting(routeDatum?.properties.HoeheAbR) &&
-            this.routeMeetsLengthSetting(routeDatum?.properties.LaengeR) 
+            this.routeMeetsLengthSetting(routeDatum?.properties.LaengeR) */
         return result
     }
 
