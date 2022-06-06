@@ -30,7 +30,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private path: D3.GeoPath
 
     private zoomTransform: D3.ZoomTransform = D3.zoomIdentity
-    private zoomExtent: [number, number] = [1, 5]
+    private zoomExtent: [number, number] = [1, 10]
 
     private photos: [number, number][] = [[9.396352777777777, 46.9688],]  // [lon, lat] e.g. [9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]
 
