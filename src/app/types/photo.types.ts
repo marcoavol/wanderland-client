@@ -8,8 +8,3 @@ export class PhotoInfo {
 export class Photo extends PhotoInfo {
     src: string;
 }
-
-export class CreatePhotoDTO {
-    photo: File;
-    info: PhotoInfo
-}
