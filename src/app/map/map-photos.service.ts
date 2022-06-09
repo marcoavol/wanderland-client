@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { CreatePhotoDTO, Photo } from '../types/photo.types';
+import { Photo, PhotoInfo } from '../types/photo.types';
 import { lastValueFrom, Subject } from 'rxjs';
 import { MapComponent } from './map.component';
 import ExifReader from 'exifreader';
@@ -25,7 +25,7 @@ export class MapPhotosService {
         useWebWorker: true
     }
 
-    private uploadDTO?: CreatePhotoDTO
+    private photoUpload?: { file: File, info: PhotoInfo }
 
     private uploadSubject = new Subject<void>()
     public uploadObservable = this.uploadSubject.asObservable()
@@ -46,7 +46,7 @@ export class MapPhotosService {
     }
 
     public async validatePhotoAsync(photo: File): Promise<ValidationResult> {
-        this.uploadDTO = undefined
+        this.photoUpload = undefined
         const result: ValidationResult = { valid: false }
         const { DateTimeOriginal, GPSLongitude, GPSLatitude } = await ExifReader.load(photo)
         if (!DateTimeOriginal || !GPSLongitude || !GPSLatitude) {
@@ -60,8 +60,8 @@ export class MapPhotosService {
             result.errorMessage = 'Das Foto wurde auf keiner bekannten Route aufgenommen'
             return result
         }
-        this.uploadDTO = {
-            photo: photo,
+        this.photoUpload = {
+            file: photo,
             info: {
                 captureIsoDate: this.exifDateToIsoString(DateTimeOriginal.description),
                 lon: lon,
@@ -74,14 +74,14 @@ export class MapPhotosService {
     }
 
     public async uploadPhotoAsync(): Promise<void> {
-        if (!this.uploadDTO) return console.warn('Unable to upload photo since no DTO is present.')
-        const compressedPhoto = await imageCompression(this.uploadDTO.photo, this.COMPRESSION_OPTIONS)
+        if (!this.photoUpload) return console.warn('Unable to upload photo since no upload data is present.')
+        const compressedPhoto = await imageCompression(this.photoUpload.file, this.COMPRESSION_OPTIONS)
         const formData = new FormData()
-        formData.append('photo', compressedPhoto, compressedPhoto.name)
-        formData.append('info', JSON.stringify(this.uploadDTO.info))
+        formData.append('photoFile', compressedPhoto, compressedPhoto.name)
+        formData.append('photoInfo', new Blob([JSON.stringify(this.photoUpload.info)], { type: 'application/json' }))
         await lastValueFrom(this.http.post(this.BASE_PATH, formData))
             .catch((e: Error) => console.error(`Error while uploading photo: ${e.message}`))
-        this.uploadDTO.info.routeIds.forEach(routeId => this.cachedPhotosByRouteId.delete(routeId))
+        this.photoUpload.info.routeIds.forEach(routeId => this.cachedPhotosByRouteId.delete(routeId))
         this.uploadSubject.next()
     }
 
