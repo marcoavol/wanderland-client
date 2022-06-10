@@ -13,6 +13,11 @@ interface ValidationResult {
     errorMessage?: string;
 }
 
+interface UploadResult {
+    success: boolean;
+    errorMessage?: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -73,16 +78,29 @@ export class MapPhotosService {
         return result
     }
 
-    public async uploadPhotoAsync(): Promise<void> {
-        if (!this.photoUpload) return console.warn('Unable to upload photo since no upload data is present.')
+    public async uploadPhotoAsync(): Promise<UploadResult> {
+        const result: UploadResult = { success: false }
+        if (!this.photoUpload) {
+            console.warn('Unable to upload photo since no upload data is present.')
+            return result
+        }
         const compressedPhoto = await imageCompression(this.photoUpload.file, this.COMPRESSION_OPTIONS)
         const formData = new FormData()
         formData.append('photoFile', compressedPhoto, compressedPhoto.name)
         formData.append('photoInfo', new Blob([JSON.stringify(this.photoUpload.info)], { type: 'application/json' }))
         await lastValueFrom(this.http.post(this.BASE_PATH, formData))
-            .catch((e: Error) => console.error(`Error while uploading photo: ${e.message}`))
-        this.photoUpload.info.routeIds.forEach(routeId => this.cachedPhotosByRouteId.delete(routeId))
-        this.uploadSubject.next()
+            .then(response => {
+                (<Photo>response).routeIds.forEach(routeId => this.cachedPhotosByRouteId.delete(routeId))
+                this.uploadSubject.next()
+                result.success = true
+            })
+            .catch((error: HttpErrorResponse) => {
+                if (error.status === 403) {
+                    console.warn(error.error)
+                    result.errorMessage = 'Dieses Foto wurde bereits hochgeladen.'
+                }
+            })
+        return result
     }
 
     public async getPhotosByRouteId(routId: number): Promise<Photo[]> {

@@ -39,10 +39,14 @@ export class PhotoUploadComponent {
         }
     }
 
-    public submit(): void {
-        this.mapPhotosService.uploadPhotoAsync()
+    public async submitAsync(): Promise<void> {
+        const { success, errorMessage } = await this.mapPhotosService.uploadPhotoAsync()
+        if (success) {
+            this.toastService.show('', 'Vielen Dank, Ihr Foto wurde übermittelt!', 'bg-success text-light')
+        } else if (errorMessage) {
+            this.toastService.show('', errorMessage, 'bg-danger text-light')
+        }
         this.closeModal()
-        this.toastService.show('', 'Vielen Dank, Ihr Foto wurde übermittelt!', 'bg-success text-light')
     }
     
     public reset(): void {

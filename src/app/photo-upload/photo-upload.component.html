@@ -13,7 +13,7 @@
         <input #fileInput type="file" accept=".jpg, .jpeg," class="form-control" (change)="handlePhotoInputAsync($event)">
     </div>
     <div class="modal-footer">
-        <button class="btn btn-light" (click)="submit()" [disabled]="!fileInput.value || errorMessage">Übermitteln</button>
+        <button class="btn btn-light" (click)="submitAsync()" [disabled]="!fileInput.value || errorMessage">Übermitteln</button>
     </div>
 </ng-template>
 

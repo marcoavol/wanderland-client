@@ -11,7 +11,7 @@ import { MapPhotosService } from './map-photos.service';
 import { RouteDatum } from '../types/map.types';
 
 // FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
-// FIXME: Einige Routen haben keine Properties (TopoJSONs überprüfen!)
+// FIXME: Einige Routen haben keine Properties und teils Routen von SwissMobile sind nicht vorhanden (TopoJSONs überprüfen!)
 
 @Component({
     selector: 'app-map',
@@ -50,8 +50,6 @@ export class MapComponent implements OnInit, OnDestroy {
     private zoomTransform: D3.ZoomTransform = D3.zoomIdentity
     private zoomExtent: [number, number] = [1, 8]
 
-    // private photos: [number, number][] = [[9.396352777777777, 46.9688],]  // [lon, lat] e.g. [9.377264, 47.423728], [7.377264, 47.423728], [9.277264, 47.493000]
-
     private isAlive = true
 
     constructor(
@@ -68,7 +66,7 @@ export class MapComponent implements OnInit, OnDestroy {
      * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
      * @returns An array containing the ID of each route that is considered near.
      */
-     public static nearKnownRoutes(coordinates: [number, number]): number[] {
+    public static nearKnownRoutes(coordinates: [number, number]): number[] {
         const nearKnownRouteIds: number[] = []
         D3.selectAll('.route').each((datum: any, index: number, nodes: any) => {
             if (datum.geometry) {
@@ -139,15 +137,8 @@ export class MapComponent implements OnInit, OnDestroy {
             .on('zoom', (event: D3.D3ZoomEvent<any, any>) => {
                 this.zoomTransform = event.transform
                 D3.selectAll('path')
-                    .attr('transform', event.transform.toString()) 
-                D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR)
-                    .attr('transform', (datum: any) => event.transform.toString() + `translate(${this.projection([datum[0], datum[1]])})`)
-                    .attr('r', 8 / event.transform.k)
-                    .attr('style', `stroke-width: ${1 / event.transform.k}`)
-                D3.selectAll(this.PHOTO_LOCATION_SELECTOR)
-                    .attr('transform', (datum: any) => event.transform.toString() + `translate(${this.projection([datum.lon, datum.lat])})`)
-                    .attr('r', 8 / event.transform.k)
-                    .attr('style', `stroke-width: ${1 / event.transform.k}`)
+                    .attr('transform', event.transform.toString())
+                this.transformRouteEndpointsAndPhotoLocations()
             })
         this.svg.call(zoomBehaviour)
     }
@@ -167,11 +158,19 @@ export class MapComponent implements OnInit, OnDestroy {
                 .attr('height', this.height)
             D3.selectAll<SVGPathElement, any>('path')
                 .attr('d', this.path)
-            D3.selectAll('circle')
-                .attr('transform', (datum: any) => this.zoomTransform.toString() + `translate(${this.projection([datum[0], datum[1]])})`)
-                .attr('r', 8 / this.zoomTransform.k)
-                .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
+            this.transformRouteEndpointsAndPhotoLocations()
         }
+    }
+
+    private transformRouteEndpointsAndPhotoLocations(): void {
+        D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR)
+            .attr('transform', (datum: any) => this.zoomTransform.toString() + `translate(${this.projection([datum[0], datum[1]])})`)
+            .attr('r', 8 / this.zoomTransform.k)
+            .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
+        D3.selectAll(this.PHOTO_LOCATION_SELECTOR)
+            .attr('transform', (datum: any) => this.zoomTransform.toString() + `translate(${this.projection([datum.lon, datum.lat])})`)
+            .attr('r', 8 / this.zoomTransform.k)
+            .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
     }
 
     private async renderAsync(): Promise<void> {
@@ -337,7 +336,7 @@ export class MapComponent implements OnInit, OnDestroy {
         D3.selectAll(this.MUNICIPALITY_SELECTOR)
             .classed('active', false)
         D3.selectAll(this.ROUTE_SELECTOR)
-            .classed('active', false)        
+            .classed('active', false)
         D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR)
             .remove()
         D3.selectAll(this.PHOTO_LOCATION_SELECTOR)
