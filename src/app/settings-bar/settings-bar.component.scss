@@ -1,11 +1,16 @@
+:host {
+    overflow-y: auto;
+}
+
 form {
     width: 100%;
     padding: 16px !important;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
+    user-select: none;
 
-    input {
+    label, input {
         cursor: pointer;
     }
 }
@@ -17,10 +22,12 @@ section {
     }
 }
 
-.filters {
-    display: flex;
-    flex-direction: column;
-    margin-top: 20px;
-    //width: 350px;
+label {
+    padding: 0;
+}
+
+.checkbox-group {
+    display: flex; 
+    justify-content: space-between;
 }
 

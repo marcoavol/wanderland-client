@@ -1,21 +1,21 @@
 <form [formGroup]="mapSettingsForm" (change)="mapSettingsChanged()">
     <section>
         <p>Streckentypen</p>
-        <div style="display: flex; justify-content: space-between;">
+        <div class="checkbox-group">
             <div  class="form-check form-switch">
-                <label style="padding: 0">
+                <label>
                     National
                     <input formControlName="national" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
-                <label style="padding: 0">
+                <label>
                     Regional
                     <input formControlName="regional" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
-                <label style="padding: 0">
+                <label>
                     Lokal
                     <input formControlName="local" type="checkbox" class="form-check-input" />
                 </label>
@@ -77,21 +77,21 @@
 
     <section>
         <p>Technik</p>
-        <div style="display: flex; justify-content: space-between;">
+        <div class="checkbox-group">
             <div  class="form-check form-switch">
-                <label style="padding: 0">
+                <label>
                     leicht
                     <input formControlName="easy" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
-                <label style="padding: 0">
+                <label>
                     mittel
                     <input formControlName="medium" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
-                <label style="padding: 0">
+                <label>
                     schwer
                     <input formControlName="hard" type="checkbox" class="form-check-input" />
                 </label>
@@ -101,21 +101,21 @@
 
     <section>
         <p>Kondition</p>
-        <div style="display: flex; justify-content: space-between;">
+        <div class="checkbox-group">
             <div  class="form-check form-switch">
-                <label style="padding: 0">
+                <label>
                     leicht
                     <input formControlName="lowFitness" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
-                <label style="padding: 0">
+                <label>
                     mittel
                     <input formControlName="mediumFitness" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
-                <label style="padding: 0">
+                <label>
                     schwer
                     <input formControlName="goodFitness" type="checkbox" class="form-check-input" />
                 </label>
@@ -123,7 +123,7 @@
         </div>
     </section>
 
+    <div style="display: flex; align-items: center; margin-top: 16px">
+        <button type="button" class="btn btn-outline-dark" style="width: 100px; margin: 0 auto;" (click)="offcanvas.close('Close click')">Schliessen</button>
+    </div>
 </form>
-<div style="display: flex; align-items: center; margin-top: 100px;">
-    <button type="button" class="btn btn-outline-dark" style="width: 100px; margin: 0 auto;" (click)="offcanvas.close('Close click')">Close</button>
-</div>
