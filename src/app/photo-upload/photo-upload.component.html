@@ -2,11 +2,11 @@
 
 <ng-template #modalContent>
     <div class="modal-header">
-        <h4 class="modal-title">Foto Upload</h4>
+        <h4 class="modal-title">Foto-Upload</h4>
         <button type="button" class="btn-close" style="margin-right: 4px" aria-label="Schliessen" (click)="closeModal()"></button>
     </div>
     <div class="modal-body text-center">
-        <div *ngIf="fileInput.value && photoPreviewURL" class="" style="padding: 16px; display: flex; justify-content: center; align-items: center;">
+        <div *ngIf="fileInput.value && photoPreviewURL" class="" style="padding: 0 16px 16px; display: flex; justify-content: center; align-items: center;">
             <img [src]="photoPreviewURL" class="img-thumbnail" style="max-height: 180px;">
         </div>
         <p *ngIf="fileInput.value && this.errorMessage" class="text-danger text-center" style="margin: auto; padding-bottom: 16px">{{errorMessage}}</p>
