@@ -4,19 +4,19 @@
         <div class="checkbox-group">
             <div  class="form-check form-switch">
                 <label>
-                    National
+                    national
                     <input formControlName="national" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
                 <label>
-                    Regional
+                    regional
                     <input formControlName="regional" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
                 <label>
-                    Lokal
+                    lokal
                     <input formControlName="local" type="checkbox" class="form-check-input" />
                 </label>
             </div>
@@ -50,19 +50,6 @@
     </section>
 
     <section>
-        <p>Abstieg [m]</p>
-        <div>
-            <app-range-slider
-                [min]="0" [max]="50000" [step]="50" 
-                [initialLower]="mapSettingsForm.value.descendingMin" 
-                [initialUpper]="mapSettingsForm.value.descendingMax" 
-                [unit]="descendingUnit"
-                (onRangeChanged)="handleDescendingRangeChange($event)">
-            </app-range-slider>
-        </div>
-    </section>
-
-    <section>
         <p>Länge [km]</p>
         <div>
             <app-range-slider
@@ -81,19 +68,19 @@
             <div  class="form-check form-switch">
                 <label>
                     leicht
-                    <input formControlName="easy" type="checkbox" class="form-check-input"/>
+                    <input formControlName="lowSkills" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
                 <label>
                     mittel
-                    <input formControlName="medium" type="checkbox" class="form-check-input"/>
+                    <input formControlName="mediumSkills" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
                 <label>
                     schwer
-                    <input formControlName="hard" type="checkbox" class="form-check-input" />
+                    <input formControlName="goodSkills" type="checkbox" class="form-check-input" />
                 </label>
             </div>
         </div>

@@ -6,13 +6,11 @@ export interface MapSettings {
     durationMax: number;
     elevationMin: number;
     elevationMax: number;
-    descendingMin: number;
-    descendingMax: number;
     lengthMin: number;
     lengthMax: number;
-    easy: boolean;
-    medium: boolean;
-    hard: boolean;
+    lowSkills: boolean;
+    mediumSkills: boolean;
+    goodSkills: boolean;
     lowFitness: boolean;
     mediumFitness: boolean;
     goodFitness: boolean;
