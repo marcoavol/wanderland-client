@@ -18,9 +18,9 @@ export class MapSettingsService {
         elevationMax: 50000,
         lengthMin: 0,
         lengthMax: 700000,
-        easy: true,
-        medium: true,
-        hard: true,
+        lowSkills: true,
+        mediumSkills: true,
+        goodSkills: true,
         lowFitness: true,
         mediumFitness: true,
         goodFitness: true
@@ -75,9 +75,9 @@ export class MapSettingsService {
 
     private routeMeetsTechniqueTypeSetting(techniqueType: 'leicht' | 'mittel' | 'schwer'): boolean {
         switch (techniqueType) {
-            case 'leicht': return this.currentSettings.easy
-            case 'mittel': return this.currentSettings.medium
-            case 'schwer': return this.currentSettings.hard
+            case 'leicht': return this.currentSettings.lowSkills
+            case 'mittel': return this.currentSettings.mediumSkills
+            case 'schwer': return this.currentSettings.goodSkills
             default: return false
         }
     }
