@@ -124,7 +124,7 @@ export class MapPhotosService {
     }
 
     public openCarouselModal(photos: Photo[]): void {
-        const modalRef = this.modalService.open(PhotoCarouselComponent, { centered: true })
+        const modalRef = this.modalService.open(PhotoCarouselComponent, { centered: true, windowClass: 'photo-carousel' })
         modalRef.componentInstance.photos = photos
     }
 
