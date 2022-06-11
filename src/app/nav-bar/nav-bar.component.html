@@ -1,6 +1,24 @@
 <nav class="nav-bar">
+    
     <button class="btn btn-md btn-outline-primary" (click)="open()">
         <i class="bi bi-sliders"></i>
         Filtern
     </button>
+
+    <!-- <div>
+        <app-search-bar></app-search-bar>     
+    </div> -->
+    
+    <div>
+        <input 
+            id="canton-search" 
+            type="text" 
+            class="form-control"
+            [ngbTypeahead]="search"
+            #instance="ngbTypeahead"
+        />
+    </div>
+    
+
+
 </nav>
