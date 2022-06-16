@@ -3,6 +3,7 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsBarComponent } from '../settings-bar/settings-bar.component';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
+import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 
 @Component({
     selector: 'app-nav-bar',
@@ -11,8 +12,7 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 })
 export class NavBarComponent implements OnInit {
 
-    private cantons = ['Bern', 'Neuernburg', 'Jura', 'Zürich', 'Zug', 'Luzern', 'Aargau', 
-                        'St. Gallen', 'Graubünden', 'Wallis', 'Genf', 'Glarus', 'Solothurn'];
+    private cantonNames = Gemeindeverzeichnis.KT.map(Gemeindeverzeichnis => Gemeindeverzeichnis.GDEKTNA);
 
     search = (text$: Observable<string>) =>
         text$.pipe(
@@ -20,7 +20,7 @@ export class NavBarComponent implements OnInit {
         distinctUntilChanged(),
         map(term => term.length < 1 
             ? []
-            : this.cantons.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+            : this.cantonNames.filter(v => v.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
     )
 
     constructor(
@@ -28,13 +28,12 @@ export class NavBarComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-  
+        
     }
 
     public open() {
         this.offcanvasService.open(SettingsBarComponent);
     }
-
 }
 
 

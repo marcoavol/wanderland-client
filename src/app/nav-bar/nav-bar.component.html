@@ -9,16 +9,20 @@
         <app-search-bar></app-search-bar>     
     </div> -->
     
-    <div>
-        <input 
-            id="canton-search" 
-            type="text" 
-            class="form-control"
-            [ngbTypeahead]="search"
-            #instance="ngbTypeahead"
-        />
-    </div>
-    
+    <form class="">
+        <div class="input-group mb-3">
+            <input 
+                class="form-control form-control-lg"
+                id="canton-search" 
+                type="text" 
+                placeholder="Suche hier"
+                class="form-control"
+                [ngbTypeahead]="search"
+                #instance="ngbTypeahead"
+            />
+            <button class="btn btn-md btn-outline-primary" type="submit"><i class="bi bi-search me-2"></i> Suche</button>
+        </div>
+    </form>
 
 
 </nav>
