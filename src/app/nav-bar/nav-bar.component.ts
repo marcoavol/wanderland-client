@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsBarComponent } from '../settings-bar/settings-bar.component';
 import { Observable } from 'rxjs';
@@ -11,6 +11,9 @@ import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
     styleUrls: ['./nav-bar.component.scss']
 })
 export class NavBarComponent implements OnInit {
+
+    @ViewChild('searchInput')
+    searchInput: ElementRef
 
     private cantonNames = Gemeindeverzeichnis.KT.map(Gemeindeverzeichnis => Gemeindeverzeichnis.GDEKTNA);
 
@@ -33,6 +36,10 @@ export class NavBarComponent implements OnInit {
 
     public open() {
         this.offcanvasService.open(SettingsBarComponent);
+    }
+
+    public readSearchInput(): void {
+        console.warn(this.searchInput.nativeElement.value)
     }
 }
 

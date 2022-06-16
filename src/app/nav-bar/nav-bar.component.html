@@ -2,7 +2,7 @@
     
     <button class="btn btn-md btn-outline-primary" (click)="open()">
         <i class="bi bi-sliders"></i>
-        Filtern
+        Filter
     </button>
 
     <!-- <div>
@@ -12,6 +12,7 @@
     <form class="">
         <div class="input-group mb-3">
             <input 
+                #searchInput
                 class="form-control form-control-lg"
                 id="canton-search" 
                 type="text" 
@@ -20,7 +21,10 @@
                 [ngbTypeahead]="search"
                 #instance="ngbTypeahead"
             />
-            <button class="btn btn-md btn-outline-primary" type="submit"><i class="bi bi-search me-2"></i> Suche</button>
+            <button type="button" class="btn btn-md btn-outline-primary" (click)="readSearchInput()"> 
+                <i class="bi bi-search me-2"></i> 
+                Suche
+            </button>
         </div>
     </form>
 
