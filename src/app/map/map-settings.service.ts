@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MapSettings } from '../types/settings.types';
 import { BehaviorSubject } from 'rxjs';
-import { descending } from 'd3';
 
 @Injectable({
     providedIn: 'root'

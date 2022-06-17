@@ -110,7 +110,7 @@ export class MapPhotosService {
     private async loadPhotosByRouteIdAsync(routeId: number): Promise<Photo[]> {
         if (!this.cachedPhotosByRouteId.has(routeId)) {
             const photos = <Photo[]>await lastValueFrom(this.http.get(this.BASE_PATH + '/' + routeId))
-                .catch((e: Error) => console.error(`Error while loading photos for routeId ${routeId}: ${e.message}`))
+                .catch((error: HttpErrorResponse) => console.error(`Error while loading photos for routeId ${routeId}: ${error.error}`))
             this.cachedPhotosByRouteId.set(routeId, photos)
         }
         return this.cachedPhotosByRouteId.get(routeId)!

@@ -8,7 +8,7 @@ import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
 import { MapSettingsService } from './map-settings.service';
 import { MapPhotosService } from './map-photos.service';
-import { RouteDatum } from '../types/map.types';
+import { RouteDatum, RouteProperties } from '../types/map.types';
 
 // FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
 // FIXME: Einige Routen haben keine Properties und teils Routen von SwissMobile sind nicht vorhanden (TopoJSONs überprüfen!)
@@ -217,8 +217,20 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('class', datum => `${this.MUNICIPALITY_SELECTOR.slice(1)} m${datum.id}`)
             .on('mouseenter', (event: MouseEvent, datum: any) => {
                 const municipalityName = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDENAME
-                const cantonName = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDEKTNA
-                console.warn(municipalityName, cantonName)
+                const cantonAbbrevation = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDEKT
+                if (municipalityName && cantonAbbrevation) {
+                    const tooltipHtml = `
+                        <p>
+                            <i class="bi bi-map"></i>
+                            ${municipalityName} (${cantonAbbrevation})
+                        </p>
+                    `
+                    this.displayTooltip(event, tooltipHtml)
+
+                }
+            })
+            .on('mouseout', (event: MouseEvent, datum: any) => {
+                this.hideTooltip()
             })
 
         // Render cantons
@@ -232,13 +244,6 @@ export class MapComponent implements OnInit, OnDestroy {
                 const cantonAbbreviation = Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)!.GDEKT
                 return (Kantonsfarben as { [key: string]: string })[cantonAbbreviation]
             })
-        // .on('click', (event: PointerEvent, datum: any) => {
-        //     console.warn(Gemeindeverzeichnis.KT.find(kt => kt.KTNR === datum.id)?.GDEKT)
-        //     D3.selectAll(this.CANTON_SELECTOR).classed('active', false)
-        //     D3.select(event.target as Element).classed('active', true).raise()
-        //     // const lonLat = this.projection.invert!([e.pageX, e.pageY])
-        //     // console.warn(lonLat![1], lonLat![0])                    
-        // })
 
         // Render routes    
         D3.select(this.ROUTES_CONTAINER_SELECTOR).selectAll('path')
@@ -254,15 +259,30 @@ export class MapComponent implements OnInit, OnDestroy {
                 this.renderSelectedRouteEndpoints(datum.geometry.coordinates)
                 this.renderSelectedRoutePhotoLocationsAsync(datum.properties.OBJECTID)
             })
-            .on('mouseenter', (event: MouseEvent) => {
+            .on('mouseenter', (event: MouseEvent, datum: any) => {
                 if (!D3.select(event.target as Element).classed('active')) {
                     D3.select(event.target as Element).raise()
                 }
+                const routeProperties = <RouteProperties>(datum.properties)
+                console.warn(routeProperties.Richtung)
+                const tooltipHtml = `
+                    <p>
+                        <i class="bi bi-signpost-split-fill"></i>
+                        ${routeProperties.BeschreibR}
+                    </p>
+                `
+                this.displayTooltip(event, tooltipHtml)
+                // const municipalityName = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDENAME
+                // const cantonAbbrevation = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDEKT
+                // if (municipalityName && cantonAbbrevation) {
+                //     this.displayTooltip(event, `<p>${municipalityName} (${cantonAbbrevation})</p>`)
+                // }
             })
             .on('mouseout', (event: MouseEvent) => {
                 if (!D3.select(event.target as Element).classed('active')) {
                     D3.select(event.target as Element).lower()
                 }
+                this.hideTooltip()
             })
 
     }
@@ -303,17 +323,26 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('r', 8 / this.zoomTransform.k)
             .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
             .on('click', (event: PointerEvent, datum: any) => {
-                console.warn(datum)
-                // open modal
                 this.mapPhotosService.openCarouselModal([datum])
             })
+    }
+
+    private resetRouteSelection(): void {
+        D3.selectAll(this.MUNICIPALITY_SELECTOR)
+            .classed('active', false)
+        D3.selectAll(this.ROUTE_SELECTOR)
+            .classed('active', false)
+        D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR)
+            .remove()
+        D3.selectAll(this.PHOTO_LOCATION_SELECTOR)
+            .remove()
     }
 
     /**
      * Takes (WGS84) coordinates of a point and converts it (with the same projection as used for the topology) 
      * to a DOMPoint representing the position of the given coordinates within the main SVG element.
-     * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
-     * @returns A DOMPoint within the main SVG-Element representing the projected input point or null if the input point is outside the clipping bounds of the projection.
+     * @param coordinates a two-element array containing longitude and latitude (in this order) of a point in degrees.
+     * @returns a DOMPoint within the main SVG-Element representing the projected input point or null if the input point is outside the clipping bounds of the projection.
      */
     private coordinatesToProjectedSVGPoint(coordinates: [number, number]): DOMPoint | null {
         const projectedCoordinates = this.projection(coordinates)
@@ -332,15 +361,16 @@ export class MapComponent implements OnInit, OnDestroy {
         })
     }
 
-    private resetRouteSelection(): void {
-        D3.selectAll(this.MUNICIPALITY_SELECTOR)
-            .classed('active', false)
-        D3.selectAll(this.ROUTE_SELECTOR)
-            .classed('active', false)
-        D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR)
-            .remove()
-        D3.selectAll(this.PHOTO_LOCATION_SELECTOR)
-            .remove()
+    private displayTooltip(event: MouseEvent, html: string): void {
+        const offsetX = -50
+        const offsetY = event.pageY < window.innerHeight / 2 ? 35 : -65
+        D3.select('#tooltip').classed('hidden', false)
+            .attr('style', `left: ${event.pageX + offsetX}px; top: ${event.pageY + offsetY}px`)
+            .html(html)
+    }
+
+    private hideTooltip(): void {
+        D3.select('#tooltip').classed('hidden', true)
     }
 
     ngOnDestroy(): void {

@@ -1,6 +1,14 @@
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+
+#map {
+    position: relative;
+}
+
 .background {
     fill: #1B3B6F;
     pointer-events: visible;
+    z-index: -1;
 }
 
 .country {
@@ -70,4 +78,29 @@
     stroke: black;
     stroke-width: 1;
     cursor: pointer;
+}
+
+#tooltip {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    background-color: $light;
+    border-radius: 2px;
+    box-shadow: $box-shadow;
+    font-size: $font-size-sm;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 999;
+
+    p {
+        margin: 0;
+        padding: 2px;
+    }
+}
+
+#tooltip.hidden {
+    // display: none;
 }
