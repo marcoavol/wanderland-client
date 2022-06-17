@@ -1,4 +1,4 @@
-<nav class="nav-bar">
+<nav class="nav-bar d-flex justify-content-between">
     
     <button class="btn btn-md btn-outline-primary" (click)="open()">
         <i class="bi bi-sliders"></i>
@@ -8,9 +8,9 @@
     <!-- <div>
         <app-search-bar></app-search-bar>     
     </div> -->
-    
+
     <form class="">
-        <div class="input-group mb-3">
+        <div class="input-group d-flex align-items-center">
             <input 
                 #searchInput
                 class="form-control form-control-lg"
@@ -21,12 +21,15 @@
                 [ngbTypeahead]="search"
                 #instance="ngbTypeahead"
             />
-            <button type="button" class="btn btn-md btn-outline-primary" (click)="readSearchInput()"> 
+            <button type="button" class="btn btn-md btn-outline-primary d-flex align-items-center" (click)="readSearchInput()"> 
                 <i class="bi bi-search me-2"></i> 
                 Suche
             </button>
         </div>
     </form>
 
+    <h2 style="color: #0d6efd;">
+        Wanderland
+    </h2>
 
 </nav>
