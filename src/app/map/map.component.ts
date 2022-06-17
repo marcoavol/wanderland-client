@@ -226,7 +226,6 @@ export class MapComponent implements OnInit, OnDestroy {
                         </p>
                     `
                     this.displayTooltip(event, tooltipHtml)
-
                 }
             })
             .on('mouseout', (event: MouseEvent, datum: any) => {
