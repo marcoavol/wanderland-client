@@ -5,6 +5,11 @@ import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 
+//TODO Supress submit cmd when Enter is clicked => enter should run readSearchInput() method
+//TODO change width of input field
+//TODO connect input to map => zoom or show selected canton
+//TODO create a component for the search bar analog to range slider
+
 @Component({
     selector: 'app-nav-bar',
     templateUrl: './nav-bar.component.html',

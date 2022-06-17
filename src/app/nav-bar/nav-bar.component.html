@@ -1,35 +1,29 @@
-<nav class="nav-bar d-flex justify-content-between">
-    
+<nav class="nav-bar d-flex">
     <button class="btn btn-md btn-outline-primary" (click)="open()">
         <i class="bi bi-sliders"></i>
         Filter
     </button>
 
-    <!-- <div>
-        <app-search-bar></app-search-bar>     
-    </div> -->
-
-    <form class="">
-        <div class="input-group d-flex align-items-center">
+    <form>
+        <div class="input-group searchbar">
             <input 
                 #searchInput
-                class="form-control form-control-lg"
+                class="form-control"
                 id="canton-search" 
                 type="text" 
-                placeholder="Suche hier"
+                placeholder="Suche hier..."
                 class="form-control"
                 [ngbTypeahead]="search"
                 #instance="ngbTypeahead"
             />
-            <button type="button" class="btn btn-md btn-outline-primary d-flex align-items-center" (click)="readSearchInput()"> 
+            <button type="button" class="btn btn-md btn-outline-primary" 
+                    (click)="readSearchInput()"> 
                 <i class="bi bi-search me-2"></i> 
                 Suche
             </button>
         </div>
     </form>
 
-    <h2 style="color: #0d6efd;">
-        Wanderland
-    </h2>
+    <h2 class="title">Wanderland</h2>
 
 </nav>

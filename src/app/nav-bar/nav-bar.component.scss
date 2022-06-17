@@ -1,12 +1,21 @@
 .nav-bar {
-    //position: fixed; 
     width: 100%;
     padding: 12px;
-    //display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
     align-items: center;
     color: whitesmoke; 
     background-color: #1B3B6F;
     backdrop-filter: blur(1px);
     border-bottom: 1px solid rgba(245, 245, 245, 0.1);
     user-select: none;
+}
+
+.title {
+    color: #0d6efd;
+}
+
+.searchbar {
+    align-items: center;
+    min-width: 350px;
 }
