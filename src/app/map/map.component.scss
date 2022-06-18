@@ -95,10 +95,15 @@
     pointer-events: none;
     z-index: 999;
 
-    p {
-        margin: 0;
+    & p {
+        margin: 0 4px;
         padding: 2px;
+
+        i {
+            margin-right: 4px;
+        }
     }
+
 }
 
 #tooltip.hidden {

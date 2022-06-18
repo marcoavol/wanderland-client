@@ -10,9 +10,6 @@ import { MapSettingsService } from './map-settings.service';
 import { MapPhotosService } from './map-photos.service';
 import { RouteDatum, RouteProperties } from '../types/map.types';
 
-// FIXME: Kantone einfärben mit leichtem Gradient mit allen Farben des Kantonswappens für bessere Wiedererkennung
-// FIXME: Einige Routen haben keine Properties und teils Routen von SwissMobile sind nicht vorhanden (TopoJSONs überprüfen!)
-
 @Component({
     selector: 'app-map',
     templateUrl: './map.component.html',
@@ -63,8 +60,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
     /**
      * Takes (WGS84) coordinates of a point and returns all near routes (within a given threshold in meters) from its projected point within the main SVG element.
-     * @param coordinates A two-element array containing longitude and latitude (in this order) of a point in degrees.
-     * @returns An array containing the ID of each route that is considered near.
+     * @param coordinates a two-element array containing longitude and latitude (in this order) of a point in degrees.
+     * @returns an array containing the id of each route that is considered near.
      */
     public static nearKnownRoutes(coordinates: [number, number]): number[] {
         const nearKnownRouteIds: number[] = []
@@ -204,9 +201,6 @@ export class MapComponent implements OnInit, OnDestroy {
             .append('path')
             .attr('d', this.path)
             .attr('class', datum => `${this.LAKE_SELECTOR.slice(1)} l${datum.id}`)
-            .on('mouseenter', (event: MouseEvent, datum: any) => {
-                console.warn(datum)
-            })
 
         // Render municipalities
         D3.select(this.MUNICIPALITIES_CONTAINER_SELECTOR).selectAll('path')
@@ -217,12 +211,12 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('class', datum => `${this.MUNICIPALITY_SELECTOR.slice(1)} m${datum.id}`)
             .on('mouseenter', (event: MouseEvent, datum: any) => {
                 const municipalityName = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDENAME
-                const cantonAbbrevation = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDEKT
-                if (municipalityName && cantonAbbrevation) {
+                const cantonAbbreviation = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDEKT
+                if (municipalityName && cantonAbbreviation) {
                     const tooltipHtml = `
                         <p>
                             <i class="bi bi-map"></i>
-                            ${municipalityName} (${cantonAbbrevation})
+                            ${municipalityName} (${cantonAbbreviation})
                         </p>
                     `
                     this.displayTooltip(event, tooltipHtml)
@@ -252,30 +246,87 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('d', this.path)
             .attr('class', this.ROUTE_SELECTOR.slice(1))
             .on('click', (event: PointerEvent, datum: any) => {
-                console.warn(datum)
                 D3.selectAll(this.ROUTE_SELECTOR).classed('active', false)
                 D3.select(event.target as Element).classed('active', true).raise()
-                this.renderSelectedRouteEndpoints(datum.geometry.coordinates)
-                this.renderSelectedRoutePhotoLocationsAsync(datum.properties.OBJECTID)
+                const routeDatum = <RouteDatum>(datum)
+                this.renderSelectedRouteEndpoints(routeDatum.geometry.coordinates)
+                this.renderSelectedRoutePhotoLocationsAsync(routeDatum.properties.OBJECTID)
+                const routeProperties = <RouteProperties>(datum.properties)
+                console.warn(JSON.stringify(routeProperties, undefined, 2))
+                const tooltipHtml = `
+                    <div class="w-100 text-center p-2">
+                        <p class="fw-bold">
+                            ${routeProperties.TourNameR}
+                        </p>
+                        <p>
+                            <i class="bi bi-signpost-split"></i>
+                            ${routeProperties.BeschreibR}
+                        </p>
+                    </div>
+                    <div class="border-top w-100 text-center p-2">
+                        <p>Eigenschaften:</p>
+                        <div class="d-flex justify-content-evenly">
+                            <p>
+                                <i class="bi bi-stopwatch"></i>
+                                Dauer: ${routeProperties.ZeitStZiR}
+                            </p>
+                            <p>
+                                <i class="bi bi-code"></i>
+                                Distanz: ${routeProperties.LaengeR}
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-evenly">
+                            <p>
+                                <i class="bi bi-arrow-bar-up"></i>
+                                Aufstieg: ${routeProperties.HoeheAufR}
+                            </p>
+                            <p>
+                                <i class="bi bi-arrow-bar-down"></i>
+                                Abstieg: ${routeProperties.HoeheAbR}
+                            </p>
+                        </div>
+                        <div class="d-flex justify-content-evenly">
+                            <p>
+                                <i class="bi bi-chevron-bar-up"></i>
+                                Min. m.ü.M.: ${routeProperties.HoeheMaxR}
+                            </p>
+                            <p>
+                                <i class="bi bi-chevron-bar-down"></i>
+                                Max. m.ü.M.: ${routeProperties.HoeheMinR}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="border-top w-100 text-center p-2">
+                        <p>Anforderung:</p>
+                        <div class="d-flex justify-content-evenly">
+                            <p>
+                                <i class="bi bi-heart-pulse"></i>
+                                Kondition: ${routeProperties.KonditionR}
+                            </p>
+                            <p>
+                                <i class="bi bi-gear"></i>
+                                Technik: ${routeProperties.TechnikR}
+                            </p>
+                        </div>
+                    </div>
+                `
+                this.displayTooltip(event, tooltipHtml)
             })
             .on('mouseenter', (event: MouseEvent, datum: any) => {
                 if (!D3.select(event.target as Element).classed('active')) {
                     D3.select(event.target as Element).raise()
                 }
                 const routeProperties = <RouteProperties>(datum.properties)
-                console.warn(routeProperties.Richtung)
                 const tooltipHtml = `
+                    <p style="font-weight: bold">
+                        ${routeProperties.TourNameR}
+                    </p>
                     <p>
-                        <i class="bi bi-signpost-split-fill"></i>
+                        <i class="bi bi-signpost-split"></i>
                         ${routeProperties.BeschreibR}
                     </p>
                 `
                 this.displayTooltip(event, tooltipHtml)
-                // const municipalityName = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDENAME
-                // const cantonAbbrevation = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDEKT
-                // if (municipalityName && cantonAbbrevation) {
-                //     this.displayTooltip(event, `<p>${municipalityName} (${cantonAbbrevation})</p>`)
-                // }
             })
             .on('mouseout', (event: MouseEvent) => {
                 if (!D3.select(event.target as Element).classed('active')) {
@@ -361,10 +412,14 @@ export class MapComponent implements OnInit, OnDestroy {
     }
 
     private displayTooltip(event: MouseEvent, html: string): void {
-        const offsetX = -50
-        const offsetY = event.pageY < window.innerHeight / 2 ? 35 : -65
+        const offsetY = 25
+        const offsetX = -100
+        const isInBottomHalf = event.pageY > window.innerHeight / 2
+        const positionY = isInBottomHalf ? window.innerHeight - event.pageY + offsetY : event.pageY + offsetY
+        const positionX = event.pageX + offsetX
         D3.select('#tooltip').classed('hidden', false)
-            .attr('style', `left: ${event.pageX + offsetX}px; top: ${event.pageY + offsetY}px`)
+            .attr('style', 'top: 0; bottom: 0')
+            .attr('style', `left: ${positionX}px; ${isInBottomHalf ? 'bottom' :  'top'}: ${positionY}px`)
             .html(html)
     }
 
