@@ -24,7 +24,7 @@
     </section>
     
     <section>
-        <p>Zeitdauer [dd:hh:mm]</p>
+        <p>Dauer [dd:hh:mm]</p>
         <div>
             <app-range-slider
                 [min]="0" [max]="17280" [step]="15" 
@@ -32,6 +32,19 @@
                 [initialUpper]="mapSettingsForm.value.durationMax" 
                 [unit]="durationUnit"
                 (onRangeChanged)="handleDurationRangeChange($event)">
+            </app-range-slider>
+        </div>
+    </section>
+
+    <section>
+        <p>Distanz [km]</p>
+        <div>
+            <app-range-slider
+                [min]="0" [max]="700000" [step]="500" 
+                [initialLower]="mapSettingsForm.value.lengthMin" 
+                [initialUpper]="mapSettingsForm.value.lengthMax" 
+                [unit]="lengthUnit"
+                (onRangeChanged)="handleLengthRangeChange($event)">
             </app-range-slider>
         </div>
     </section>
@@ -58,19 +71,6 @@
                 [initialUpper]="mapSettingsForm.value.descendingMax" 
                 [unit]="descendingUnit"
                 (onRangeChanged)="handleDescendingRangeChange($event)">
-            </app-range-slider>
-        </div>
-    </section>
-
-    <section>
-        <p>Länge [km]</p>
-        <div>
-            <app-range-slider
-                [min]="0" [max]="700000" [step]="500" 
-                [initialLower]="mapSettingsForm.value.lengthMin" 
-                [initialUpper]="mapSettingsForm.value.lengthMax" 
-                [unit]="lengthUnit"
-                (onRangeChanged)="handleLengthRangeChange($event)">
             </app-range-slider>
         </div>
     </section>

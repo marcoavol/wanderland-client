@@ -9,6 +9,7 @@ import Kantonsfarben from '../../assets/kantonsfarben.json';
 import { MapSettingsService } from './map-settings.service';
 import { MapPhotosService } from './map-photos.service';
 import { RouteDatum, RouteProperties } from '../types/map.types';
+import { UnitUtilsServiceService } from '../utils/unit-utils-service.service';
 
 @Component({
     selector: 'app-map',
@@ -52,6 +53,7 @@ export class MapComponent implements OnInit, OnDestroy {
     constructor(
         private mapSettingsService: MapSettingsService,
         private mapPhotosService: MapPhotosService,
+        private unitUtilsService: UnitUtilsServiceService
     ) { }
 
     ngOnInit(): void {
@@ -268,31 +270,31 @@ export class MapComponent implements OnInit, OnDestroy {
                         <div class="d-flex justify-content-evenly">
                             <p>
                                 <i class="bi bi-stopwatch"></i>
-                                Dauer: ${routeProperties.ZeitStZiR}
+                                Dauer: ${this.unitUtilsService.convertToUnit(routeProperties.ZeitStZiR, 'DaysHoursMinutes', true)}
                             </p>
                             <p>
                                 <i class="bi bi-code"></i>
-                                Distanz: ${routeProperties.LaengeR}
+                                Distanz: ${this.unitUtilsService.convertToUnit(routeProperties.LaengeR, 'Kilometers', true)}
                             </p>
                         </div>
                         <div class="d-flex justify-content-evenly">
                             <p>
-                                <i class="bi bi-arrow-bar-up"></i>
-                                Aufstieg: ${routeProperties.HoeheAufR}
+                                <i class="bi bi-arrow-up-right"></i>
+                                Aufstieg: ${this.unitUtilsService.convertToUnit(routeProperties.HoeheAufR, routeProperties.HoeheAufR > 1000 ? 'Kilometers' : 'Meters', true)}
                             </p>
                             <p>
-                                <i class="bi bi-arrow-bar-down"></i>
-                                Abstieg: ${routeProperties.HoeheAbR}
+                                <i class="bi bi-arrow-down-right"></i>
+                                Abstieg: ${this.unitUtilsService.convertToUnit(routeProperties.HoeheAbR, routeProperties.HoeheAbR > 1000 ? 'Kilometers' : 'Meters', true)}
                             </p>
                         </div>
                         <div class="d-flex justify-content-evenly">
                             <p>
                                 <i class="bi bi-chevron-bar-up"></i>
-                                Min. m.ü.M.: ${routeProperties.HoeheMaxR}
+                                Höhe max.: ${this.unitUtilsService.convertToUnit(routeProperties.HoeheMaxR, 'Meters', true)}
                             </p>
                             <p>
                                 <i class="bi bi-chevron-bar-down"></i>
-                                Max. m.ü.M.: ${routeProperties.HoeheMinR}
+                                Höhe min.: ${this.unitUtilsService.convertToUnit(routeProperties.HoeheMinR, 'Meters', true)}
                             </p>
                         </div>
                     </div>
@@ -301,11 +303,11 @@ export class MapComponent implements OnInit, OnDestroy {
                         <div class="d-flex justify-content-evenly">
                             <p>
                                 <i class="bi bi-heart-pulse"></i>
-                                Kondition: ${routeProperties.KonditionR}
+                                Kondition: ${routeProperties.KonditionR ?? 'n.a.'}
                             </p>
                             <p>
                                 <i class="bi bi-gear"></i>
-                                Technik: ${routeProperties.TechnikR}
+                                Technik: ${routeProperties.TechnikR ?? 'n.a.'}
                             </p>
                         </div>
                     </div>
@@ -381,7 +383,7 @@ export class MapComponent implements OnInit, OnDestroy {
         D3.selectAll(this.MUNICIPALITY_SELECTOR)
             .classed('active', false)
         D3.selectAll(this.ROUTE_SELECTOR)
-            .classed('active', false)
+            .classed('active', (false))
         D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR)
             .remove()
         D3.selectAll(this.PHOTO_LOCATION_SELECTOR)
@@ -405,10 +407,10 @@ export class MapComponent implements OnInit, OnDestroy {
     }
 
     private handleSettingsChange(): void {
-        this.resetRouteSelection()
-        D3.selectAll(this.ROUTE_SELECTOR).classed('hidden', (datum: any) => {
-            return !this.mapSettingsService.routeMeetsCurrentSettings(datum)
-        })
+        // this.resetRouteSelection()
+        // D3.selectAll(this.ROUTE_SELECTOR).classed('hidden', (datum: any) => {
+        //     return !this.mapSettingsService.routeMeetsCurrentSettings(datum)
+        // })
     }
 
     private displayTooltip(event: MouseEvent, html: string): void {

@@ -3,6 +3,7 @@
 
 #map {
     position: relative;
+    fill: none;
 }
 
 .background {
@@ -32,12 +33,10 @@
 }
 
 .canton {
-    // fill: none;
     fill-opacity: 10%;
-    stroke: #1B3B6F;
+    stroke: black;
     stroke-width: 1;
     pointer-events: none;
-    // cursor: pointer;
 }
 
 // .canton.active {
@@ -87,12 +86,14 @@
     justify-content: center;
     align-items: center;
     padding: 8px;
+    opacity: 0.95;
     background-color: $light;
     border-radius: 2px;
     box-shadow: $box-shadow;
     font-size: $font-size-sm;
     white-space: nowrap;
     pointer-events: none;
+    user-select: none;
     z-index: 999;
 
     & p {
