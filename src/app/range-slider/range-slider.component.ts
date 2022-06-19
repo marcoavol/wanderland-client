@@ -79,7 +79,7 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
 
     private showOutputValues(lowerValue: number, upperValue: number): void {
 
-        this.lowerValueOutput.nativeElement.innerHTML = this.unitUtilsService.convertToUnit(lowerValue, this.unit)
+        this.lowerValueOutput.nativeElement.innerHTML = this.unitUtilsService.convertToUnitString(lowerValue, this.unit)
         if (lowerValue <= this.max / 2) {
             this.lowerValueOutput.nativeElement.style.right = 'unset'
             this.lowerValueOutput.nativeElement.style.left = lowerValue / this.max * 100 + '%'
@@ -102,11 +102,11 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
         
         if (distanceBetweenOutputs <= 25) {
             this.upperValueOutput.nativeElement.style.visibility = 'hidden'
-            this.lowerValueOutput.nativeElement.innerHTML = this.unitUtilsService.convertToUnit(lowerValue, this.unit) + " - " + 
-                                                            this.unitUtilsService.convertToUnit(upperValue, this.unit)
+            this.lowerValueOutput.nativeElement.innerHTML = this.unitUtilsService.convertToUnitString(lowerValue, this.unit) + " - " + 
+                                                            this.unitUtilsService.convertToUnitString(upperValue, this.unit)
         } else {
             this.upperValueOutput.nativeElement.style.visibility = 'visible'
-            this.upperValueOutput.nativeElement.innerHTML = this.unitUtilsService.convertToUnit(upperValue, this.unit)
+            this.upperValueOutput.nativeElement.innerHTML = this.unitUtilsService.convertToUnitString(upperValue, this.unit)
         }
     }
 }

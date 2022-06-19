@@ -8,7 +8,7 @@ import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
 import { MapSettingsService } from './map-settings.service';
 import { MapPhotosService } from './map-photos.service';
-import { RouteDatum, RouteProperties } from '../types/map.types';
+import { Coordinate, RouteDatum, RouteProperties } from '../types/map.types';
 import { UnitUtilsServiceService } from '../utils/unit-utils-service.service';
 
 @Component({
@@ -26,6 +26,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private readonly MUNICIPALITIES_CONTAINER_SELECTOR = '.municipalities-container'
     private readonly CANTONS_CONTAINER_SELECTOR = '.cantons-container'
     private readonly ROUTES_CONTAINER_SELECTOR = '.routes-container'
+    private readonly STAGES_CONTAINER_SELECTOR = '.stages-container'
     private readonly PHOTO_LOCATIONS_CONTAINER_SELECTOR = '.photo-locations-container'
 
     private readonly BACKGROUND_SELECTOR = '.background'
@@ -35,16 +36,20 @@ export class MapComponent implements OnInit, OnDestroy {
     private readonly CANTON_SELECTOR = '.canton'
     private readonly ROUTE_SELECTOR = '.route'
     private readonly ROUTE_ENDPOINT_SELECTOR = '.route-endpoint'
+    private readonly STAGE_SELECTOR = '.stage'
+    private readonly STAGE_ENDPOINT_SELECTOR = '.stage-endpoint'
     private readonly PHOTO_LOCATION_SELECTOR = '.photo-location'
 
     private svg: D3.Selection<SVGSVGElement, unknown, HTMLElement, any>
     private width: number = window.innerWidth
     private height: number = window.innerHeight
 
+    private mapTopology: any
+    private routesTopology: any
+    
     private projectionScale: number = 7
     private projection: D3.GeoProjection
     private path: D3.GeoPath
-
     private zoomTransform: D3.ZoomTransform = D3.zoomIdentity
     private zoomExtent: [number, number] = [1, 8]
 
@@ -105,29 +110,22 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('height', this.height)
             .attr('class', this.BACKGROUND_SELECTOR.slice(1))
             .on('click', () => {
-                D3.selectAll(this.MUNICIPALITY_SELECTOR).classed('active', false)
-                D3.selectAll(this.ROUTE_SELECTOR).classed('active', false)
-                D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR).remove()
-                D3.selectAll(this.PHOTO_LOCATION_SELECTOR).remove()
+                this.resetMap()
             })
 
-        this.svg.append('g')
-            .attr('class', this.COUTRY_CONTAINER_SELECTOR.slice(1))
+        this.svg.append('g').attr('class', this.COUTRY_CONTAINER_SELECTOR.slice(1))
 
-        this.svg.append('g')
-            .attr('class', this.LAKES_CONTAINER_SELECTOR.slice(1))
+        this.svg.append('g').attr('class', this.LAKES_CONTAINER_SELECTOR.slice(1))
 
-        this.svg.append('g')
-            .attr('class', this.MUNICIPALITIES_CONTAINER_SELECTOR.slice(1))
+        this.svg.append('g').attr('class', this.MUNICIPALITIES_CONTAINER_SELECTOR.slice(1))
 
-        this.svg.append('g')
-            .attr('class', this.CANTONS_CONTAINER_SELECTOR.slice(1))
+        this.svg.append('g').attr('class', this.CANTONS_CONTAINER_SELECTOR.slice(1))
 
-        this.svg.append('g')
-            .attr('class', this.ROUTES_CONTAINER_SELECTOR.slice(1))
+        this.svg.append('g').attr('class', this.ROUTES_CONTAINER_SELECTOR.slice(1))
 
-        this.svg.append('g')
-            .attr('class', this.PHOTO_LOCATIONS_CONTAINER_SELECTOR.slice(1))
+        this.svg.append('g').attr('class', this.STAGES_CONTAINER_SELECTOR.slice(1))
+
+        this.svg.append('g').attr('class', this.PHOTO_LOCATIONS_CONTAINER_SELECTOR.slice(1))
     }
 
     private setZoomAndPanBehavior(): void {
@@ -135,9 +133,8 @@ export class MapComponent implements OnInit, OnDestroy {
             .scaleExtent(this.zoomExtent)
             .on('zoom', (event: D3.D3ZoomEvent<any, any>) => {
                 this.zoomTransform = event.transform
-                D3.selectAll('path')
-                    .attr('transform', event.transform.toString())
-                this.transformRouteEndpointsAndPhotoLocations()
+                D3.selectAll('path').attr('transform', event.transform.toString())
+                this.transformEndpointsAndLocations()
             })
         this.svg.call(zoomBehaviour)
     }
@@ -155,15 +152,18 @@ export class MapComponent implements OnInit, OnDestroy {
             D3.select(this.BACKGROUND_SELECTOR)
                 .attr('width', this.width)
                 .attr('height', this.height)
-            D3.selectAll<SVGPathElement, any>('path')
-                .attr('d', this.path)
-            this.transformRouteEndpointsAndPhotoLocations()
+            D3.selectAll<SVGPathElement, any>('path').attr('d', this.path)
+            this.transformEndpointsAndLocations()
         }
     }
 
-    private transformRouteEndpointsAndPhotoLocations(): void {
+    private transformEndpointsAndLocations(): void {
         D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR)
             .attr('transform', (datum: any) => this.zoomTransform.toString() + `translate(${this.projection([datum[0], datum[1]])})`)
+            .attr('r', 8 / this.zoomTransform.k)
+            .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
+        D3.selectAll(this.STAGE_ENDPOINT_SELECTOR)
+            .attr('transform', (datum: any) => this.zoomTransform.toString() + `translate(${this.projection([datum.lon, datum.lat])})`)
             .attr('r', 8 / this.zoomTransform.k)
             .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
         D3.selectAll(this.PHOTO_LOCATION_SELECTOR)
@@ -175,7 +175,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private async renderAsync(): Promise<void> {
 
         // Load map and routes topology
-        const [mapTopology, routesTopology] = (await Promise.all([
+        [this.mapTopology, this.routesTopology] = (await Promise.all([
             D3.json('./assets/karten-topologie/kombiniert.json'),
             D3.json('./assets/routen-topologie/kombiniert.json')
         ])) as Topology[]
@@ -184,21 +184,21 @@ export class MapComponent implements OnInit, OnDestroy {
         this.projection = D3.geoMercator()
             .scale((this.width + this.height / 2) * this.projectionScale)
             .translate([this.width / 2, this.height / 2])
-            .center(D3.geoCentroid(TopoJSON.feature(mapTopology, mapTopology.objects.cantons)))
+            .center(D3.geoCentroid(TopoJSON.feature(this.mapTopology, this.mapTopology.objects.cantons)))
 
         this.path = D3.geoPath()
             .projection(this.projection)
 
         // Render country 
         D3.select(this.COUTRY_CONTAINER_SELECTOR).selectAll('path')
-            .data(TopoJSON.feature(mapTopology, mapTopology.objects.country as GeometryCollection).features)
+            .data(TopoJSON.feature(this.mapTopology, this.mapTopology.objects.country as GeometryCollection).features)
             .enter()
             .append('path')
             .attr('d', this.path)
 
         // Render lakes
         D3.select(this.LAKES_CONTAINER_SELECTOR).selectAll('path')
-            .data(TopoJSON.feature(mapTopology, mapTopology.objects.lakes as GeometryCollection).features)
+            .data(TopoJSON.feature(this.mapTopology, this.mapTopology.objects.lakes as GeometryCollection).features)
             .enter()
             .append('path')
             .attr('d', this.path)
@@ -206,7 +206,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
         // Render municipalities
         D3.select(this.MUNICIPALITIES_CONTAINER_SELECTOR).selectAll('path')
-            .data(TopoJSON.feature(mapTopology, mapTopology.objects.municipalities as GeometryCollection).features)
+            .data(TopoJSON.feature(this.mapTopology, this.mapTopology.objects.municipalities as GeometryCollection).features)
             .enter()
             .append('path')
             .attr('d', this.path)
@@ -230,7 +230,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
         // Render cantons
         D3.select(this.CANTONS_CONTAINER_SELECTOR).selectAll('path')
-            .data(TopoJSON.feature(mapTopology, mapTopology.objects.cantons as GeometryCollection).features)
+            .data(TopoJSON.feature(this.mapTopology, this.mapTopology.objects.cantons as GeometryCollection).features)
             .enter()
             .append('path')
             .attr('d', this.path)
@@ -242,15 +242,16 @@ export class MapComponent implements OnInit, OnDestroy {
 
         // Render routes    
         D3.select(this.ROUTES_CONTAINER_SELECTOR).selectAll('path')
-            .data(TopoJSON.feature(routesTopology, routesTopology.objects.Route as GeometryCollection).features)
+            .data(TopoJSON.feature(this.routesTopology, this.routesTopology.objects.Route as GeometryCollection).features)
             .enter()
             .append('path')
             .attr('d', this.path)
-            .attr('class', this.ROUTE_SELECTOR.slice(1))
+            .attr('class', (datum: any) => `${this.ROUTE_SELECTOR.slice(1)} r${datum.properties.OBJECTID}`)
             .on('click', (event: PointerEvent, datum: any) => {
                 D3.selectAll(this.ROUTE_SELECTOR).classed('active', false)
                 D3.select(event.target as Element).classed('active', true).raise()
                 const routeDatum = <RouteDatum>(datum)
+                this.renderSelectedRouteStages(routeDatum.properties.TechNrR_ID)
                 this.renderSelectedRouteEndpoints(routeDatum.geometry.coordinates)
                 this.renderSelectedRoutePhotoLocationsAsync(routeDatum.properties.OBJECTID)
                 const routeProperties = <RouteProperties>(datum.properties)
@@ -270,31 +271,31 @@ export class MapComponent implements OnInit, OnDestroy {
                         <div class="d-flex justify-content-evenly">
                             <p>
                                 <i class="bi bi-stopwatch"></i>
-                                Dauer: ${this.unitUtilsService.convertToUnit(routeProperties.ZeitStZiR, 'DaysHoursMinutes', true)}
+                                Dauer: ${this.unitUtilsService.convertToUnitString(routeProperties.ZeitStZiR, 'DaysHoursMinutes', true)}
                             </p>
                             <p>
                                 <i class="bi bi-code"></i>
-                                Distanz: ${this.unitUtilsService.convertToUnit(routeProperties.LaengeR, 'Kilometers', true)}
+                                Distanz: ${this.unitUtilsService.convertToUnitString(routeProperties.LaengeR, 'Kilometers', true)}
                             </p>
                         </div>
                         <div class="d-flex justify-content-evenly">
                             <p>
                                 <i class="bi bi-arrow-up-right"></i>
-                                Aufstieg: ${this.unitUtilsService.convertToUnit(routeProperties.HoeheAufR, routeProperties.HoeheAufR > 1000 ? 'Kilometers' : 'Meters', true)}
+                                Aufstieg: ${this.unitUtilsService.convertToUnitString(routeProperties.HoeheAufR, routeProperties.HoeheAufR > 1000 ? 'Kilometers' : 'Meters', true)}
                             </p>
                             <p>
                                 <i class="bi bi-arrow-down-right"></i>
-                                Abstieg: ${this.unitUtilsService.convertToUnit(routeProperties.HoeheAbR, routeProperties.HoeheAbR > 1000 ? 'Kilometers' : 'Meters', true)}
+                                Abstieg: ${this.unitUtilsService.convertToUnitString(routeProperties.HoeheAbR, routeProperties.HoeheAbR > 1000 ? 'Kilometers' : 'Meters', true)}
                             </p>
                         </div>
                         <div class="d-flex justify-content-evenly">
                             <p>
                                 <i class="bi bi-chevron-bar-up"></i>
-                                Höhe max.: ${this.unitUtilsService.convertToUnit(routeProperties.HoeheMaxR, 'Meters', true)}
+                                Höhe max.: ${this.unitUtilsService.convertToUnitString(routeProperties.HoeheMaxR, 'Meters', true)}
                             </p>
                             <p>
                                 <i class="bi bi-chevron-bar-down"></i>
-                                Höhe min.: ${this.unitUtilsService.convertToUnit(routeProperties.HoeheMinR, 'Meters', true)}
+                                Höhe min.: ${this.unitUtilsService.convertToUnitString(routeProperties.HoeheMinR, 'Meters', true)}
                             </p>
                         </div>
                     </div>
@@ -339,17 +340,52 @@ export class MapComponent implements OnInit, OnDestroy {
 
     }
 
-    private renderSelectedRouteEndpoints(routeCoordinates: [number, number][]): void {
+    private renderSelectedRouteStages(techRouteId: number): void {
+        const stages = TopoJSON.feature(this.routesTopology, this.routesTopology.objects.Etappe as GeometryCollection).features.filter((geo: any) => geo.properties.TechNrRId === techRouteId)
+        if (!stages) return
+        D3.select(this.STAGES_CONTAINER_SELECTOR).selectChildren().remove()
+        const stageSelection = D3.select(this.STAGES_CONTAINER_SELECTOR).selectAll('g')
+            .data(stages)
+            .enter()
+            .append('g')
+        stageSelection.selectAll('path')
+            .data(stages)
+            .enter()
+            .append('path')
+            .attr('d', this.path)
+            .attr('transform', this.zoomTransform.toString())
+            .attr('class', this.STAGE_SELECTOR.slice(1))
+            .on('click', (event: MouseEvent, datum: any) => {
+                console.warn(JSON.stringify(datum.properties, undefined, 2))
+            })
+            .raise()
+        stageSelection.selectAll('circle')
+            .data((datum: any) => {
+                const coordinates = (datum.geometry as any).coordinates
+                const startCoordinates = coordinates[0]
+                const endCoordinates = coordinates[coordinates.length - 1]
+                return [{ lon: startCoordinates[0], lat: startCoordinates[1] }, { lon: endCoordinates[0], lat: endCoordinates[1] }]
+            })
+            .enter()       
+            .append('circle')
+            .attr('transform', (datum: any) => {
+                return this.zoomTransform.toString() + `translate(${this.projection([datum.lon, datum.lat])})`
+            })
+            .attr('r', 8 / this.zoomTransform.k)
+            .attr('class', this.STAGE_ENDPOINT_SELECTOR.slice(1))
+            .attr('style', `stroke-width: ${1 / this.zoomTransform.k}`)
+            .raise()
+    }
+
+    private renderSelectedRouteEndpoints(routeCoordinates: Coordinate[]): void {
         const svgStartPoint = this.coordinatesToProjectedSVGPoint(routeCoordinates[0])
         const svgEndPoint = this.coordinatesToProjectedSVGPoint(routeCoordinates[routeCoordinates.length - 1])
         D3.selectAll(this.MUNICIPALITY_SELECTOR)
             .classed('active', (_, index: number, nodes: any) => {
                 return nodes[index].isPointInFill(svgStartPoint) || nodes[index].isPointInFill(svgEndPoint)
             })
-        D3.selectAll(`${this.MUNICIPALITY_SELECTOR}.active`)
-            .raise()
-        D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR)
-            .remove()
+        D3.selectAll(`${this.MUNICIPALITY_SELECTOR}.active`).raise()
+        D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR).remove()
         D3.select(this.ROUTES_CONTAINER_SELECTOR).selectAll('circle')
             .data([routeCoordinates[0], routeCoordinates[routeCoordinates.length - 1]]) // TODO: Als [{lon: , lat: }, {lon: , lat: }] übergeben anstatt als Array von Arrays und überall anpassen wo Datum verwendet wird!
             .enter()
@@ -380,14 +416,16 @@ export class MapComponent implements OnInit, OnDestroy {
     }
 
     private resetRouteSelection(): void {
-        D3.selectAll(this.MUNICIPALITY_SELECTOR)
-            .classed('active', false)
-        D3.selectAll(this.ROUTE_SELECTOR)
-            .classed('active', (false))
-        D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR)
-            .remove()
-        D3.selectAll(this.PHOTO_LOCATION_SELECTOR)
-            .remove()
+        D3.selectAll(this.MUNICIPALITY_SELECTOR).classed('active', false)
+        D3.selectAll(this.ROUTE_SELECTOR).classed('active', (false))
+        D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR).remove()
+        D3.select(this.STAGES_CONTAINER_SELECTOR).selectChildren().remove()
+        D3.selectAll(this.PHOTO_LOCATION_SELECTOR).remove()
+    }
+
+    private resetMap(): void {
+        D3.selectAll(this.CANTON_SELECTOR).classed('active', false)
+        this.resetRouteSelection()
     }
 
     /**
@@ -407,10 +445,10 @@ export class MapComponent implements OnInit, OnDestroy {
     }
 
     private handleSettingsChange(): void {
-        // this.resetRouteSelection()
-        // D3.selectAll(this.ROUTE_SELECTOR).classed('hidden', (datum: any) => {
-        //     return !this.mapSettingsService.routeMeetsCurrentSettings(datum)
-        // })
+        this.resetRouteSelection()
+        D3.selectAll(this.ROUTE_SELECTOR).classed('hidden', (datum: any) => {
+            return !this.mapSettingsService.routeMeetsCurrentSettings(datum)
+        })
     }
 
     private displayTooltip(event: MouseEvent, html: string): void {

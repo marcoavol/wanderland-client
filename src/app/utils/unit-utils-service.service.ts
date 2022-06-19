@@ -7,7 +7,7 @@ export class UnitUtilsServiceService {
 
     constructor() { }
 
-    public convertToUnit(value: number, unit: 'Meters' | 'Kilometers' | 'DaysHoursMinutes', formatWithUnit: boolean = false): string {
+    public convertToUnitString(value: number, unit: 'Meters' | 'Kilometers' | 'DaysHoursMinutes', formatWithUnit: boolean = false): string {
         switch (unit) {
             case 'Meters': return formatWithUnit ? String(value) + 'm' : String(value)
             case 'Kilometers': return formatWithUnit ? (value/1000).toFixed(1) + 'km' : String(value/1000)

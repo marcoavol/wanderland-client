@@ -72,6 +72,21 @@
     // cursor: pointer;
 }
 
+.stage {
+    stroke: transparent;
+    stroke-width: 1;
+    // stroke-dasharray: 1;
+    // stroke-dashoffset: 0.01;
+    cursor: pointer;
+}
+
+.stage-endpoint {
+    fill: black;
+    stroke: whitesmoke;
+    stroke-width: 1;
+    // cursor: pointer;
+}
+
 .photo-location {
     fill: red;
     stroke: black;
