@@ -70,4 +70,21 @@ export class SettingsBarComponent implements OnInit {
     public handleLengthRangeChange(range: { lower: number, upper: number }): void {
         this.mapSettingsForm.patchValue({ lengthMin: range.lower, lengthMax: range.upper })
     }
+
+    public resetFiltersToDefault(): void {
+        console.warn("Filter reset")
+        //this.mapSettingsService.currentSettings.national = true
+        this.mapSettingsForm.patchValue({ national: true, regional: true, local: true })
+        this.mapSettingsForm.patchValue({ lowSkills: true, mediumSkills: true, goodSkills: true })
+        this.mapSettingsForm.patchValue({ lowFitness: true, mediumFitness: true, goodFitness: true })
+        this.mapSettingsChanged()
+        // this.mapSettingsService.currentSettings.durationMin = 0
+        // this.mapSettingsService.currentSettings.durationMax = 17280
+        // this.mapSettingsService.currentSettings.elevationMin = 0
+        // this.mapSettingsService.currentSettings.elevationMax = 50000
+        // this.mapSettingsService.currentSettings.descendingMin = 0
+        // this.mapSettingsService.currentSettings.descendingMax = 50000
+        // this.mapSettingsService.currentSettings.lengthMin = 0
+        // this.mapSettingsService.currentSettings.lengthMax = 70000
+    }
 }
