@@ -74,7 +74,6 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
         this.showOutputValues(lowerValue, upperValue)
     }
 
-
     private convertToUnit(value: number): string {
         switch (this.unit) {
             case 'Meters': return String(value)

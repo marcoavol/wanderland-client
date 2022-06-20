@@ -14,7 +14,7 @@ export interface MapSettings {
     lowFitness: boolean;
     mediumFitness: boolean;
     goodFitness: boolean;
-    canton?: string;
+    cantonId?: number;
 } 
 
 export type units = 'Meters' | 

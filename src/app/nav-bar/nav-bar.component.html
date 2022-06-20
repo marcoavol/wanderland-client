@@ -4,7 +4,7 @@
         Filter
     </button>
 
-    <form>
+    <form (submit)="searchForCanton($event)">
         <div class="input-group searchbar">
             <input 
                 #searchInput
@@ -16,8 +16,7 @@
                 [ngbTypeahead]="search"
                 #instance="ngbTypeahead"
             />
-            <button type="button" class="btn btn-md btn-outline-primary" 
-                    (click)="readSearchInput()"> 
+            <button type="submit" class="btn btn-md btn-outline-primary" > 
                 <i class="bi bi-search me-2"></i> 
                 Suche
             </button>

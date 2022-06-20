@@ -330,6 +330,11 @@ export class MapComponent implements OnInit, OnDestroy {
         D3.selectAll(this.ROUTE_SELECTOR).classed('hidden', (datum: any) => {
             return !this.mapSettingsService.routeMeetsCurrentSettings(datum)
         })
+ 
+        // D3.selectAll(this.CANTON_SELECTOR).filter((datum: any) => {
+        //     return datum.id == 1
+        //     }).classed('active', true)
+        // this.mapSettingsService.currentSettings.cantonId    
     }
 
     private resetRouteSelection(): void {

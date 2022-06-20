@@ -4,9 +4,8 @@ import { SettingsBarComponent } from '../settings-bar/settings-bar.component';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
+import { MapSettingsService } from '../map/map-settings.service';
 
-//TODO Supress submit cmd when Enter is clicked => enter should run readSearchInput() method
-//TODO change width of input field
 //TODO connect input to map => zoom or show selected canton
 //TODO create a component for the search bar analog to range slider
 
@@ -33,6 +32,7 @@ export class NavBarComponent implements OnInit {
 
     constructor(
         private offcanvasService: NgbOffcanvas,
+        private mapSettingsService: MapSettingsService,
     ) { }
 
     ngOnInit(): void {
@@ -43,8 +43,11 @@ export class NavBarComponent implements OnInit {
         this.offcanvasService.open(SettingsBarComponent);
     }
 
-    public readSearchInput(): void {
-        console.warn(this.searchInput.nativeElement.value)
+    public searchForCanton(event: Event): void {
+        event.preventDefault()   
+        const cantonId = this.cantonNames.findIndex(canton => canton === this.searchInput.nativeElement.value)
+        console.warn(cantonId, this.searchInput.nativeElement.value)
+        this.mapSettingsService.currentSettings.cantonId = cantonId
     }
 }
 

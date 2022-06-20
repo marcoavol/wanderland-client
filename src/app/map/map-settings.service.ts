@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MapSettings } from '../types/settings.types';
 import { BehaviorSubject } from 'rxjs';
-import { descending } from 'd3';
 
 @Injectable({
     providedIn: 'root'
@@ -23,7 +22,8 @@ export class MapSettingsService {
         goodSkills: true,
         lowFitness: true,
         mediumFitness: true,
-        goodFitness: true
+        goodFitness: true,
+        cantonId: -1
     }
 
     private mapSettingsBehaviorSubject = new BehaviorSubject<MapSettings>(this._currentSettings)
