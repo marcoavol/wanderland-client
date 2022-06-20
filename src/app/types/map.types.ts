@@ -1,8 +1,11 @@
+import { Feature } from 'geojson';
+
 export type Coordinate = [number, number]
 
 export interface RouteDatum {
     geometry: RouteGeometry;
     properties: RouteProperties;
+    stages?: Array<Feature<any, any>>
 }
 
 export class RouteGeometry {

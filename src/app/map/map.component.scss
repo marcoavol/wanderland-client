@@ -36,10 +36,11 @@
     fill-opacity: 10%;
     stroke: black;
     stroke-width: 1;
-    pointer-events: none;
+    // pointer-events: none;
 }
 
 // .canton.active {
+//     filter: drop-shadow(2px 2px 2px rgb(0 0 0 / 5));
 //     fill: none;
 //     stroke-width: 1;
 // }
@@ -73,10 +74,9 @@
 }
 
 .stage {
-    stroke: transparent;
-    stroke-width: 1;
-    // stroke-dasharray: 1;
-    // stroke-dashoffset: 0.01;
+    stroke-opacity: 0;
+    stroke-width: 2;
+    pointer-events: all;
     cursor: pointer;
 }
 
@@ -123,5 +123,5 @@
 }
 
 #tooltip.hidden {
-    // display: none;
+    display: none;
 }

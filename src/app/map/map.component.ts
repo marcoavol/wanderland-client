@@ -3,12 +3,13 @@ import { takeWhile } from 'rxjs';
 import * as D3 from 'd3';
 import * as TopoJSON from 'topojson-client';
 import { Topology, GeometryCollection } from 'topojson-specification';
+import { Feature } from 'geojson';
 import pointToLineDistance from '@turf/point-to-line-distance';
 import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../assets/kantonsfarben.json';
 import { MapSettingsService } from './map-settings.service';
 import { MapPhotosService } from './map-photos.service';
-import { Coordinate, RouteDatum, RouteProperties } from '../types/map.types';
+import { Coordinate, RouteDatum, RouteProperties, RouteGeometry } from '../types/map.types';
 import { UnitUtilsServiceService } from '../utils/unit-utils-service.service';
 
 @Component({
@@ -242,7 +243,14 @@ export class MapComponent implements OnInit, OnDestroy {
 
         // Render routes    
         D3.select(this.ROUTES_CONTAINER_SELECTOR).selectAll('path')
-            .data(TopoJSON.feature(this.routesTopology, this.routesTopology.objects.Route as GeometryCollection).features)
+            .data(() => {
+                const stages = TopoJSON.feature(this.routesTopology, this.routesTopology.objects.Etappe as GeometryCollection).features
+                const routes = <any>TopoJSON.feature(this.routesTopology, this.routesTopology.objects.Route as GeometryCollection).features
+                return routes.map((route: any) => {
+                    route['stages'] = stages.filter((stage: any) => stage.properties.TechNrRId === route.properties.TechNrR_ID)
+                    return route
+                }) as Array<Feature<any, any>>
+            })
             .enter()
             .append('path')
             .attr('d', this.path)
@@ -251,11 +259,13 @@ export class MapComponent implements OnInit, OnDestroy {
                 D3.selectAll(this.ROUTE_SELECTOR).classed('active', false)
                 D3.select(event.target as Element).classed('active', true).raise()
                 const routeDatum = <RouteDatum>(datum)
-                this.renderSelectedRouteStages(routeDatum.properties.TechNrR_ID)
+                const routeProperties = routeDatum.properties
+                console.warn(routeDatum)
+                if (routeDatum.stages) {
+                    this.renderSelectedRouteStages(routeDatum.stages)
+                }
                 this.renderSelectedRouteEndpoints(routeDatum.geometry.coordinates)
-                this.renderSelectedRoutePhotoLocationsAsync(routeDatum.properties.OBJECTID)
-                const routeProperties = <RouteProperties>(datum.properties)
-                console.warn(JSON.stringify(routeProperties, undefined, 2))
+                this.renderSelectedRoutePhotoLocationsAsync(routeProperties.OBJECTID)
                 const tooltipHtml = `
                     <div class="w-100 text-center p-2">
                         <p class="fw-bold">
@@ -340,15 +350,9 @@ export class MapComponent implements OnInit, OnDestroy {
 
     }
 
-    private renderSelectedRouteStages(techRouteId: number): void {
-        const stages = TopoJSON.feature(this.routesTopology, this.routesTopology.objects.Etappe as GeometryCollection).features.filter((geo: any) => geo.properties.TechNrRId === techRouteId)
-        if (!stages) return
+    private renderSelectedRouteStages(stages: Array<Feature<any, any>>): void {
         D3.select(this.STAGES_CONTAINER_SELECTOR).selectChildren().remove()
-        const stageSelection = D3.select(this.STAGES_CONTAINER_SELECTOR).selectAll('g')
-            .data(stages)
-            .enter()
-            .append('g')
-        stageSelection.selectAll('path')
+        D3.select(this.STAGES_CONTAINER_SELECTOR).selectAll('path')
             .data(stages)
             .enter()
             .append('path')
@@ -359,9 +363,13 @@ export class MapComponent implements OnInit, OnDestroy {
                 console.warn(JSON.stringify(datum.properties, undefined, 2))
             })
             .raise()
-        stageSelection.selectAll('circle')
+        D3.select(this.STAGES_CONTAINER_SELECTOR).selectAll('g')
+            .data(stages)
+            .enter()
+            .append('g')
+            .selectAll('circle')
             .data((datum: any) => {
-                const coordinates = (datum.geometry as any).coordinates
+                const coordinates = (datum.geometry as RouteGeometry).coordinates
                 const startCoordinates = coordinates[0]
                 const endCoordinates = coordinates[coordinates.length - 1]
                 return [{ lon: startCoordinates[0], lat: startCoordinates[1] }, { lon: endCoordinates[0], lat: endCoordinates[1] }]
