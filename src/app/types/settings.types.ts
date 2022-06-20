@@ -6,6 +6,8 @@ export interface MapSettings {
     durationMax: number;
     elevationMin: number;
     elevationMax: number;
+    descendingMin: number;
+    descendingMax: number;
     lengthMin: number;
     lengthMax: number;
     lowSkills: boolean;

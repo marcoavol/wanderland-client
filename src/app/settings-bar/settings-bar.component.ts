@@ -14,6 +14,7 @@ export class SettingsBarComponent implements OnInit {
     public mapSettingsForm: FormGroup
     public durationUnit: units
     public elevationUnit: units
+    public descendingUnit: units
     public lengthUnit: units
 
     constructor(
@@ -24,6 +25,7 @@ export class SettingsBarComponent implements OnInit {
     ngOnInit(): void {
         this.durationUnit = 'DaysHoursMinutes'
         this.elevationUnit = 'Meters'
+        this.descendingUnit = 'Meters'
         this.lengthUnit = 'Kilometers'
 
         const currentSettings = this.mapSettingsService.currentSettings
@@ -35,6 +37,8 @@ export class SettingsBarComponent implements OnInit {
             durationMax: new FormControl(currentSettings.durationMax),
             elevationMin: new FormControl(currentSettings.elevationMin),
             elevationMax: new FormControl(currentSettings.elevationMax),
+            descendingMin: new FormControl(currentSettings.descendingMin),
+            descendingMax: new FormControl(currentSettings.descendingMax),
             lengthMin: new FormControl(currentSettings.lengthMin),
             lengthMax: new FormControl(currentSettings.lengthMax),
             lowSkills: new FormControl(currentSettings.lowSkills),
@@ -57,6 +61,10 @@ export class SettingsBarComponent implements OnInit {
 
     public handleElevationRangeChange(range: { lower: number, upper: number }): void {
         this.mapSettingsForm.patchValue({ elevationMin: range.lower, elevationMax: range.upper })
+    }
+
+    public handleDescendingRangeChange(range: { lower: number, upper: number }): void {
+        this.mapSettingsForm.patchValue({ descendingMin: range.lower, descendingMax: range.upper })
     }
 
     public handleLengthRangeChange(range: { lower: number, upper: number }): void {
