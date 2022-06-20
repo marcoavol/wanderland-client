@@ -9,8 +9,6 @@
     }
 }
 
-
-
 /* Override Bootstrap styles here */
 // $theme-colors: (
 //   "primary":    $primary,
@@ -23,5 +21,7 @@
 //   "dark":       $dark
 // );
 
-/* Importing Bootstrap SCSS file. */
+/* Importing Bootstrap files */
 @import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-icons/font/bootstrap-icons';
+

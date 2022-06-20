@@ -98,6 +98,8 @@ export class MapPhotosService {
                 if (error.status === 403) {
                     console.warn(error.error)
                     result.errorMessage = 'Dieses Foto wurde bereits hochgeladen.'
+                } else {
+                    console.error(`Error while uploading photo: ${error.error}`)
                 }
             })
         return result
@@ -109,11 +111,11 @@ export class MapPhotosService {
 
     private async loadPhotosByRouteIdAsync(routeId: number): Promise<Photo[]> {
         if (!this.cachedPhotosByRouteId.has(routeId)) {
-            const photos = <Photo[]>await lastValueFrom(this.http.get(this.BASE_PATH + '/' + routeId))
-                .catch((e: Error) => console.error(`Error while loading photos for routeId ${routeId}: ${e.message}`))
-            this.cachedPhotosByRouteId.set(routeId, photos)
-        }
-        return this.cachedPhotosByRouteId.get(routeId)!
+            await lastValueFrom(this.http.get(this.BASE_PATH + '/' + routeId))
+                .then(response => this.cachedPhotosByRouteId.set(routeId, <Photo[]>response))
+                .catch((error: HttpErrorResponse) => console.error(`Error while loading photos for routeId ${routeId}: ${error.error}`))
+        }           
+        return this.cachedPhotosByRouteId.get(routeId) ?? []
     }
 
     private exifDateToIsoString(exifDate: string): string {

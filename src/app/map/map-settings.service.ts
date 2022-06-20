@@ -87,7 +87,7 @@ export class MapSettingsService {
             case 'leicht': return this.currentSettings.lowFitness
             case 'mittel': return this.currentSettings.mediumFitness
             case 'schwer': return this.currentSettings.goodFitness
-            default: return this._currentSettings.lowFitness && this.currentSettings.mediumFitness && this.currentSettings.goodFitness
+            default: return this.currentSettings.lowFitness && this.currentSettings.mediumFitness && this.currentSettings.goodFitness
         }
     }
 }

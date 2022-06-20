@@ -1,6 +1,15 @@
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+
+#map {
+    position: relative;
+    fill: none;
+}
+
 .background {
     fill: #1B3B6F;
     pointer-events: visible;
+    z-index: -1;
 }
 
 .country {
@@ -24,17 +33,16 @@
 }
 
 .canton {
-    // fill: none;
     fill-opacity: 10%;
-    stroke: #1B3B6F;
+    stroke: black;
     stroke-width: 1;
-    pointer-events: none;
-    // cursor: pointer;
+    // pointer-events: none;
 }
 
 .canton.active {
     fill-opacity: 30%;
     stroke-width: 3;
+    // filter: drop-shadow(2px 2px 2px rgb(0 0 0 / 5));
 }
 
 .route {
@@ -65,9 +73,55 @@
     // cursor: pointer;
 }
 
+.stage {
+    stroke-opacity: 0;
+    stroke-width: 2;
+    pointer-events: all;
+    cursor: pointer;
+}
+
+.stage-endpoint {
+    fill: black;
+    stroke: whitesmoke;
+    stroke-width: 1;
+    // cursor: pointer;
+}
+
 .photo-location {
     fill: red;
     stroke: black;
     stroke-width: 1;
     cursor: pointer;
+}
+
+#tooltip {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 8px;
+    opacity: 0.95;
+    background-color: $light;
+    border-radius: 2px;
+    box-shadow: $box-shadow;
+    font-size: $font-size-sm;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    z-index: 999;
+
+    & p {
+        margin: 0 4px;
+        padding: 2px;
+
+        i {
+            margin-right: 4px;
+        }
+    }
+
+}
+
+#tooltip.hidden {
+    display: none;
 }

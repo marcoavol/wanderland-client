@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef, Input, Output, EventEmitter, OnInit, AfterViewInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { units } from '../types/settings.types';
+import { UnitUtilsServiceService } from '../utils/unit-utils-service.service';
 
 
 @Component({
@@ -42,7 +43,9 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
 
     public rangeForm: FormGroup
 
-    constructor() { }
+    constructor(
+        private unitUtilsService: UnitUtilsServiceService
+    ) { }
 
     ngOnInit(): void {
         this.rangeForm = new FormGroup({
@@ -74,28 +77,9 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
         this.showOutputValues(lowerValue, upperValue)
     }
 
-    private convertToUnit(value: number): string {
-        switch (this.unit) {
-            case 'Meters': return String(value)
-            case 'Kilometers': return String(value/1000)
-            case 'DaysHoursMinutes': return this.convertInDaysHoursMinutes(value)
-            default: return ''   
-        }
-    }
-
-    private convertInDaysHoursMinutes(minutes: number): string {
-        let d = Math.floor(minutes / (60 * 24))
-        let h = (Math.floor(minutes / 60)) % 24
-        let m = minutes % 60
-        let days = d < 10 ? '0' + d : d 
-        let hrs = h < 10 ? '0' + h : h 
-        let mins = m < 10 ? '0' + m : m 
-        return d > 0 ? `${days}:${hrs}:${mins}` : `${hrs}:${mins}`
-    }
-
     private showOutputValues(lowerValue: number, upperValue: number): void {
 
-        this.lowerValueOutput.nativeElement.innerHTML = this.convertToUnit(lowerValue)
+        this.lowerValueOutput.nativeElement.innerHTML = this.unitUtilsService.convertToUnitString(lowerValue, this.unit)
         if (lowerValue <= this.max / 2) {
             this.lowerValueOutput.nativeElement.style.right = 'unset'
             this.lowerValueOutput.nativeElement.style.left = lowerValue / this.max * 100 + '%'
@@ -118,11 +102,11 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
         
         if (distanceBetweenOutputs <= 25) {
             this.upperValueOutput.nativeElement.style.visibility = 'hidden'
-            this.lowerValueOutput.nativeElement.innerHTML = this.convertToUnit(lowerValue) + " - " + 
-                                                            this.convertToUnit(upperValue)
+            this.lowerValueOutput.nativeElement.innerHTML = this.unitUtilsService.convertToUnitString(lowerValue, this.unit) + " - " + 
+                                                            this.unitUtilsService.convertToUnitString(upperValue, this.unit)
         } else {
             this.upperValueOutput.nativeElement.style.visibility = 'visible'
-            this.upperValueOutput.nativeElement.innerHTML = this.convertToUnit(upperValue)
+            this.upperValueOutput.nativeElement.innerHTML = this.unitUtilsService.convertToUnitString(upperValue, this.unit)
         }
     }
 }

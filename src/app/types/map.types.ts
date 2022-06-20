@@ -1,8 +1,11 @@
+import { Feature } from 'geojson';
+
 export type Coordinate = [number, number]
 
 export interface RouteDatum {
     geometry: RouteGeometry;
     properties: RouteProperties;
+    stages?: Array<Feature<any, any>>
 }
 
 export class RouteGeometry {
@@ -20,7 +23,7 @@ export class RouteProperties {
     HoeheAufR: number;
     HoeheMaxR: number;
     HoeheMinR: number;
-    KonditionR: string;
+    KonditionR?: string;
     LaengeR: number;
     NichtPubFh: number;
     OBJECTID: number;
@@ -30,7 +33,7 @@ export class RouteProperties {
     SHAPE_Leng: number;
     TechNameR: string;
     TechNrR_ID: number;
-    TechnikR: string;
+    TechnikR?: string;
     TourNameR: string;
     TourNrR: string;
     Typ_TR: string;
