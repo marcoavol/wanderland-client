@@ -36,61 +36,64 @@
     fill-opacity: 10%;
     stroke: black;
     stroke-width: 1;
-    // pointer-events: none;
+    pointer-events: none;
 }
 
 .canton.active {
     fill-opacity: 30%;
     stroke-width: 3;
-    // filter: drop-shadow(2px 2px 2px rgb(0 0 0 / 5));
 }
 
 .route {
     fill: none;
     stroke: red;
-    stroke-width: 1;
+    stroke-width: 0.7;
     cursor: pointer;
 }
 
 .route.active {
     stroke: green !important;
-    // stroke-width: 2;
+    filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.5)); 
+
 }
 
 .route:not(.active):hover {
-    stroke-width: 1.5;
+    stroke: yellow !important;
     transition: 0.075s;
+    filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.5)); 
 }
 
 .route.hidden {
     stroke: none;
 }
 
-.route-endpoint {
-    fill: green;
-    stroke: black;
-    stroke-width: 1;
-    // cursor: pointer;
-}
+// .route-endpoint {
+//     fill: green;
+//     fill-opacity: 75%;
+//     stroke: black;
+//     stroke-width: 2;
+//     // cursor: pointer;
+// }
 
 .stage {
     stroke-opacity: 0;
-    stroke-width: 2;
-    pointer-events: all;
+    stroke-width: 1;
+    pointer-events: stroke;
     cursor: pointer;
 }
 
 .stage-endpoint {
-    fill: black;
-    stroke: whitesmoke;
-    stroke-width: 1;
+    fill: green;
+    fill-opacity: 50%;
+    stroke: black;
+    stroke-width: 2;
     // cursor: pointer;
 }
 
 .photo-location {
     fill: red;
     stroke: black;
-    stroke-width: 1;
+    stroke-width: 2;
     cursor: pointer;
 }
 
