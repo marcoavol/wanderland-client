@@ -426,6 +426,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private resetRouteSelection(): void {
         D3.selectAll(this.MUNICIPALITY_SELECTOR).classed('active', false)
         D3.selectAll(this.ROUTE_SELECTOR).classed('active', (false))
+        D3.selectAll(this.CANTON_SELECTOR).classed('active', false)
         D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR).remove()
         D3.select(this.STAGES_CONTAINER_SELECTOR).selectChildren().remove()
         D3.selectAll(this.PHOTO_LOCATION_SELECTOR).remove()
@@ -456,13 +457,13 @@ export class MapComponent implements OnInit, OnDestroy {
         this.resetRouteSelection()
         D3.selectAll(this.ROUTE_SELECTOR).classed('hidden', (datum: any) => {
             return !this.mapSettingsService.routeMeetsCurrentSettings(datum)
-        })
- 
+        })       
+
         D3.selectAll(this.CANTON_SELECTOR).filter((datum: any) => {
-            return datum.id == 2
+            return datum.id == this.mapSettingsService.currentSettings.cantonId
             }).classed('active', true)
-        this.mapSettingsService.currentSettings.cantonId    
     }
+
 
     private displayTooltip(event: MouseEvent, html: string): void {
         const offsetY = 25
