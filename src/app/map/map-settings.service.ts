@@ -11,7 +11,7 @@ export class MapSettingsService {
         national: true,
         regional: true,
         local: true,
-        includeStages: true,
+        includeStages: false,//true,
         durationMin: 0,
         durationMax: 17280,
         elevationMin: 0,
