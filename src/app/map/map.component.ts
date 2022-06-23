@@ -458,10 +458,10 @@ export class MapComponent implements OnInit, OnDestroy {
             return !this.mapSettingsService.routeMeetsCurrentSettings(datum)
         })
  
-        // D3.selectAll(this.CANTON_SELECTOR).filter((datum: any) => {
-        //     return datum.id == 1
-        //     }).classed('active', true)
-        // this.mapSettingsService.currentSettings.cantonId    
+        D3.selectAll(this.CANTON_SELECTOR).filter((datum: any) => {
+            return datum.id == 2
+            }).classed('active', true)
+        this.mapSettingsService.currentSettings.cantonId    
     }
 
     private displayTooltip(event: MouseEvent, html: string): void {
