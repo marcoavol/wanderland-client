@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MapSettings } from '../../types/settings.types';
+import { MapSettings, RouteType } from '../../types/settings.types';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -23,7 +23,8 @@ export class MapSettingsService {
         lowFitness: true,
         mediumFitness: true,
         goodFitness: true,
-        cantonId: -1
+        cantonId: -1,
+        includeStages: true
     }
 
     private mapSettingsBehaviorSubject = new BehaviorSubject<MapSettings>(this._currentSettings)
@@ -52,7 +53,7 @@ export class MapSettingsService {
         return result
     }
 
-    private routeMeetsRouteTypeSetting(routeType: 'National' | 'Regional' | 'Lokal'): boolean {
+    private routeMeetsRouteTypeSetting(routeType: RouteType): boolean {
         switch (routeType) {
             case 'National': return this.currentSettings.national
             case 'Regional': return this.currentSettings.regional

@@ -67,19 +67,16 @@
     stroke: none;
 }
 
-// .route-endpoint {
-//     fill: green;
-//     fill-opacity: 75%;
-//     stroke: black;
-//     stroke-width: 2;
-//     // cursor: pointer;
-// }
-
 .stage {
-    stroke-opacity: 0;
+    stroke: transparent;
     stroke-width: 1;
     pointer-events: stroke;
     cursor: pointer;
+}
+
+.stage:hover {
+    stroke: yellow !important;
+    transition: 0.075s;
 }
 
 .stage-endpoint {
@@ -126,38 +123,5 @@
 }
 
 #tooltip.hidden {
-    display: none;
-}
-
-#infobox {
-    position: absolute;
-    bottom: 16px;
-    left: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 8px;
-    opacity: 0.95;
-    background-color: $light;
-    border-radius: 2px;
-    box-shadow: $box-shadow;
-    font-size: $font-size-sm;
-    white-space: nowrap;
-    pointer-events: none;
-    user-select: none;
-    z-index: 999;
-
-    & p {
-        margin: 0 4px;
-        padding: 2px;
-
-        i {
-            margin-right: 4px;
-        }
-    }
-}
-
-#infobox.hidden {
     display: none;
 }

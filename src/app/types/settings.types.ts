@@ -14,9 +14,10 @@ export interface MapSettings {
     lowFitness: boolean;
     mediumFitness: boolean;
     goodFitness: boolean;
+    includeStages: boolean;
     cantonId?: number;
 } 
 
-export type units = 'Meters' | 
-                    'Kilometers' | 
-                    'DaysHoursMinutes' 
+export type Unit = 'Meters' | 'Kilometers' | 'DaysHoursMinutes' 
+
+export type RouteType = 'National' | 'Regional' | 'Lokal'

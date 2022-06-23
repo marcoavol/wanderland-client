@@ -9,8 +9,7 @@ import Gemeindeverzeichnis from '../../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../../assets/kantonsfarben.json';
 import { MapSettingsService } from './map-settings.service';
 import { MapPhotosService } from './map-photos.service';
-import { Coordinate, RouteDatum, RouteProperties, RouteGeometry, StageProperties } from '../../types/map.types';
-import { UnitUtilsService } from '../../utils/unit-utils.service';
+import { Coordinate, RouteDatum, RouteGeometry } from '../../types/map.types';
 import { MapTooltipContentService } from './map-tooltip-content.service';
 
 @Component({
@@ -20,8 +19,6 @@ import { MapTooltipContentService } from './map-tooltip-content.service';
     encapsulation: ViewEncapsulation.None
 })
 export class MapComponent implements OnInit, OnDestroy {
-
-    public selectedRouteProperties?: RouteProperties & { stages?: StageProperties[] }
 
     private static readonly NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS = 1000
 
@@ -39,7 +36,6 @@ export class MapComponent implements OnInit, OnDestroy {
     private readonly MUNICIPALITY_SELECTOR = '.municipality'
     private readonly CANTON_SELECTOR = '.canton'
     private readonly ROUTE_SELECTOR = '.route'
-    // private readonly ROUTE_ENDPOINT_SELECTOR = '.route-endpoint'
     private readonly STAGE_SELECTOR = '.stage'
     private readonly STAGE_ENDPOINT_SELECTOR = '.stage-endpoint'
     private readonly PHOTO_LOCATION_SELECTOR = '.photo-location'
@@ -115,17 +111,11 @@ export class MapComponent implements OnInit, OnDestroy {
             })
 
         this.svg.append('g').attr('class', this.COUTRY_CONTAINER_SELECTOR.slice(1))
-
         this.svg.append('g').attr('class', this.LAKES_CONTAINER_SELECTOR.slice(1))
-
         this.svg.append('g').attr('class', this.MUNICIPALITIES_CONTAINER_SELECTOR.slice(1))
-
         this.svg.append('g').attr('class', this.CANTONS_CONTAINER_SELECTOR.slice(1))
-
         this.svg.append('g').attr('class', this.ROUTES_CONTAINER_SELECTOR.slice(1))
-
         this.svg.append('g').attr('class', this.STAGES_CONTAINER_SELECTOR.slice(1))
-
         this.svg.append('g').attr('class', this.PHOTO_LOCATIONS_CONTAINER_SELECTOR.slice(1))
     }
 
@@ -135,7 +125,7 @@ export class MapComponent implements OnInit, OnDestroy {
             .on('zoom', (event: D3.D3ZoomEvent<any, any>) => {
                 this.zoomTransform = event.transform
                 D3.selectAll('path').attr('transform', event.transform.toString())
-                this.transformEndpointsAndLocations()
+                this.transformStageEndpointsAndPhotoLocations()
             })
         this.svg.call(zoomBehaviour)
     }
@@ -154,15 +144,11 @@ export class MapComponent implements OnInit, OnDestroy {
                 .attr('width', this.width)
                 .attr('height', this.height)
             D3.selectAll<SVGPathElement, any>('path').attr('d', this.path)
-            this.transformEndpointsAndLocations()
+            this.transformStageEndpointsAndPhotoLocations()
         }
     }
 
-    private transformEndpointsAndLocations(): void {
-        // D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR)
-        //     .attr('transform', (datum: any) => this.zoomTransform.toString() + `translate(${this.projection([datum[0], datum[1]])})`)
-        //     .attr('r', 8 / this.zoomTransform.k)
-        //     .attr('style', `stroke-width: ${2 / this.zoomTransform.k}`)
+    private transformStageEndpointsAndPhotoLocations(): void {
         D3.selectAll(this.STAGE_ENDPOINT_SELECTOR)
             .attr('transform', (datum: any) => this.zoomTransform.toString() + `translate(${this.projection([datum.lon, datum.lat])})`)
             .attr('r', 8 / this.zoomTransform.k)
@@ -213,10 +199,10 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('d', this.path)
             .attr('class', datum => `${this.MUNICIPALITY_SELECTOR.slice(1)} m${datum.id}`)
             .on('mouseenter', (event: MouseEvent, datum: any) => {
-                const municipalityName = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDENAME
-                const cantonAbbreviation = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDEKT
-                if (municipalityName && cantonAbbreviation) {
-                    this.displayTooltip(event, this.mapTooltipContentService.getMunicipalitytooltipHTML({ municipalityName, cantonAbbreviation }))
+                const name = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDENAME
+                const canton = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDEKT
+                if (name && canton) {
+                    this.displayTooltip(event, this.mapTooltipContentService.getMunicipalitytooltipHTML({ name, canton }))
                 }
             })
             .on('mouseout', (event: MouseEvent, datum: any) => {
@@ -266,36 +252,31 @@ export class MapComponent implements OnInit, OnDestroy {
                 D3.select(event.target as Element).classed('active', true).raise()
                 const routeDatum = <RouteDatum>(datum)
                 const routeProperties = routeDatum.properties
-                this.selectedRouteProperties = { ...routeProperties, stages: routeDatum.stages?.map(stage => stage.properties) }
-                if (routeDatum.stages) {
-                    this.renderSelectedRouteStages(routeDatum.stages)
-                }
+                this.renderSelectedRouteStages(routeDatum)
                 this.renderSelectedRouteEndpoints(routeDatum.geometry.coordinates)
                 this.renderSelectedRoutePhotoLocationsAsync(routeProperties.OBJECTID)
             })
 
     }
 
-    private renderSelectedRouteStages(stages: Array<Feature<any, any>>): void {
+    private renderSelectedRouteStages(routeDatum: RouteDatum): void {
         D3.select(this.STAGES_CONTAINER_SELECTOR).selectChildren().remove()
         D3.select(this.STAGES_CONTAINER_SELECTOR).selectAll('path')
-            .data(stages)
+            .data(routeDatum.stages)
             .enter()
             .append('path')
             .attr('d', this.path)
             .attr('transform', this.zoomTransform.toString())
             .attr('class', this.STAGE_SELECTOR.slice(1))
             .on('mouseenter', (event: MouseEvent, datum: any) => {
-                if (stages.length > 1) {
-                    this.displayTooltip(event, this.mapTooltipContentService.getStageTooltipHTML(datum.properties))
-                }
+                this.displayTooltip(event, this.mapTooltipContentService.getStageTooltipHTML(routeDatum.properties, routeDatum.stages.length, datum.properties))
             })
             .on('mouseout', (event: MouseEvent, datum: any) => {
-                
+                this.hideTooltip()
             })
             .raise()
         D3.select(this.STAGES_CONTAINER_SELECTOR).selectAll('g')
-            .data(stages)
+            .data(routeDatum.stages)
             .enter()
             .append('g')
             .selectAll('circle')
@@ -324,16 +305,6 @@ export class MapComponent implements OnInit, OnDestroy {
                 return nodes[index].isPointInFill(svgStartPoint) || nodes[index].isPointInFill(svgEndPoint)
             })
         D3.selectAll(`${this.MUNICIPALITY_SELECTOR}.active`).raise()
-        // D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR).remove()
-        // D3.select(this.ROUTES_CONTAINER_SELECTOR).selectAll('circle')
-        //     .data([routeCoordinates[0], routeCoordinates[routeCoordinates.length - 1]]) // TODO: Als [{lon: , lat: }, {lon: , lat: }] übergeben anstatt als Array von Arrays und überall anpassen wo Datum verwendet wird!
-        //     .enter()
-        //     .append('circle')
-        //     .attr('transform', (datum: any) => this.zoomTransform.toString() + `translate(${this.projection([datum[0], datum[1]])})`)
-        //     .attr('r', 8 / this.zoomTransform.k)
-        //     .attr('class', this.ROUTE_ENDPOINT_SELECTOR.slice(1))
-        //     .attr('style', `stroke-width: ${2 / this.zoomTransform.k}`)
-        //     .raise()
     }
 
     private async renderSelectedRoutePhotoLocationsAsync(routeId: number): Promise<void> {
@@ -357,10 +328,8 @@ export class MapComponent implements OnInit, OnDestroy {
     private resetRouteSelection(): void {
         D3.selectAll(this.MUNICIPALITY_SELECTOR).classed('active', false)
         D3.selectAll(this.ROUTE_SELECTOR).classed('active', (false))
-        // D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR).remove()
         D3.select(this.STAGES_CONTAINER_SELECTOR).selectChildren().remove()
         D3.selectAll(this.PHOTO_LOCATION_SELECTOR).remove()
-        this.selectedRouteProperties = undefined
     }
 
     private resetMap(): void {
@@ -389,11 +358,6 @@ export class MapComponent implements OnInit, OnDestroy {
         D3.selectAll(this.ROUTE_SELECTOR).classed('hidden', (datum: any) => {
             return !this.mapSettingsService.routeMeetsCurrentSettings(datum)
         })
- 
-        // D3.selectAll(this.CANTON_SELECTOR).filter((datum: any) => {
-        //     return datum.id == 1
-        //     }).classed('active', true)
-        // this.mapSettingsService.currentSettings.cantonId    
     }
 
     private displayTooltip(event: MouseEvent, html: string): void {

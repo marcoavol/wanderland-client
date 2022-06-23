@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MapSettingsService } from '../map/map-settings.service';
-import { units } from '../../types/settings.types';
+import { Unit } from '../../types/settings.types';
 
 @Component({
     selector: 'app-settings-bar',
@@ -12,9 +12,9 @@ import { units } from '../../types/settings.types';
 export class SettingsBarComponent implements OnInit {
 
     public mapSettingsForm: FormGroup
-    public durationUnit: units
-    public elevationUnit: units
-    public lengthUnit: units
+    public durationUnit: Unit
+    public elevationUnit: Unit
+    public lengthUnit: Unit
 
     constructor(
         readonly offcanvas: NgbActiveOffcanvas,

@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, Input, Output, EventEmitter, OnInit, AfterViewInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { units } from '../../types/settings.types';
+import { Unit } from '../../types/settings.types';
 import { UnitUtilsService } from '../../utils/unit-utils.service';
 
 @Component({
@@ -35,7 +35,7 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
     initialUpper: number
 
     @Input()
-    unit: units
+    unit: Unit
 
     @Output()
     onRangeChanged = new EventEmitter<{ lower: number, upper: number }>()
