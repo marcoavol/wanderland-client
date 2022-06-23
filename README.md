@@ -69,3 +69,54 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 - Konvertierung/Aufbereitung:
   - Swiss Maps Generator von Interactive Things (<https://swiss-maps.vercel.app/>)
   - Mapshaper (<https://mapshaper.org/>)
+
+
+## How to dockerize
+Tutorial:  https://wkrzywiec.medium.com/build-and-run-angular-application-in-a-docker-container-b65dbbc50be8
+
+1) Compile Angular app: In root folder of the app run
+`ng build`
+
+Creates a ./dist/wanderland-client folder with the compiled files
+
+2) In the root folder of the app, create a file nginx.conf containing:
+```
+events{}
+http {
+        include /etc/nginx/mime.types;
+        server {
+                listen 80;
+                server_name localhost;
+                root /usr/share/nginx/html;
+                index index.html;
+
+                location / {
+                    try_files $uri $uri/ /index.html;
+                }
+        }
+}
+```
+
+3) In the root folder of the app, create a file called Dockerfile containing:   
+```
+FROM nginx:1.22.0
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY /dist/wanderland-client /usr/share/nginx/html
+```
+
+The following steps, I run from Powershell but it should be the same anywhere you have docker installed:  
+4) Create image: `docker build -t wanderland-client-image .`  
+You should now see the image when you run `docker image ls`
+
+
+5) Start up container from image, running in the background:  
+`docker run --name wanderland-client-container -d -p 4200:80 wanderland-client-image`
+Optionally, you can specify a tag after the image name, e.g. wanderland-client-container:2.0
+
+
+6) Connect to front-end from browser at http://localhost:4200/.
+
+7) Stop container: `docker stop wanderland-client-container`
+8) Resume container: `docker restart wanderland-client-container`
+
+
