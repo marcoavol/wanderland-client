@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MapSettings } from '../types/settings.types';
+import { MapSettings } from '../../types/settings.types';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({

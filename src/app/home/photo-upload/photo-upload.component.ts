@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToastsService } from '../toasts/toasts.service';
+import { ToastsService } from '../../toasts/toasts.service';
 import { MapPhotosService } from '../map/map-photos.service';
 
 @Component({

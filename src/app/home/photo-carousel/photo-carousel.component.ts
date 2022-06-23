@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Photo } from '../types/photo.types';
+import { Photo } from '../../types/photo.types';
 
 @Component({
     selector: 'app-photo-carousel',

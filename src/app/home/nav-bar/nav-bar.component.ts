@@ -3,7 +3,7 @@ import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsBarComponent } from '../settings-bar/settings-bar.component';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
+import Gemeindeverzeichnis from '../../../assets/gemeindeverzeichnis.json';
 import { MapSettingsService } from '../map/map-settings.service';
 
 //TODO connect input to map => zoom or show selected canton

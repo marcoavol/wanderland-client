@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Photo, PhotoInfo } from '../types/photo.types';
+import { Photo, PhotoInfo } from '../../types/photo.types';
 import { lastValueFrom, Subject } from 'rxjs';
 import { MapComponent } from './map.component';
 import ExifReader from 'exifreader';

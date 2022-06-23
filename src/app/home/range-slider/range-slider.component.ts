@@ -1,8 +1,7 @@
 import { Component, ViewChild, ElementRef, Input, Output, EventEmitter, OnInit, AfterViewInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { units } from '../types/settings.types';
-import { UnitUtilsServiceService } from '../utils/unit-utils-service.service';
-
+import { units } from '../../types/settings.types';
+import { UnitUtilsService } from '../../utils/unit-utils.service';
 
 @Component({
     selector: 'app-range-slider',
@@ -44,7 +43,7 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
     public rangeForm: FormGroup
 
     constructor(
-        private unitUtilsService: UnitUtilsServiceService
+        private unitUtilsService: UnitUtilsService
     ) { }
 
     ngOnInit(): void {

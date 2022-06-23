@@ -42,3 +42,23 @@ export class RouteProperties {
     ZeitStZiR: number;
     ZeitZiStR: number;
 }
+
+export class StageProperties {
+    Abwicklung: string;
+    Change_Dt: string;
+    DistanzE: number;
+    HoeheAbE: number;
+    HoeheAufE: number;
+    HoeheMaxE: number;
+    HoeheMinE: number;
+    KonditionE?: string;
+    NameE: string;
+    NrEtappe: number;
+    OBJECTID: number;
+    SHAPE_Leng: number;
+    TechnikE?: string;
+    TechNrRId: number;
+    TourNrR: string;
+    ZeitStZiE: number;
+    ZeitZiStE: number;
+}

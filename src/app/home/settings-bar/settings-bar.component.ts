@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MapSettingsService } from '../map/map-settings.service';
-import { units } from '../types/settings.types';
+import { units } from '../../types/settings.types';
 
 @Component({
     selector: 'app-settings-bar',

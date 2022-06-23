@@ -1,0 +1,65 @@
+<div id="map">
+    <div id="tooltip" class="hidden"></div>
+</div>
+
+<div *ngIf="selectedRouteProperties" id="infobox" [ngClass]="{'hidden': !selectedRouteProperties}">
+    <div class="w-100 text-center p-2">
+        <p class="fw-bold">
+            {{selectedRouteProperties.TourNameR}}
+        </p>
+        <p>
+            <i class="bi bi-signpost-split"></i>
+            {{selectedRouteProperties.BeschreibR}}
+        </p>
+        <p *ngIf="selectedRouteProperties.stages && selectedRouteProperties.stages.length > 1">
+            ({{selectedRouteProperties.stages.length}} Etappen)
+        </p>
+    </div>
+    <div class="border-top w-100 text-center p-2">
+        <p>Eigenschaften:</p>
+        <div class="d-flex justify-content-evenly">
+            <p>
+                <i class="bi bi-stopwatch"></i>
+                Dauer: {{selectedRouteProperties.ZeitStZiR | convertToUnit: 'DaysHoursMinutes':true}}
+            </p>
+            <p>
+                <i class="bi bi-code"></i>
+                Distanz: {{selectedRouteProperties.LaengeR | convertToUnit: 'Kilometers':true}}
+            </p>
+        </div>
+        <div class="d-flex justify-content-evenly">
+            <p>
+                <i class="bi bi-arrow-up-right"></i>
+                Aufstieg: {{selectedRouteProperties.HoeheAufR | convertToUnit: (selectedRouteProperties.HoeheAufR > 1000 ? 'Kilometers' : 'Meters'):true}}
+            </p>
+            <p>
+                <i class="bi bi-arrow-down-right"></i>
+                Abstieg: {{selectedRouteProperties.HoeheAbR | convertToUnit: (selectedRouteProperties.HoeheAbR > 1000 ? 'Kilometers' : 'Meters'):true}}
+            </p>
+        </div>
+        <div class="d-flex justify-content-evenly">
+            <p>
+                <i class="bi bi-chevron-bar-up"></i>
+                Höhe max.: {{selectedRouteProperties.HoeheMaxR | convertToUnit: 'Meters':true}}
+            </p>
+            <p>
+                <i class="bi bi-chevron-bar-down"></i>
+                Höhe min.: {{selectedRouteProperties.HoeheMinR | convertToUnit: 'Meters':true}}
+            </p>
+        </div>
+    </div>
+    <div class="border-top w-100 text-center p-2">
+        <p>Anforderung:</p>
+        <div class="d-flex justify-content-evenly">
+            <p>
+                <i class="bi bi-heart-pulse"></i>
+                Kondition: {{selectedRouteProperties.KonditionR ?? 'n.a.'}}
+            </p>
+            <p>
+                <i class="bi bi-gear"></i>
+                Technik: {{selectedRouteProperties.TechnikR ?? 'n.a.'}}
+            </p>
+        </div>
+    </div>
+</div>
+

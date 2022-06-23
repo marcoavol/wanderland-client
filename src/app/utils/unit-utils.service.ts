@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
     providedIn: 'root'
 })
-export class UnitUtilsServiceService {
+export class UnitUtilsService {
 
     constructor() { }
 
@@ -11,12 +11,12 @@ export class UnitUtilsServiceService {
         switch (unit) {
             case 'Meters': return formatWithUnit ? String(value) + 'm' : String(value)
             case 'Kilometers': return formatWithUnit ? (value/1000).toFixed(1) + 'km' : String(value/1000)
-            case 'DaysHoursMinutes': return this.convertInDaysHoursMinutes(value, formatWithUnit)
+            case 'DaysHoursMinutes': return this.convertToDaysHoursMinutesString(value, formatWithUnit)
             default: return ''   
         }
     }
 
-    private convertInDaysHoursMinutes(minutes: number, formatWithUnit: boolean = false): string {
+    private convertToDaysHoursMinutesString(minutes: number, formatWithUnit: boolean = false): string {
         let d = Math.floor(minutes / (60 * 24))
         let h = (Math.floor(minutes / 60)) % 24
         let m = minutes % 60

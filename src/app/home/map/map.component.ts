@@ -5,12 +5,13 @@ import * as TopoJSON from 'topojson-client';
 import { Topology, GeometryCollection } from 'topojson-specification';
 import { Feature } from 'geojson';
 import pointToLineDistance from '@turf/point-to-line-distance';
-import Gemeindeverzeichnis from '../../assets/gemeindeverzeichnis.json';
-import Kantonsfarben from '../../assets/kantonsfarben.json';
+import Gemeindeverzeichnis from '../../../assets/gemeindeverzeichnis.json';
+import Kantonsfarben from '../../../assets/kantonsfarben.json';
 import { MapSettingsService } from './map-settings.service';
 import { MapPhotosService } from './map-photos.service';
-import { Coordinate, RouteDatum, RouteProperties, RouteGeometry } from '../types/map.types';
-import { UnitUtilsServiceService } from '../utils/unit-utils-service.service';
+import { Coordinate, RouteDatum, RouteProperties, RouteGeometry, StageProperties } from '../../types/map.types';
+import { UnitUtilsService } from '../../utils/unit-utils.service';
+import { MapTooltipContentService } from './map-tooltip-content.service';
 
 @Component({
     selector: 'app-map',
@@ -19,6 +20,8 @@ import { UnitUtilsServiceService } from '../utils/unit-utils-service.service';
     encapsulation: ViewEncapsulation.None
 })
 export class MapComponent implements OnInit, OnDestroy {
+
+    public selectedRouteProperties?: RouteProperties & { stages?: StageProperties[] }
 
     private static readonly NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS = 1000
 
@@ -56,7 +59,7 @@ export class MapComponent implements OnInit, OnDestroy {
     constructor(
         private mapSettingsService: MapSettingsService,
         private mapPhotosService: MapPhotosService,
-        private unitUtilsService: UnitUtilsServiceService
+        private mapTooltipContentService: MapTooltipContentService,
     ) { }
 
     ngOnInit(): void {
@@ -210,17 +213,10 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('d', this.path)
             .attr('class', datum => `${this.MUNICIPALITY_SELECTOR.slice(1)} m${datum.id}`)
             .on('mouseenter', (event: MouseEvent, datum: any) => {
-                console.warn(datum)
                 const municipalityName = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDENAME
                 const cantonAbbreviation = Gemeindeverzeichnis.GDE.find(gemeinde => gemeinde.GDENR === datum.id)?.GDEKT
                 if (municipalityName && cantonAbbreviation) {
-                    const tooltipHtml = `
-                        <p>
-                            <i class="bi bi-map"></i>
-                            ${municipalityName} (${cantonAbbreviation})
-                        </p>
-                    `
-                    this.displayTooltip(event, tooltipHtml)
+                    this.displayTooltip(event, this.mapTooltipContentService.getMunicipalitytooltipHTML({ municipalityName, cantonAbbreviation }))
                 }
             })
             .on('mouseout', (event: MouseEvent, datum: any) => {
@@ -247,102 +243,35 @@ export class MapComponent implements OnInit, OnDestroy {
                 return routes.map((route: any) => {
                     route['stages'] = stages.filter((stage: any) => stage.properties.TechNrRId === route.properties.TechNrR_ID)
                     return route
-                }) as Array<Feature<any, any>>
+                }) as Array<Feature>
             })
             .enter()
             .append('path')
             .attr('d', this.path)
             .attr('class', (datum: any) => `${this.ROUTE_SELECTOR.slice(1)} r${datum.properties.OBJECTID}`)
-            .on('click', (event: PointerEvent, datum: any) => {
-                D3.selectAll(this.ROUTE_SELECTOR).classed('active', false)
-                D3.select(event.target as Element).classed('active', true).raise()
-                const routeDatum = <RouteDatum>(datum)
-                const routeProperties = routeDatum.properties
-                if (routeDatum.stages) {
-                    this.renderSelectedRouteStages(routeDatum.stages)
-                }
-                this.renderSelectedRouteEndpoints(routeDatum.geometry.coordinates)
-                this.renderSelectedRoutePhotoLocationsAsync(routeProperties.OBJECTID)
-                const tooltipHtml = `
-                    <div class="w-100 text-center p-2">
-                        <p class="fw-bold">
-                            ${routeProperties.TourNameR}
-                        </p>
-                        <p>
-                            <i class="bi bi-signpost-split"></i>
-                            ${routeProperties.BeschreibR}
-                        </p>
-                    </div>
-                    <div class="border-top w-100 text-center p-2">
-                        <p>Eigenschaften:</p>
-                        <div class="d-flex justify-content-evenly">
-                            <p>
-                                <i class="bi bi-stopwatch"></i>
-                                Dauer: ${this.unitUtilsService.convertToUnitString(routeProperties.ZeitStZiR, 'DaysHoursMinutes', true)}
-                            </p>
-                            <p>
-                                <i class="bi bi-code"></i>
-                                Distanz: ${this.unitUtilsService.convertToUnitString(routeProperties.LaengeR, 'Kilometers', true)}
-                            </p>
-                        </div>
-                        <div class="d-flex justify-content-evenly">
-                            <p>
-                                <i class="bi bi-arrow-up-right"></i>
-                                Aufstieg: ${this.unitUtilsService.convertToUnitString(routeProperties.HoeheAufR, routeProperties.HoeheAufR > 1000 ? 'Kilometers' : 'Meters', true)}
-                            </p>
-                            <p>
-                                <i class="bi bi-arrow-down-right"></i>
-                                Abstieg: ${this.unitUtilsService.convertToUnitString(routeProperties.HoeheAbR, routeProperties.HoeheAbR > 1000 ? 'Kilometers' : 'Meters', true)}
-                            </p>
-                        </div>
-                        <div class="d-flex justify-content-evenly">
-                            <p>
-                                <i class="bi bi-chevron-bar-up"></i>
-                                Höhe max.: ${this.unitUtilsService.convertToUnitString(routeProperties.HoeheMaxR, 'Meters', true)}
-                            </p>
-                            <p>
-                                <i class="bi bi-chevron-bar-down"></i>
-                                Höhe min.: ${this.unitUtilsService.convertToUnitString(routeProperties.HoeheMinR, 'Meters', true)}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="border-top w-100 text-center p-2">
-                        <p>Anforderung:</p>
-                        <div class="d-flex justify-content-evenly">
-                            <p>
-                                <i class="bi bi-heart-pulse"></i>
-                                Kondition: ${routeProperties.KonditionR ?? 'n.a.'}
-                            </p>
-                            <p>
-                                <i class="bi bi-gear"></i>
-                                Technik: ${routeProperties.TechnikR ?? 'n.a.'}
-                            </p>
-                        </div>
-                    </div>
-                `
-                this.displayTooltip(event, tooltipHtml)
-            })
             .on('mouseenter', (event: MouseEvent, datum: any) => {
                 if (!D3.select(event.target as Element).classed('active')) {
                     D3.select(event.target as Element).raise()
                 }
-                const routeProperties = <RouteProperties>(datum.properties)
-                const tooltipHtml = `
-                    <p style="font-weight: bold">
-                        ${routeProperties.TourNameR}
-                    </p>
-                    <p>
-                        <i class="bi bi-signpost-split"></i>
-                        ${routeProperties.BeschreibR}
-                    </p>
-                `
-                this.displayTooltip(event, tooltipHtml)
+                this.displayTooltip(event, this.mapTooltipContentService.getRouteTooltipHMTL(datum.properties))
             })
             .on('mouseout', (event: MouseEvent) => {
                 if (!D3.select(event.target as Element).classed('active')) {
                     D3.select(event.target as Element).lower()
                 }
                 this.hideTooltip()
+            })
+            .on('click', (event: PointerEvent, datum: any) => {
+                D3.selectAll(this.ROUTE_SELECTOR).classed('active', false)
+                D3.select(event.target as Element).classed('active', true).raise()
+                const routeDatum = <RouteDatum>(datum)
+                const routeProperties = routeDatum.properties
+                this.selectedRouteProperties = { ...routeProperties, stages: routeDatum.stages?.map(stage => stage.properties) }
+                if (routeDatum.stages) {
+                    this.renderSelectedRouteStages(routeDatum.stages)
+                }
+                this.renderSelectedRouteEndpoints(routeDatum.geometry.coordinates)
+                this.renderSelectedRoutePhotoLocationsAsync(routeProperties.OBJECTID)
             })
 
     }
@@ -356,8 +285,13 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('d', this.path)
             .attr('transform', this.zoomTransform.toString())
             .attr('class', this.STAGE_SELECTOR.slice(1))
-            .on('click', (event: MouseEvent, datum: any) => {
-                console.warn(JSON.stringify(datum.properties, undefined, 2))
+            .on('mouseenter', (event: MouseEvent, datum: any) => {
+                if (stages.length > 1) {
+                    this.displayTooltip(event, this.mapTooltipContentService.getStageTooltipHTML(datum.properties))
+                }
+            })
+            .on('mouseout', (event: MouseEvent, datum: any) => {
+                
             })
             .raise()
         D3.select(this.STAGES_CONTAINER_SELECTOR).selectAll('g')
@@ -426,6 +360,7 @@ export class MapComponent implements OnInit, OnDestroy {
         // D3.selectAll(this.ROUTE_ENDPOINT_SELECTOR).remove()
         D3.select(this.STAGES_CONTAINER_SELECTOR).selectChildren().remove()
         D3.selectAll(this.PHOTO_LOCATION_SELECTOR).remove()
+        this.selectedRouteProperties = undefined
     }
 
     private resetMap(): void {
