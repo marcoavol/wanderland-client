@@ -38,6 +38,11 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
     @Input()
     unit: units
 
+    @Input()
+    set resetRange(resetCmd: boolean) {
+        this.rangeForm.reset()
+    }
+
     @Output()
     onRangeChanged = new EventEmitter<{ lower: number, upper: number }>()
 
@@ -75,6 +80,8 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
         }
 
         this.showOutputValues(lowerValue, upperValue)
+     
+        
     }
 
     private showOutputValues(lowerValue: number, upperValue: number): void {

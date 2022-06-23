@@ -11,6 +11,7 @@ export class MapSettingsService {
         national: true,
         regional: true,
         local: true,
+        includeStages: true,
         durationMin: 0,
         durationMax: 17280,
         elevationMin: 0,
@@ -61,6 +62,10 @@ export class MapSettingsService {
             case 'Lokal': return this.currentSettings.local
             default: return false
         }
+    }
+
+    private routeMeetsStagesSetting(includeStages: boolean): boolean {
+        return includeStages
     }
 
     private routeMeetsDurationSetting(duration: number): boolean {

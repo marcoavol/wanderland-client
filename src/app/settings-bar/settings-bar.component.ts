@@ -17,6 +17,8 @@ export class SettingsBarComponent implements OnInit {
     public descendingUnit: units
     public lengthUnit: units
 
+    public resetDuration: boolean
+
     constructor(
         readonly offcanvas: NgbActiveOffcanvas,
         private mapSettingsService: MapSettingsService,
@@ -33,6 +35,7 @@ export class SettingsBarComponent implements OnInit {
             national: new FormControl(currentSettings.national),
             regional: new FormControl(currentSettings.regional),
             local: new FormControl(currentSettings.local),
+            includeStages: new FormControl(currentSettings.includeStages),
             durationMin: new FormControl(currentSettings.durationMin),
             durationMax: new FormControl(currentSettings.durationMax),
             elevationMin: new FormControl(currentSettings.elevationMin),
@@ -78,13 +81,9 @@ export class SettingsBarComponent implements OnInit {
         this.mapSettingsForm.patchValue({ lowSkills: true, mediumSkills: true, goodSkills: true })
         this.mapSettingsForm.patchValue({ lowFitness: true, mediumFitness: true, goodFitness: true })
         this.mapSettingsChanged()
-        // this.mapSettingsService.currentSettings.durationMin = 0
-        // this.mapSettingsService.currentSettings.durationMax = 17280
-        // this.mapSettingsService.currentSettings.elevationMin = 0
-        // this.mapSettingsService.currentSettings.elevationMax = 50000
-        // this.mapSettingsService.currentSettings.descendingMin = 0
-        // this.mapSettingsService.currentSettings.descendingMax = 50000
-        // this.mapSettingsService.currentSettings.lengthMin = 0
-        // this.mapSettingsService.currentSettings.lengthMax = 70000
+
+        // this.mapSettingsForm.patchValue({ durationMin: 0, durationMax: 17280 })
+        // this.handleLengthRangeChange({ lower: 0, upper: 70000 })
+
     }
 }
