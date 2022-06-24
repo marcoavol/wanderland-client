@@ -41,6 +41,7 @@ export class NavBarComponent implements OnInit {
 
     public open() {
         this.offcanvasService.open(SettingsBarComponent);
+        this.mapSettingsService.currentSettings = {cantonId: -1}
     }
 
     public searchForCanton(event: Event): void {
