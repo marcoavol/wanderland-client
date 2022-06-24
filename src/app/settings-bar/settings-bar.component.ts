@@ -83,5 +83,7 @@ export class SettingsBarComponent implements OnInit {
                                                     elevationMin: 0, elevationMax: 50000,
                                                     descendingMin: 0, descendingMax: 50000,
                                                     lengthMin: 0, lengthMax: 700000}
+
+        this.resetDuration = true       
     }
 }

@@ -19,6 +19,9 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
     spanFullRange: ElementRef
     @ViewChild('spanSliderRange')
     spanSliderRange: ElementRef
+    
+    public resetValueLimitOne : number
+    public resetValueLimitTwo : number
 
     @Input()
     min: number
@@ -39,8 +42,12 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
     unit: units
 
     @Input()
-    set resetRange(resetCmd: boolean) {
-        this.rangeForm.reset()
+    set resetRange(reset: boolean) {
+        this.rangeForm.value.limitOne = this.min
+        this.rangeForm.value.limitTwo = this.max
+        this.resetValueLimitOne = this.min
+        this.resetValueLimitTwo = this.max
+        this.rangeSliderChanged()
     }
 
     @Output()
@@ -80,8 +87,6 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
         }
 
         this.showOutputValues(lowerValue, upperValue)
-     
-        
     }
 
     private showOutputValues(lowerValue: number, upperValue: number): void {
