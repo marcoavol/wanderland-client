@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { MapSettings, RouteType } from '../../types/settings.types';
+import { MapSettings, Difficulty, RouteType } from '../../types/settings.types';
 import { BehaviorSubject } from 'rxjs';
+import { RouteDatum, RouteProperties, StageProperties } from '../../types/map.types';
 
 @Injectable({
     providedIn: 'root'
@@ -42,18 +43,36 @@ export class MapSettingsService {
         console.warn(this.currentSettings)
     }
 
-    public routeMeetsCurrentSettings(routeDatum: any): boolean {
+    public routeOrStageMeetsCurrentSettings(routeDatum: RouteDatum): boolean {
+        const routeProperties = routeDatum.properties as RouteProperties
         const result = 
-            this.routeMeetsRouteTypeSetting(routeDatum?.properties.Typ_TR) && 
-            this.routeMeetsDurationSetting(routeDatum?.properties.ZeitStZiR) &&
-            this.routeMeetsElevationSetting(routeDatum?.properties.HoeheAufR) &&
-            this.routeMeetsLengthSetting(routeDatum?.properties.LaengeR) &&
-            this.routeMeetsTechniqueTypeSetting(routeDatum?.properties.TechnikR) &&
-            this.routeMeetsFitnessLevelTypeSetting(routeDatum?.properties.KonditionR)
+            this.routeMeetsCurrentSettings(routeProperties) || 
+            routeDatum.stages.some(stage => this.stageMeetsCurrentSettings(stage.properties))  
         return result
     }
 
-    private routeMeetsRouteTypeSetting(routeType: RouteType): boolean {
+    public routeMeetsCurrentSettings(routeProperties: RouteProperties): boolean {
+        const result = 
+            this.meetsRouteTypeSetting(routeProperties.Typ_TR as RouteType) && 
+            this.meetsDurationSetting(routeProperties.ZeitStZiR) &&
+            this.meetsElevationSetting(routeProperties.HoeheAufR) &&
+            this.meetsLengthSetting(routeProperties.LaengeR) &&
+            this.meetsTechniqueDifficultySetting(routeProperties.TechnikR as Difficulty) &&
+            this.meetsFitnessDifficultySetting(routeProperties.KonditionR as Difficulty)
+        return result
+    }
+
+    public stageMeetsCurrentSettings(stageProperties: StageProperties): boolean {
+        const result = 
+            this.meetsDurationSetting(stageProperties.ZeitStZiE) &&
+            this.meetsElevationSetting(stageProperties.HoeheAufE) &&
+            this.meetsLengthSetting(stageProperties.DistanzE) &&
+            this.meetsTechniqueDifficultySetting(stageProperties.TechnikE as Difficulty) &&
+            this.meetsFitnessDifficultySetting(stageProperties.KonditionE as Difficulty)
+        return result
+    }
+
+    private meetsRouteTypeSetting(routeType: RouteType): boolean {
         switch (routeType) {
             case 'National': return this.currentSettings.national
             case 'Regional': return this.currentSettings.regional
@@ -62,20 +81,20 @@ export class MapSettingsService {
         }
     }
 
-    private routeMeetsDurationSetting(duration: number): boolean {
+    private meetsDurationSetting(duration: number): boolean {
         return duration >= this.currentSettings.durationMin && duration <= this.currentSettings.durationMax
     } 
 
-    private routeMeetsElevationSetting(elevation: number): boolean {
+    private meetsElevationSetting(elevation: number): boolean {
         return elevation >= this.currentSettings.elevationMin && elevation <= this.currentSettings.elevationMax
     } 
 
-    private routeMeetsLengthSetting(length: number): boolean {
+    private meetsLengthSetting(length: number): boolean {
         return length >= this.currentSettings.lengthMin && length <= this.currentSettings.lengthMax
     } 
 
-    private routeMeetsTechniqueTypeSetting(techniqueType: 'leicht' | 'mittel' | 'schwer'): boolean {
-        switch (techniqueType) {
+    private meetsTechniqueDifficultySetting(difficulty: Difficulty): boolean {
+        switch (difficulty) {
             case 'leicht': return this.currentSettings.lowSkills
             case 'mittel': return this.currentSettings.mediumSkills
             case 'schwer': return this.currentSettings.goodSkills
@@ -83,12 +102,13 @@ export class MapSettingsService {
         }
     }
 
-    private routeMeetsFitnessLevelTypeSetting(fitnessLevelType: 'leicht' | 'mittel' | 'schwer'): boolean {
-        switch (fitnessLevelType) {
+    private meetsFitnessDifficultySetting(difficulty: Difficulty): boolean {
+        switch (difficulty) {
             case 'leicht': return this.currentSettings.lowFitness
             case 'mittel': return this.currentSettings.mediumFitness
             case 'schwer': return this.currentSettings.goodFitness
             default: return this.currentSettings.lowFitness && this.currentSettings.mediumFitness && this.currentSettings.goodFitness
         }
     }
+    
 }

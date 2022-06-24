@@ -21,3 +21,5 @@ export interface MapSettings {
 export type Unit = 'Meters' | 'Kilometers' | 'DaysHoursMinutes' 
 
 export type RouteType = 'National' | 'Regional' | 'Lokal'
+
+export type Difficulty = 'leicht' | 'mittel' | 'schwer'

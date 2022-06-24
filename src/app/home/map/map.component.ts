@@ -80,6 +80,22 @@ export class MapComponent implements OnInit, OnDestroy {
         return nearKnownRouteIds
     }
 
+      /**
+     * Takes (WGS84) coordinates of a point and converts it (with the same projection as used for the topology) 
+     * to a DOMPoint representing the position of the given coordinates within the main SVG element.
+     * @param coordinates a two-element array containing longitude and latitude (in this order) of a point in degrees.
+     * @returns a DOMPoint within the main SVG-Element representing the projected input point or null if the input point is outside the clipping bounds of the projection.
+     */
+    private coordinatesToProjectedSVGPoint(coordinates: [number, number]): DOMPoint | null {
+        const projectedCoordinates = this.projection(coordinates)
+        const svgPoint = this.svg.node()?.createSVGPoint()
+        if (projectedCoordinates && svgPoint) {
+            svgPoint.x = projectedCoordinates[0]
+            svgPoint.y = projectedCoordinates[1]
+        }
+        return svgPoint || null
+    }
+
     private async setupAsync(): Promise<void> {
         this.createSVG()
         this.setZoomAndPanBehavior()
@@ -248,12 +264,11 @@ export class MapComponent implements OnInit, OnDestroy {
                 this.hideTooltip()
             })
             .on('click', (event: PointerEvent, datum: any) => {
-                D3.selectAll(this.ROUTE_SELECTOR).classed('active', false)
-                D3.select(event.target as Element).classed('active', true).raise()
                 const routeDatum = <RouteDatum>(datum)
                 const routeProperties = routeDatum.properties
+                D3.selectAll(this.ROUTE_SELECTOR).classed('active', false)
+                D3.select(event.target as Element).classed('active', this.mapSettingsService.routeMeetsCurrentSettings(routeProperties)).raise()
                 this.renderSelectedRouteStages(routeDatum)
-                this.renderSelectedRouteEndpoints(routeDatum.geometry.coordinates)
                 this.renderSelectedRoutePhotoLocationsAsync(routeProperties.OBJECTID)
             })
 
@@ -268,6 +283,7 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('d', this.path)
             .attr('transform', this.zoomTransform.toString())
             .attr('class', this.STAGE_SELECTOR.slice(1))
+            .classed('active', (datum: any) => this.mapSettingsService.stageMeetsCurrentSettings(datum.properties))
             .on('mouseenter', (event: MouseEvent, datum: any) => {
                 this.displayTooltip(event, this.mapTooltipContentService.getStageTooltipHTML(routeDatum.properties, routeDatum.stages.length, datum.properties))
             })
@@ -281,9 +297,9 @@ export class MapComponent implements OnInit, OnDestroy {
             .append('g')
             .selectAll('circle')
             .data((datum: any) => {
-                const coordinates = (datum.geometry as RouteGeometry).coordinates
-                const startCoordinates = coordinates[0]
-                const endCoordinates = coordinates[coordinates.length - 1]
+                const stageCoordinates = (datum.geometry as RouteGeometry).coordinates
+                const startCoordinates = stageCoordinates[0]
+                const endCoordinates = stageCoordinates[stageCoordinates.length - 1]
                 return [{ lon: startCoordinates[0], lat: startCoordinates[1] }, { lon: endCoordinates[0], lat: endCoordinates[1] }]
             })
             .enter()       
@@ -297,7 +313,11 @@ export class MapComponent implements OnInit, OnDestroy {
             .raise()
     }
 
-    private renderSelectedRouteEndpoints(routeCoordinates: Coordinate[]): void {
+    // TODO: remove if not needed anymore
+    /**
+     * @deprecated 
+     */
+    private renderSelectedRouteEnds(routeCoordinates: Coordinate[]): void {
         const svgStartPoint = this.coordinatesToProjectedSVGPoint(routeCoordinates[0])
         const svgEndPoint = this.coordinatesToProjectedSVGPoint(routeCoordinates[routeCoordinates.length - 1])
         D3.selectAll(this.MUNICIPALITY_SELECTOR)
@@ -309,7 +329,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
     private async renderSelectedRoutePhotoLocationsAsync(routeId: number): Promise<void> {
         const photos = await this.mapPhotosService.getPhotosByRouteId(routeId)
-        console.warn(photos)
         D3.selectAll(this.PHOTO_LOCATION_SELECTOR)
             .remove()
         D3.select(this.PHOTO_LOCATIONS_CONTAINER_SELECTOR).selectAll('circle')
@@ -337,26 +356,10 @@ export class MapComponent implements OnInit, OnDestroy {
         this.resetRouteSelection()
     }
 
-    /**
-     * Takes (WGS84) coordinates of a point and converts it (with the same projection as used for the topology) 
-     * to a DOMPoint representing the position of the given coordinates within the main SVG element.
-     * @param coordinates a two-element array containing longitude and latitude (in this order) of a point in degrees.
-     * @returns a DOMPoint within the main SVG-Element representing the projected input point or null if the input point is outside the clipping bounds of the projection.
-     */
-    private coordinatesToProjectedSVGPoint(coordinates: [number, number]): DOMPoint | null {
-        const projectedCoordinates = this.projection(coordinates)
-        const svgPoint = this.svg.node()?.createSVGPoint()
-        if (projectedCoordinates && svgPoint) {
-            svgPoint.x = projectedCoordinates[0]
-            svgPoint.y = projectedCoordinates[1]
-        }
-        return svgPoint || null
-    }
-
     private handleSettingsChange(): void {
         this.resetRouteSelection()
         D3.selectAll(this.ROUTE_SELECTOR).classed('hidden', (datum: any) => {
-            return !this.mapSettingsService.routeMeetsCurrentSettings(datum)
+            return !this.mapSettingsService.routeOrStageMeetsCurrentSettings(datum)
         })
     }
 
@@ -366,7 +369,8 @@ export class MapComponent implements OnInit, OnDestroy {
         const isInBottomHalf = event.pageY > window.innerHeight / 2
         const positionY = isInBottomHalf ? window.innerHeight - event.pageY + offsetY : event.pageY + offsetY
         const positionX = event.pageX + offsetX
-        D3.select('#tooltip').classed('hidden', false)
+        D3.select('#tooltip')
+            .classed('hidden', false)
             .attr('style', 'top: 0; bottom: 0')
             .attr('style', `left: ${positionX}px; ${isInBottomHalf ? 'bottom' :  'top'}: ${positionY}px`)
             .html(html)

@@ -74,6 +74,10 @@
     cursor: pointer;
 }
 
+.stage.active {
+    stroke: green !important
+}
+
 .stage:hover {
     stroke: yellow !important;
     transition: 0.075s;
