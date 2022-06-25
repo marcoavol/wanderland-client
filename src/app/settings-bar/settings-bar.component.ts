@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MapSettingsService } from '../map/map-settings.service';
+import { RangeSliderComponent } from '../range-slider/range-slider.component';
 import { units } from '../types/settings.types';
 
 @Component({
@@ -16,8 +17,6 @@ export class SettingsBarComponent implements OnInit {
     public elevationUnit: units
     public descendingUnit: units
     public lengthUnit: units
-
-    public resetDuration: boolean
 
     constructor(
         readonly offcanvas: NgbActiveOffcanvas,
@@ -75,15 +74,17 @@ export class SettingsBarComponent implements OnInit {
     }
 
     public resetFiltersToDefault(): void {
-        this.mapSettingsForm.patchValue({ national: true, regional: true, local: true })
-        this.mapSettingsForm.patchValue({ lowSkills: true, mediumSkills: true, goodSkills: true })
-        this.mapSettingsForm.patchValue({ lowFitness: true, mediumFitness: true, goodFitness: true })
-        this.mapSettingsChanged()
-        this.mapSettingsService.currentSettings = {durationMin: 0, durationMax: 17280, 
-                                                    elevationMin: 0, elevationMax: 50000,
-                                                    descendingMin: 0, descendingMax: 50000,
-                                                    lengthMin: 0, lengthMax: 700000}
+        // this.mapSettingsForm.patchValue({ national: true, regional: true, local: true })
+        // this.mapSettingsForm.patchValue({ lowSkills: true, mediumSkills: true, goodSkills: true })
+        // this.mapSettingsForm.patchValue({ lowFitness: true, mediumFitness: true, goodFitness: true })
+        // this.mapSettingsChanged()
+        // this.mapSettingsService.currentSettings = {durationMin: 0, durationMax: 17280, 
+        //                                             elevationMin: 0, elevationMax: 50000,
+        //                                             descendingMin: 0, descendingMax: 50000,
+        //                                             lengthMin: 0, lengthMax: 700000}
 
-        this.resetDuration = true       
+        // this.resetDuration = true
+        this.mapSettingsForm.reset(MapSettingsService.INITIAL_SETTINGS)
+        this.mapSettingsChanged()
     }
 }

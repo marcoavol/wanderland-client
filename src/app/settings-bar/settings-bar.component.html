@@ -41,7 +41,6 @@
                 [initialLower]="mapSettingsForm.value.durationMin" 
                 [initialUpper]="mapSettingsForm.value.includeStages ? 360 : mapSettingsForm.value.durationMax" 
                 [unit]="durationUnit"
-                [resetRange]="resetDuration"
                 (onRangeChanged)="handleDurationRangeChange($event)">
             </app-range-slider>
         </div>
@@ -53,7 +52,7 @@
             <app-range-slider
                 [min]="0" [max]="mapSettingsForm.value.includeStages ? 20000 : 700000" [step]="500" 
                 [initialLower]="mapSettingsForm.value.lengthMin" 
-                [initialUpper]="mapSettingsForm.value.includeStages ? 20000 : mapSettingsForm.value.lengthMax" 
+                [initialUpper]="mapSettingsForm.value.lengthMax" 
                 [unit]="lengthUnit"
                 (onRangeChanged)="handleLengthRangeChange($event)">
             </app-range-slider>

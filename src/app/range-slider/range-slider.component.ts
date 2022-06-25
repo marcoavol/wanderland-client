@@ -19,9 +19,6 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
     spanFullRange: ElementRef
     @ViewChild('spanSliderRange')
     spanSliderRange: ElementRef
-    
-    public resetValueLimitOne : number
-    public resetValueLimitTwo : number
 
     @Input()
     min: number
@@ -33,22 +30,35 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
     step: number
 
     @Input()
-    initialLower: number
+    set initialLower(value: number) {
+        this.rangeForm?.patchValue({ limitOne: value })
+        this._initialLower = value
+        //this.rangeSliderChanged()
+    }
+    _initialLower: number
 
     @Input()
-    initialUpper: number
+    set initialUpper(value: number) {
+        this.rangeForm?.patchValue({ limitTwo: value})
+        this._initialUpper = value
+        //this.rangeSliderChanged()
+    }
+    _initialUpper: number
 
     @Input()
     unit: units
-
-    @Input()
-    set resetRange(reset: boolean) {
-        this.rangeForm.value.limitOne = this.min
-        this.rangeForm.value.limitTwo = this.max
-        this.resetValueLimitOne = this.min
-        this.resetValueLimitTwo = this.max
-        this.rangeSliderChanged()
-    }
+ 
+    // @Input() 
+    // set resetRange(reset: boolean) {
+    //     if (reset) {
+    //         this.rangeForm.value.limitOne = this.min
+    //         this.rangeForm.value.limitTwo = this.max
+    //         this.resetValueLimitOne = this.min
+    //         this.resetValueLimitTwo = this.max
+    //         this.rangeSliderChanged()
+    //         this._resetRange = false
+    //     }
+    // }
 
     @Output()
     onRangeChanged = new EventEmitter<{ lower: number, upper: number }>()
@@ -61,8 +71,8 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.rangeForm = new FormGroup({
-            limitOne: new FormControl(this.initialLower),
-            limitTwo: new FormControl(this.initialUpper)
+            limitOne: new FormControl(this._initialLower),
+            limitTwo: new FormControl(this._initialUpper)
         })
     }
 

@@ -7,11 +7,10 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class MapSettingsService {
 
-    private _currentSettings: MapSettings = {
+    public static readonly INITIAL_SETTINGS: MapSettings = {
         national: true,
         regional: true,
         local: true,
-        includeStages: false,//true,
         durationMin: 0,
         durationMax: 17280,
         elevationMin: 0,
@@ -26,8 +25,11 @@ export class MapSettingsService {
         lowFitness: true,
         mediumFitness: true,
         goodFitness: true,
-        cantonId: -1
+        cantonId: -1,
+        includeStages: false//true
     }
+
+    private _currentSettings: MapSettings = {...MapSettingsService.INITIAL_SETTINGS}
 
     private mapSettingsBehaviorSubject = new BehaviorSubject<MapSettings>(this._currentSettings)
     public mapSettingsObservable = this.mapSettingsBehaviorSubject.asObservable()
