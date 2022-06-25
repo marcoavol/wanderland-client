@@ -11,6 +11,8 @@ import { UnitUtilsServiceService } from '../utils/unit-utils-service.service';
 })
 export class RangeSliderComponent implements OnInit, AfterViewInit {
 
+    private resetSlider: boolean
+
     @ViewChild('lowerValueOutput')
     lowerValueOutput: ElementRef
     @ViewChild('upperValueOutput')
@@ -33,32 +35,24 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
     set initialLower(value: number) {
         this.rangeForm?.patchValue({ limitOne: value })
         this._initialLower = value
-        //this.rangeSliderChanged()
+        if (this.lowerValueOutput) {
+            if (this.rangeForm.value.limitTwo == this.max) {this.rangeSliderChanged()}
+        }
     }
     _initialLower: number
 
     @Input()
     set initialUpper(value: number) {
-        this.rangeForm?.patchValue({ limitTwo: value})
+        this.rangeForm?.patchValue({ limitTwo: value })
         this._initialUpper = value
-        //this.rangeSliderChanged()
+        if (this.upperValueOutput) {
+            this.rangeSliderChanged()
+        }
     }
     _initialUpper: number
 
     @Input()
     unit: units
- 
-    // @Input() 
-    // set resetRange(reset: boolean) {
-    //     if (reset) {
-    //         this.rangeForm.value.limitOne = this.min
-    //         this.rangeForm.value.limitTwo = this.max
-    //         this.resetValueLimitOne = this.min
-    //         this.resetValueLimitTwo = this.max
-    //         this.rangeSliderChanged()
-    //         this._resetRange = false
-    //     }
-    // }
 
     @Output()
     onRangeChanged = new EventEmitter<{ lower: number, upper: number }>()
@@ -74,13 +68,14 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
             limitOne: new FormControl(this._initialLower),
             limitTwo: new FormControl(this._initialUpper)
         })
+        this.resetSlider = false
     }
 
     ngAfterViewInit(): void {
         this.rangeSliderChanged()
     }
 
-    public rangeSliderChanged(): void {
+    public rangeSliderChanged(): void {        
         const lowerValue = Math.min(this.rangeForm.value.limitOne, this.rangeForm.value.limitTwo)
         const upperValue = Math.max(this.rangeForm.value.limitOne, this.rangeForm.value.limitTwo)
 
