@@ -7,7 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class MapSettingsService {
 
-    private _currentSettings: MapSettings = {
+    public static readonly INITIAL_SETTINGS: MapSettings = {
         national: true,
         regional: true,
         local: true,
@@ -15,6 +15,8 @@ export class MapSettingsService {
         durationMax: 17280,
         elevationMin: 0,
         elevationMax: 50000,
+        descendingMin: 0,
+        descendingMax: 50000,
         lengthMin: 0,
         lengthMax: 700000,
         lowSkills: true,
@@ -23,8 +25,11 @@ export class MapSettingsService {
         lowFitness: true,
         mediumFitness: true,
         goodFitness: true,
-        cantonId: -1
+        cantonId: -1,
+        includeStages: true
     }
+
+    private _currentSettings: MapSettings = {...MapSettingsService.INITIAL_SETTINGS}
 
     private mapSettingsBehaviorSubject = new BehaviorSubject<MapSettings>(this._currentSettings)
     public mapSettingsObservable = this.mapSettingsBehaviorSubject.asObservable()
@@ -37,7 +42,7 @@ export class MapSettingsService {
 
     set currentSettings(updatedSettings: Partial<MapSettings>) {
         this._currentSettings = { ...this._currentSettings, ...updatedSettings }
-        this.mapSettingsBehaviorSubject.next(this._currentSettings) 
+        this.mapSettingsBehaviorSubject.next(this._currentSettings)
         console.warn(this.currentSettings)
     }
 
@@ -59,6 +64,10 @@ export class MapSettingsService {
             case 'Lokal': return this.currentSettings.local
             default: return false
         }
+    }
+
+    private routeMeetsStagesSetting(includeStages: boolean): boolean {
+        return includeStages
     }
 
     private routeMeetsDurationSetting(duration: number): boolean {

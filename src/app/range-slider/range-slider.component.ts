@@ -11,6 +11,8 @@ import { UnitUtilsServiceService } from '../utils/unit-utils-service.service';
 })
 export class RangeSliderComponent implements OnInit, AfterViewInit {
 
+    private resetSlider: boolean
+
     @ViewChild('lowerValueOutput')
     lowerValueOutput: ElementRef
     @ViewChild('upperValueOutput')
@@ -30,10 +32,24 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
     step: number
 
     @Input()
-    initialLower: number
+    set initialLower(value: number) {
+        this.rangeForm?.patchValue({ limitOne: value })
+        this._initialLower = value
+        if (this.lowerValueOutput) {
+            if (this.rangeForm.value.limitTwo == this.max) {this.rangeSliderChanged()}
+        }
+    }
+    _initialLower: number
 
     @Input()
-    initialUpper: number
+    set initialUpper(value: number) {
+        this.rangeForm?.patchValue({ limitTwo: value })
+        this._initialUpper = value
+        if (this.upperValueOutput) {
+            this.rangeSliderChanged()
+        }
+    }
+    _initialUpper: number
 
     @Input()
     unit: units
@@ -49,16 +65,17 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.rangeForm = new FormGroup({
-            limitOne: new FormControl(this.initialLower),
-            limitTwo: new FormControl(this.initialUpper)
+            limitOne: new FormControl(this._initialLower),
+            limitTwo: new FormControl(this._initialUpper)
         })
+        this.resetSlider = false
     }
 
     ngAfterViewInit(): void {
         this.rangeSliderChanged()
     }
 
-    public rangeSliderChanged(): void {
+    public rangeSliderChanged(): void {        
         const lowerValue = Math.min(this.rangeForm.value.limitOne, this.rangeForm.value.limitTwo)
         const upperValue = Math.max(this.rangeForm.value.limitOne, this.rangeForm.value.limitTwo)
 

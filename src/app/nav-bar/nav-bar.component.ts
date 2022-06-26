@@ -41,13 +41,13 @@ export class NavBarComponent implements OnInit {
 
     public open() {
         this.offcanvasService.open(SettingsBarComponent);
+        this.mapSettingsService.currentSettings = {cantonId: -1}
     }
 
     public searchForCanton(event: Event): void {
         event.preventDefault()   
-        const cantonId = this.cantonNames.findIndex(canton => canton === this.searchInput.nativeElement.value)
-        console.warn(cantonId, this.searchInput.nativeElement.value)
-        this.mapSettingsService.currentSettings.cantonId = cantonId
+        const cantonId = this.cantonNames.findIndex(canton => canton === this.searchInput.nativeElement.value) + 1
+        this.mapSettingsService.currentSettings = {cantonId: cantonId}
     }
 }
 
