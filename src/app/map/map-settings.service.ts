@@ -26,7 +26,7 @@ export class MapSettingsService {
         mediumFitness: true,
         goodFitness: true,
         cantonId: -1,
-        includeStages: false//true
+        includeStages: true
     }
 
     private _currentSettings: MapSettings = {...MapSettingsService.INITIAL_SETTINGS}

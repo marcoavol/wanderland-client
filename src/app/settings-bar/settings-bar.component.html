@@ -17,7 +17,7 @@
             <div class="form-check form-switch">
                 <label>
                     lokal
-                    <input formControlName="local" type="checkbox" class="form-check-input" />
+                    <input formControlName="local" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
         </div>
@@ -28,7 +28,7 @@
         <div class="form-check form-switch">
             <label>
                 Etappen berücksichtigen
-                <input formControlName="includeStages" type="checkbox" class="form-check-input" />
+                <input formControlName="includeStages" type="checkbox" class="form-check-input" (change)="handleIncludeStagesChange()"/>
             </label>
         </div>
     </section>
@@ -52,7 +52,7 @@
             <app-range-slider
                 [min]="0" [max]="mapSettingsForm.value.includeStages ? 20000 : 700000" [step]="500" 
                 [initialLower]="mapSettingsForm.value.lengthMin" 
-                [initialUpper]="mapSettingsForm.value.lengthMax" 
+                [initialUpper]="mapSettingsForm.value.includeStages ? 20000 : mapSettingsForm.value.lengthMax" 
                 [unit]="lengthUnit"
                 (onRangeChanged)="handleLengthRangeChange($event)">
             </app-range-slider>
@@ -63,9 +63,9 @@
         <p>Aufstieg [m]</p>
         <div>
             <app-range-slider
-                [min]="0" [max]="50000" [step]="50" 
+                [min]="0" [max]="mapSettingsForm.value.includeStages ? 3000 : 50000" [step]="50" 
                 [initialLower]="mapSettingsForm.value.elevationMin" 
-                [initialUpper]="mapSettingsForm.value.elevationMax" 
+                [initialUpper]="mapSettingsForm.value.includeStages ? 3000 : mapSettingsForm.value.elevationMax" 
                 [unit]="elevationUnit"
                 (onRangeChanged)="handleElevationRangeChange($event)">
             </app-range-slider>
@@ -76,9 +76,9 @@
         <p>Abstieg [m]</p>
         <div>
             <app-range-slider
-                [min]="0" [max]="50000" [step]="50" 
+                [min]="0" [max]="mapSettingsForm.value.includeStages ? 3000 : 50000" [step]="50" 
                 [initialLower]="mapSettingsForm.value.descendingMin" 
-                [initialUpper]="mapSettingsForm.value.descendingMax" 
+                [initialUpper]="mapSettingsForm.value.includeStages ? 3000 : mapSettingsForm.value.descendingMax" 
                 [unit]="descendingUnit"
                 (onRangeChanged)="handleDescendingRangeChange($event)">
             </app-range-slider>

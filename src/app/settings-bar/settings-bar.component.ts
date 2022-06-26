@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MapSettingsService } from '../map/map-settings.service';
-import { RangeSliderComponent } from '../range-slider/range-slider.component';
 import { units } from '../types/settings.types';
 
 @Component({
@@ -72,6 +71,11 @@ export class SettingsBarComponent implements OnInit {
     public handleLengthRangeChange(range: { lower: number, upper: number }): void {
         this.mapSettingsForm.patchValue({ lengthMin: range.lower, lengthMax: range.upper })
     }
+
+    public handleIncludeStagesChange(): void {
+        
+        this.mapSettingsChanged()
+    } 
 
     public resetFiltersToDefault(): void {
         this.mapSettingsForm.reset(MapSettingsService.INITIAL_SETTINGS)
