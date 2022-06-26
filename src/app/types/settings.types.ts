@@ -2,24 +2,26 @@ export interface MapSettings {
     national: boolean; 
     regional: boolean;
     local: boolean;
-    includeStages: boolean;
     durationMin: number;
     durationMax: number;
     elevationMin: number;
     elevationMax: number;
     descendingMin: number;
     descendingMax: number;
-    lengthMin: number;
-    lengthMax: number;
-    lowSkills: boolean;
-    mediumSkills: boolean;
-    goodSkills: boolean;
-    lowFitness: boolean;
-    mediumFitness: boolean;
-    goodFitness: boolean;
+    distanceMin: number;
+    distanceMax: number;
+    skillsEasy: boolean;
+    skillsMedium: boolean;
+    skillsHard: boolean;
+    fitnessEasy: boolean;
+    fitnessMedium: boolean;
+    fitnessHard: boolean;
+    includeStages: boolean;
     cantonId?: number;
 } 
 
-export type units = 'Meters' | 
-                    'Kilometers' | 
-                    'DaysHoursMinutes' 
+export type Unit = 'Meters' | 'Kilometers' | 'DaysHoursMinutes' 
+
+export type RouteType = 'National' | 'Regional' | 'Lokal'
+
+export type Difficulty = 'leicht' | 'mittel' | 'schwer'

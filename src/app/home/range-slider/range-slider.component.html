@@ -1,0 +1,10 @@
+<form [formGroup]="rangeForm" (input)="rangeSliderChanged()">
+    <div class="valueLabelContainer">
+        <span #lowerValueLabel class="valueLabel lowerValue"></span>
+        <span #upperValueLabel class="valueLabel upperValue"></span>
+    </div>
+    <span class="full-range"></span>
+    <span #selectedRange class="selected-range"></span>
+    <input formControlName="limitOne" type="range" [min]="min" [max]="max" [step]="step">
+    <input formControlName="limitTwo" type="range" [min]="min" [max]="max" [step]="step">
+</form>

@@ -1,0 +1,30 @@
+<nav class="nav-bar d-flex">
+    <button class="btn btn-md btn-outline-primary" (click)="open()">
+        <i class="bi bi-sliders"></i>
+        Filter
+    </button>
+
+    <form (submit)="searchByName($event)">
+        <div class="input-group searchbar">
+            <input 
+                #searchInput
+                #instance="ngbTypeahead"
+                class="form-control"
+                id="canton-search" 
+                type="text" 
+                placeholder="Suche nach Kanton..."
+                [ngbTypeahead]="search"
+                [resultFormatter]="formatter"
+                [inputFormatter]="formatter"
+                (selectItem)="searchById($event.item.id)"
+            />
+            <button class="btn btn-md btn-outline-primary"> 
+                <i class="bi bi-search me-2"></i> 
+                Suche
+            </button>
+        </div>
+    </form>
+
+    <h2 class="title">Wanderland</h2>
+
+</nav>

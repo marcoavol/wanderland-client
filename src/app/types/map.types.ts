@@ -5,7 +5,7 @@ export type Coordinate = [number, number]
 export interface RouteDatum {
     geometry: RouteGeometry;
     properties: RouteProperties;
-    stages?: Array<Feature<any, any>>
+    stages: Array<Feature<any, any>>
 }
 
 export class RouteGeometry {
@@ -18,7 +18,7 @@ export class RouteProperties {
     AuspraegR: string;
     BeschreibR: string;
     Change_Dt: string;
-    GueltigJ: number;
+    GueltigJ?: number;
     HoeheAbR: number;
     HoeheAufR: number;
     HoeheMaxR: number;
@@ -41,4 +41,29 @@ export class RouteProperties {
     ZOrt: string;
     ZeitStZiR: number;
     ZeitZiStR: number;
+}
+
+export class StageProperties {
+    Abwicklung: string;
+    Change_Dt: string;
+    DistanzE: number;
+    HoeheAbE: number;
+    HoeheAufE: number;
+    HoeheMaxE: number;
+    HoeheMinE: number;
+    KonditionE?: string;
+    NameE: string;
+    NrEtappe: number;
+    OBJECTID: number;
+    SHAPE_Leng: number;
+    TechnikE?: string;
+    TechNrRId: number;
+    TourNrR: string;
+    ZeitStZiE: number;
+    ZeitZiStE: number;
+}
+
+export class MunicipalityProperties {
+    name: string;
+    canton: string;
 }
