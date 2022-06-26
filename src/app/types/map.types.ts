@@ -18,7 +18,7 @@ export class RouteProperties {
     AuspraegR: string;
     BeschreibR: string;
     Change_Dt: string;
-    GueltigJ: number;
+    GueltigJ?: number;
     HoeheAbR: number;
     HoeheAufR: number;
     HoeheMaxR: number;

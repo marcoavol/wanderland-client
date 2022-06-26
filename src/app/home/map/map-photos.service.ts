@@ -125,12 +125,12 @@ export class MapPhotosService {
         return date.toISOString()
     }
 
-    public openCarouselModal(photos: Photo[]): void {
+    public openPhotoCarouselModal(photos: Photo[]): void {
         const modalRef = this.modalService.open(PhotoCarouselComponent, { centered: true, windowClass: 'photo-carousel' })
         modalRef.componentInstance.photos = photos
     }
 
-    public closeCarouselModal(): void {
+    public closePhotoCarouselModal(): void {
         this.modalService.dismissAll()
     }
 

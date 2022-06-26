@@ -55,7 +55,7 @@ export class MapTooltipContentService {
                             </p>
                             <p>
                                 <i class="bi bi-code"></i>
-                                Dauer: ${this.unitUtilsService.convertToUnitString(routeProperties.LaengeR, 'Kilometers', true)}
+                                Distanz: ${this.unitUtilsService.convertToUnitString(routeProperties.LaengeR, 'Kilometers', true)}
                             </p>
                         </div>`
                         : ''

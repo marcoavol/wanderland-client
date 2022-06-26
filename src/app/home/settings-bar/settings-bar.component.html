@@ -41,8 +41,8 @@
         <div>
             <app-range-slider
                 [min]="0" [max]="700000" [step]="500" 
-                [initialLower]="mapSettingsForm.value.lengthMin" 
-                [initialUpper]="mapSettingsForm.value.lengthMax" 
+                [initialLower]="mapSettingsForm.value.distanceMin" 
+                [initialUpper]="mapSettingsForm.value.distanceMax" 
                 [unit]="lengthUnit"
                 (onRangeChanged)="handleLengthRangeChange($event)">
             </app-range-slider>
@@ -81,19 +81,19 @@
             <div  class="form-check form-switch">
                 <label>
                     leicht
-                    <input formControlName="lowSkills" type="checkbox" class="form-check-input"/>
+                    <input formControlName="skillsEasy" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
                 <label>
                     mittel
-                    <input formControlName="mediumSkills" type="checkbox" class="form-check-input"/>
+                    <input formControlName="skillsMedium" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
                 <label>
                     schwer
-                    <input formControlName="goodSkills" type="checkbox" class="form-check-input" />
+                    <input formControlName="skillsHard" type="checkbox" class="form-check-input" />
                 </label>
             </div>
         </div>
@@ -105,19 +105,19 @@
             <div  class="form-check form-switch">
                 <label>
                     leicht
-                    <input formControlName="lowFitness" type="checkbox" class="form-check-input"/>
+                    <input formControlName="fitnessEasy" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
                 <label>
                     mittel
-                    <input formControlName="mediumFitness" type="checkbox" class="form-check-input"/>
+                    <input formControlName="fitnessMedium" type="checkbox" class="form-check-input"/>
                 </label>
             </div>
             <div class="form-check form-switch">
                 <label>
                     schwer
-                    <input formControlName="goodFitness" type="checkbox" class="form-check-input" />
+                    <input formControlName="fitnessHard" type="checkbox" class="form-check-input" />
                 </label>
             </div>
         </div>

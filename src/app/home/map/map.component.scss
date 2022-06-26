@@ -45,7 +45,6 @@
 }
 
 .route {
-    fill: none;
     stroke: red;
     stroke-width: 0.7;
     cursor: pointer;
@@ -54,7 +53,6 @@
 .route.active {
     stroke: green !important;
     filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.5)); 
-
 }
 
 .route:not(.active):hover {
@@ -63,23 +61,28 @@
     filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.5)); 
 }
 
+.route.disabled {
+    pointer-events: none;
+}
+
 .route.hidden {
     stroke: none;
 }
 
 .stage {
-    stroke: transparent;
-    stroke-width: 1;
+    stroke: green !important;
+    stroke-width: 0.7;
     pointer-events: stroke;
     cursor: pointer;
 }
 
-.stage.active {
-    stroke: green !important
+.stage.inactive {
+    stroke-width: 0.35;
 }
 
 .stage:hover {
     stroke: yellow !important;
+    stroke-width: 0.7;
     transition: 0.075s;
 }
 

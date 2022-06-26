@@ -8,7 +8,7 @@ import { RouteDatum, RouteProperties, StageProperties } from '../../types/map.ty
 })
 export class MapSettingsService {
 
-    private _currentSettings: MapSettings = {
+    private readonly DEFAULT_SETTINGS: MapSettings = {
         national: true,
         regional: true,
         local: true,
@@ -16,17 +16,19 @@ export class MapSettingsService {
         durationMax: 17280,
         elevationMin: 0,
         elevationMax: 50000,
-        lengthMin: 0,
-        lengthMax: 700000,
-        lowSkills: true,
-        mediumSkills: true,
-        goodSkills: true,
-        lowFitness: true,
-        mediumFitness: true,
-        goodFitness: true,
+        distanceMin: 0,
+        distanceMax: 700000,
+        skillsEasy: true,
+        skillsMedium: true,
+        skillsHard: true,
+        fitnessEasy: true,
+        fitnessMedium: true,
+        fitnessHard: true,
         cantonId: -1,
         includeStages: true
     }
+    
+    private _currentSettings: MapSettings = { ...this.DEFAULT_SETTINGS }
 
     private mapSettingsBehaviorSubject = new BehaviorSubject<MapSettings>(this._currentSettings)
     public mapSettingsObservable = this.mapSettingsBehaviorSubject.asObservable()
@@ -56,8 +58,8 @@ export class MapSettingsService {
             this.meetsRouteTypeSetting(routeProperties.Typ_TR as RouteType) && 
             this.meetsDurationSetting(routeProperties.ZeitStZiR) &&
             this.meetsElevationSetting(routeProperties.HoeheAufR) &&
-            this.meetsLengthSetting(routeProperties.LaengeR) &&
-            this.meetsTechniqueDifficultySetting(routeProperties.TechnikR as Difficulty) &&
+            this.meetsDistanceSetting(routeProperties.LaengeR) &&
+            this.meetsSkillsDifficultySetting(routeProperties.TechnikR as Difficulty) &&
             this.meetsFitnessDifficultySetting(routeProperties.KonditionR as Difficulty)
         return result
     }
@@ -66,8 +68,8 @@ export class MapSettingsService {
         const result = 
             this.meetsDurationSetting(stageProperties.ZeitStZiE) &&
             this.meetsElevationSetting(stageProperties.HoeheAufE) &&
-            this.meetsLengthSetting(stageProperties.DistanzE) &&
-            this.meetsTechniqueDifficultySetting(stageProperties.TechnikE as Difficulty) &&
+            this.meetsDistanceSetting(stageProperties.DistanzE) &&
+            this.meetsSkillsDifficultySetting(stageProperties.TechnikE as Difficulty) &&
             this.meetsFitnessDifficultySetting(stageProperties.KonditionE as Difficulty)
         return result
     }
@@ -82,6 +84,7 @@ export class MapSettingsService {
     }
 
     private meetsDurationSetting(duration: number): boolean {
+        console.log(this.currentSettings.durationMin, this.currentSettings.durationMax, duration)
         return duration >= this.currentSettings.durationMin && duration <= this.currentSettings.durationMax
     } 
 
@@ -89,26 +92,26 @@ export class MapSettingsService {
         return elevation >= this.currentSettings.elevationMin && elevation <= this.currentSettings.elevationMax
     } 
 
-    private meetsLengthSetting(length: number): boolean {
-        return length >= this.currentSettings.lengthMin && length <= this.currentSettings.lengthMax
+    private meetsDistanceSetting(length: number): boolean {
+        return length >= this.currentSettings.distanceMin && length <= this.currentSettings.distanceMax
     } 
 
-    private meetsTechniqueDifficultySetting(difficulty: Difficulty): boolean {
+    private meetsSkillsDifficultySetting(difficulty: Difficulty): boolean {
         switch (difficulty) {
-            case 'leicht': return this.currentSettings.lowSkills
-            case 'mittel': return this.currentSettings.mediumSkills
-            case 'schwer': return this.currentSettings.goodSkills
-            default: return false
+            case 'leicht': return this.currentSettings.skillsEasy
+            case 'mittel': return this.currentSettings.skillsMedium
+            case 'schwer': return this.currentSettings.skillsHard
+            default: return this.currentSettings.skillsEasy && this.currentSettings.skillsMedium && this.currentSettings.skillsHard
         }
     }
 
     private meetsFitnessDifficultySetting(difficulty: Difficulty): boolean {
         switch (difficulty) {
-            case 'leicht': return this.currentSettings.lowFitness
-            case 'mittel': return this.currentSettings.mediumFitness
-            case 'schwer': return this.currentSettings.goodFitness
-            default: return this.currentSettings.lowFitness && this.currentSettings.mediumFitness && this.currentSettings.goodFitness
+            case 'leicht': return this.currentSettings.fitnessEasy
+            case 'mittel': return this.currentSettings.fitnessMedium
+            case 'schwer': return this.currentSettings.fitnessHard
+            default: return this.currentSettings.fitnessEasy && this.currentSettings.fitnessMedium && this.currentSettings.fitnessHard
         }
     }
-    
+
 }

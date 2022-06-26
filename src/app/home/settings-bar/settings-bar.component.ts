@@ -35,14 +35,14 @@ export class SettingsBarComponent implements OnInit {
             durationMax: new FormControl(currentSettings.durationMax),
             elevationMin: new FormControl(currentSettings.elevationMin),
             elevationMax: new FormControl(currentSettings.elevationMax),
-            lengthMin: new FormControl(currentSettings.lengthMin),
-            lengthMax: new FormControl(currentSettings.lengthMax),
-            lowSkills: new FormControl(currentSettings.lowSkills),
-            mediumSkills: new FormControl(currentSettings.mediumSkills),
-            goodSkills: new FormControl(currentSettings.goodSkills),
-            lowFitness: new FormControl(currentSettings.lowFitness),
-            mediumFitness: new FormControl(currentSettings.mediumFitness),
-            goodFitness: new FormControl(currentSettings.goodFitness),
+            distanceMin: new FormControl(currentSettings.distanceMin),
+            distanceMax: new FormControl(currentSettings.distanceMax),
+            skillsEasy: new FormControl(currentSettings.skillsEasy),
+            skillsMedium: new FormControl(currentSettings.skillsMedium),
+            skillsHard: new FormControl(currentSettings.skillsHard),
+            fitnessEasy: new FormControl(currentSettings.fitnessEasy),
+            fitnessMedium: new FormControl(currentSettings.fitnessMedium),
+            fitnessHard: new FormControl(currentSettings.fitnessHard),
         })
         this.mapSettingsChanged()
     }
@@ -60,6 +60,6 @@ export class SettingsBarComponent implements OnInit {
     }
 
     public handleLengthRangeChange(range: { lower: number, upper: number }): void {
-        this.mapSettingsForm.patchValue({ lengthMin: range.lower, lengthMax: range.upper })
+        this.mapSettingsForm.patchValue({ distanceMin: range.lower, distanceMax: range.upper })
     }
 }

@@ -20,7 +20,7 @@ import { MapTooltipContentService } from './map-tooltip-content.service';
 })
 export class MapComponent implements OnInit, OnDestroy {
 
-    private static readonly NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS = 1000
+    private static readonly NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS = 500
 
     private readonly COUTRY_CONTAINER_SELECTOR = '.country-container'
     private readonly LAKES_CONTAINER_SELECTOR = '.lakes-container'
@@ -267,7 +267,7 @@ export class MapComponent implements OnInit, OnDestroy {
                 const routeDatum = <RouteDatum>(datum)
                 const routeProperties = routeDatum.properties
                 D3.selectAll(this.ROUTE_SELECTOR).classed('active', false)
-                D3.select(event.target as Element).classed('active', this.mapSettingsService.routeMeetsCurrentSettings(routeProperties)).raise()
+                D3.select(event.target as Element).attr('class', this.mapSettingsService.routeMeetsCurrentSettings(routeProperties) ? 'active' : 'disabled').raise()
                 this.renderSelectedRouteStages(routeDatum)
                 this.renderSelectedRoutePhotoLocationsAsync(routeProperties.OBJECTID)
             })
@@ -283,7 +283,7 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('d', this.path)
             .attr('transform', this.zoomTransform.toString())
             .attr('class', this.STAGE_SELECTOR.slice(1))
-            .classed('active', (datum: any) => this.mapSettingsService.stageMeetsCurrentSettings(datum.properties))
+            .classed('inactive', (datum: any) => !this.mapSettingsService.stageMeetsCurrentSettings(datum.properties))
             .on('mouseenter', (event: MouseEvent, datum: any) => {
                 this.displayTooltip(event, this.mapTooltipContentService.getStageTooltipHTML(routeDatum.properties, routeDatum.stages.length, datum.properties))
             })
@@ -340,13 +340,13 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('r', 8 / this.zoomTransform.k)
             .attr('style', `stroke-width: ${2 / this.zoomTransform.k}`)
             .on('click', (event: PointerEvent, datum: any) => {
-                this.mapPhotosService.openCarouselModal([datum])
+                this.mapPhotosService.openPhotoCarouselModal([datum])
             })
     }
 
     private resetRouteSelection(): void {
         D3.selectAll(this.MUNICIPALITY_SELECTOR).classed('active', false)
-        D3.selectAll(this.ROUTE_SELECTOR).classed('active', (false))
+        D3.selectAll(this.ROUTE_SELECTOR).classed('active', false).classed('disabled', false)
         D3.select(this.STAGES_CONTAINER_SELECTOR).selectChildren().remove()
         D3.selectAll(this.PHOTO_LOCATION_SELECTOR).remove()
     }
@@ -364,9 +364,9 @@ export class MapComponent implements OnInit, OnDestroy {
     }
 
     private displayTooltip(event: MouseEvent, html: string): void {
-        const offsetY = 25
-        const offsetX = -100
         const isInBottomHalf = event.pageY > window.innerHeight / 2
+        const offsetY = isInBottomHalf ? 25 : 40
+        const offsetX = -100
         const positionY = isInBottomHalf ? window.innerHeight - event.pageY + offsetY : event.pageY + offsetY
         const positionX = event.pageX + offsetX
         D3.select('#tooltip')

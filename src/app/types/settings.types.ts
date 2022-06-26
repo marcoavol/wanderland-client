@@ -6,14 +6,14 @@ export interface MapSettings {
     durationMax: number;
     elevationMin: number;
     elevationMax: number;
-    lengthMin: number;
-    lengthMax: number;
-    lowSkills: boolean;
-    mediumSkills: boolean;
-    goodSkills: boolean;
-    lowFitness: boolean;
-    mediumFitness: boolean;
-    goodFitness: boolean;
+    distanceMin: number;
+    distanceMax: number;
+    skillsEasy: boolean;
+    skillsMedium: boolean;
+    skillsHard: boolean;
+    fitnessEasy: boolean;
+    fitnessMedium: boolean;
+    fitnessHard: boolean;
     includeStages: boolean;
     cantonId?: number;
 } 
