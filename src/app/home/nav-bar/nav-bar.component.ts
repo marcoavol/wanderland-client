@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
-import { NgbOffcanvas, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsBarComponent } from '../settings-bar/settings-bar.component';
 import { Observable, takeWhile } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
@@ -7,7 +7,6 @@ import Gemeindeverzeichnis from '../../../assets/gemeindeverzeichnis.json';
 import { MapSettingsService } from '../map/map-settings.service';
 
 //TODO connect input to map => zoom or show selected canton
-//TODO create a component for the search bar analog to range slider
 
 @Component({
     selector: 'app-nav-bar',
@@ -41,6 +40,7 @@ export class NavBarComponent implements OnDestroy {
 
     public open() {
         this.offcanvasService.open(SettingsBarComponent);
+        this.mapSettingsService.currentSettings = { cantonId: undefined };
     }
 
     public searchByName(event: Event): void {
