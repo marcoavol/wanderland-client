@@ -62,10 +62,6 @@
     filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.5)); 
 }
 
-.route.disabled {
-    pointer-events: none;
-}
-
 .route.hidden {
     stroke: none;
 }
@@ -78,12 +74,12 @@
 }
 
 .stage.inactive {
-    stroke-width: 0.35;
+    stroke-opacity: 50%;
 }
 
 .stage:hover {
     stroke: yellow !important;
-    stroke-width: 0.7;
+    stroke-opacity: 100%;
     transition: 0.075s;
 }
 

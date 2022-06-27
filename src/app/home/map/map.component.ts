@@ -267,9 +267,8 @@ export class MapComponent implements OnInit, OnDestroy {
             .on('click', (event: PointerEvent, datum: any) => {
                 const routeDatum = <RouteDatum>(datum)
                 const routeProperties = routeDatum.properties
-                const routeMeetsCurrentSettings = this.mapSettingsService.routeMeetsCurrentSettings(routeProperties)
                 D3.selectAll(this.ROUTE_SELECTOR).classed('active', false)
-                D3.select(event.target as Element).classed('active', routeMeetsCurrentSettings).classed('disabled', !routeMeetsCurrentSettings).raise()
+                D3.select(event.target as Element).classed('active', this.mapSettingsService.routeMeetsCurrentSettings(routeProperties)).raise()
                 this.renderSelectedRouteStages(routeDatum)
                 this.renderSelectedRoutePhotoLocationsAsync(routeProperties.OBJECTID)
             })
@@ -335,7 +334,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private resetMap(): void {
         D3.selectAll(this.CANTON_SELECTOR).classed('active', false)
         D3.selectAll(this.MUNICIPALITY_SELECTOR).classed('active', false)
-        D3.selectAll(this.ROUTE_SELECTOR).classed('active', false).classed('disabled', false)
+        D3.selectAll(this.ROUTE_SELECTOR).classed('active', false)
         D3.select(this.STAGES_CONTAINER_SELECTOR).selectChildren().remove()
         D3.selectAll(this.PHOTO_LOCATION_SELECTOR).remove()
     }

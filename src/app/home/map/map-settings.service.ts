@@ -15,7 +15,7 @@ export class MapSettingsService {
         durationMin: 0,
         durationMax: 720,
         distanceMin: 0,
-        distanceMax: 25000,
+        distanceMax: 30000,
         elevationMin: 0,
         elevationMax: 2500,
         descendingMin: 0,
