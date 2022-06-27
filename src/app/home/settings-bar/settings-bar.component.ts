@@ -4,6 +4,7 @@ import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { MapSettingsService } from '../map/map-settings.service';
 import { RangeSliderComponent } from '../range-slider/range-slider.component';
 import { takeWhile } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
     selector: 'app-settings-bar',
@@ -49,9 +50,14 @@ export class SettingsBarComponent implements OnInit, OnDestroy {
             includeStages: new FormControl(currentSettings.includeStages),
         })
         this.rangeSliderMaxValues = this.mapSettingsService.getMaxValuesDependingOnIncludeStagesSetting(currentSettings.includeStages)
-        this.settingsForm.valueChanges.pipe(takeWhile(() => this.isAlive)).subscribe(value => {
-            this.mapSettingsService.currentSettings = { ...value }
-        })
+        this.settingsForm.valueChanges
+            .pipe(
+                takeWhile(() => this.isAlive), 
+                distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b))
+            )
+            .subscribe(settings => {
+                this.mapSettingsService.currentSettings = { ...settings }
+            })
     }
 
     public mapSettingsChanged(): void {

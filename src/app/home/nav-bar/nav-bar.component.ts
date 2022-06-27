@@ -1,7 +1,7 @@
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { NgbOffcanvas, NgbTypeaheadSelectItemEvent } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsBarComponent } from '../settings-bar/settings-bar.component';
-import { Observable } from 'rxjs';
+import { Observable, takeWhile } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import Gemeindeverzeichnis from '../../../assets/gemeindeverzeichnis.json';
 import { MapSettingsService } from '../map/map-settings.service';
@@ -14,12 +14,13 @@ import { MapSettingsService } from '../map/map-settings.service';
     templateUrl: './nav-bar.component.html',
     styleUrls: ['./nav-bar.component.scss']
 })
-export class NavBarComponent {
+export class NavBarComponent implements OnDestroy {
 
     @ViewChild('searchInput')
     searchInput: ElementRef
 
     public search = (text$: Observable<string>) => text$.pipe(
+        takeWhile(() => this.isAlive),
         debounceTime(200),
         distinctUntilChanged(),
         map(term => term.length < 1 
@@ -30,6 +31,8 @@ export class NavBarComponent {
     public formatter = (item: { name: string, id: number }) => item.name
 
     private cantonNamesAndIDs = Gemeindeverzeichnis.KT.map(canton => ({ name: canton.GDEKTNA, id: canton.KTNR }))
+
+    private isAlive = true
 
     constructor(
         private offcanvasService: NgbOffcanvas,
@@ -49,6 +52,10 @@ export class NavBarComponent {
 
     public searchById(id?: number): void {
         this.mapSettingsService.currentSettings = { cantonId: id }
+    }
+
+    ngOnDestroy(): void {
+        this.isAlive = false
     }
 
 }
