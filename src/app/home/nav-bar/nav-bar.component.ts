@@ -40,7 +40,7 @@ export class NavBarComponent implements OnDestroy {
 
     public open() {
         this.offcanvasService.open(SettingsBarComponent);
-        this.mapSettingsService.currentSettings = { cantonId: undefined };
+        this.resetSearchInput()
     }
 
     public searchByName(event: Event): void {
@@ -54,10 +54,14 @@ export class NavBarComponent implements OnDestroy {
         this.mapSettingsService.currentSettings = { cantonId: id }
     }
 
+    public resetSearchInput(): void {
+        this.mapSettingsService.currentSettings = { cantonId: undefined }
+        this.searchInput.nativeElement.value = ""
+    }
+
     ngOnDestroy(): void {
         this.isAlive = false
     }
-
 }
 
 
