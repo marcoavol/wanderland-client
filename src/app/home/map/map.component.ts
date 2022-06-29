@@ -9,7 +9,7 @@ import Gemeindeverzeichnis from '../../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../../assets/kantonsfarben.json';
 import { MapSettingsService } from './map-settings.service';
 import { MapPhotosService } from './map-photos.service';
-import { Coordinate, RouteDatum, RouteGeometry } from '../../types/map.types';
+import {  Coordinate, RouteDatum, RouteGeometry } from '../../types/map.types';
 import { MapTooltipContentService } from './map-tooltip-content.service';
 
 @Component({
@@ -125,6 +125,7 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('class', this.BACKGROUND_SELECTOR.slice(1))
             .on('click', () => {
                 this.resetMap()
+                this.mapSettingsService.currentSettings = {cantonId: undefined}
             })
 
         this.svg.append('g').attr('class', this.COUTRY_CONTAINER_SELECTOR.slice(1))

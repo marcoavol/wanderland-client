@@ -7,7 +7,7 @@
 }
 
 .background {
-    fill: #1B3B6F;
+    fill: #19647E;// #1B3B6F;
     pointer-events: visible;
     z-index: -1;
 }
@@ -46,18 +46,18 @@
 }
 
 .route {
-    stroke: red;
+    stroke: #F95738;//red;
     stroke-width: 0.7;
     cursor: pointer;
 }
 
 .route.active {
-    stroke: green !important;
+    stroke: #7FB069 !important;
     filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.5)); 
 }
 
 .route:not(.active):hover {
-    stroke: yellow !important;
+    stroke: #28AFB0 !important;
     transition: 0.075s;
     filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.5)); 
 }
@@ -67,7 +67,7 @@
 }
 
 .stage {
-    stroke: green !important;
+    stroke: #3F612D !important;
     stroke-width: 0.7;
     pointer-events: stroke;
     cursor: pointer;
@@ -78,7 +78,7 @@
 }
 
 .stage:hover {
-    stroke: yellow !important;
+    stroke: #28AFB0 !important;
     stroke-opacity: 100%;
     transition: 0.075s;
 }
@@ -129,4 +129,23 @@
 
 #tooltip.hidden {
     display: none;
+}
+
+.btn-outline-primary {
+   color: #DDCECD;
+   border-color: #DDCECD; 
+}
+
+.btn-outline-primary:hover, 
+.btn-outline-primary:active,
+.btn-outline-primary:focus,
+.btn-outline-primary:visited {
+    background-color: #DDCECD !important;
+    border-color: #DDCECD !important;
+    background-image: none !important;
+}
+
+.form-control {
+    background-color: #EEE5E5;
+    //border: #EEE5E5;
 }
