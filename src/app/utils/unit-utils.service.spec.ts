@@ -26,6 +26,11 @@ fdescribe('UnitUtilsService', () => {
     expect(service.convertToUnitString(7932, 'DaysHoursMinutes')).toBe("05:12:12")
   })
 
-  
+  it('convert to days hours and minutes => formatWithUnit enabled', () => {
+    expect(service.convertToUnitString(15, 'DaysHoursMinutes', true)).toBe("0h 15m")
+    expect(service.convertToUnitString(1440, 'DaysHoursMinutes', true)).toBe("1d 0h 0m")
+    expect(service.convertToUnitString(333, 'DaysHoursMinutes', true)).toBe("5h 33m")
+    expect(service.convertToUnitString(18364, 'DaysHoursMinutes', true)).toBe("12d 18h 4m")
+  })
 
 });
