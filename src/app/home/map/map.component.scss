@@ -57,7 +57,7 @@
 }
 
 .route:not(.active):hover {
-    stroke: #28AFB0 !important;
+    stroke: #4ce0b3ff !important;
     transition: 0.075s;
     filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.5)); 
 }
@@ -78,7 +78,7 @@
 }
 
 .stage:hover {
-    stroke: #28AFB0 !important;
+    stroke: #4ce0b3ff !important;
     stroke-opacity: 100%;
     transition: 0.075s;
 }
