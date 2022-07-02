@@ -82,7 +82,8 @@ Tutorial:  https://wkrzywiec.medium.com/build-and-run-angular-application-in-a-d
 
 Creates a ./dist/wanderland-client folder with the compiled files
 
-2) In the root folder of the app, create a file nginx.conf containing:
+2) In the root folder of the app, create nginx configuration files for use with local or deployment mode.  
+Local:
 ```
 events{}
 http {
@@ -99,7 +100,54 @@ http {
         }
 }
 ```
-Note that this is a basic configuration for local use.
+Deployment (including the use of an SSL certificate):
+```
+events {}
+
+http {
+	include /etc/nginx/mime.types;
+
+    server {
+        listen 80;
+        listen [::]:80;
+        server_name wanderland.dev www.wanderland.dev;
+        server_tokens off;
+        return 301 https://$server_name$request_uri;
+    }
+
+    server {
+        listen 443 ssl http2;
+        listen [::]:443 ssl http2;
+        server_name wanderland.dev www.wanderland.dev;
+
+        ssl_certificate /etc/letsencrypt/live/www.wanderland.dev/fullchain.pem;
+        ssl_certificate_key /etc/letsencrypt/live/www.wanderland.dev/privkey.pem;
+
+        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+        ssl_ecdh_curve secp384r1;
+        ssl_session_cache shared:SSL:10m;
+        ssl_session_tickets off;
+        ssl_stapling on;
+        ssl_stapling_verify on;
+        resolver 8.8.8.8 8.8.4.4 valid=300s;
+        resolver_timeout 5s;
+        add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
+        add_header X-Frame-Options SAMEORIGIN;
+        add_header X-Content-Type-Options nosniff;
+
+        root /usr/share/nginx/html;
+        index index.html;
+
+        location /.well-known/acme-challenge/ {
+            root /var/www/certbot;
+        }
+
+    }
+}
+```
+
 
 
 3) In the root folder of the app, create a file called Dockerfile containing:   
@@ -114,17 +162,17 @@ COPY /dist/wanderland-client /usr/share/nginx/html
 A different nginx configuration file needs to be included for an image that will be used locally or on the Hetzner server. Comment out one of these two lines, depending on your use case: `COPY local-nginx.conf /etc/nginx/nginx.conf` or `COPY deploy-nginx.conf /etc/nginx/nginx.conf`. In the example above, an image for local use will be created.
 
 
-The following steps, I run from Powershell but it should be the same anywhere you have docker installed:  
-4) Create image: `docker build -t wanderland-client-image .`  
+4) Create image: `docker build -t <dockerhub_username>/<image_name>:<tag_name> .`  
 You should now see the image when you run `docker image ls`
 
+5) Push the image to dockerhub: `docker push <dockerhub_username>/<image_name>:<tag_name>`
 
-5) Start up container from image, running in the background:  
-`docker run --name wanderland-client-container -d -p 4200:80 wanderland-client-image`
-Optionally, you can specify a tag after the image name, e.g. wanderland-client-container:2.0
+The image will then be used with docker compose as explained [here](https://github.com/marcoavol/wanderland-server)
 
-
-6) Connect to front-end from browser at http://localhost:4200/.
-
-7) Stop container: `docker stop wanderland-client-container`
-8) Resume container: `docker restart wanderland-client-container`
+The following steps can be used to start a container manually. Note that this will work only if you set up your image for local use as explained above.
+i) Start up container from image, running in the background:  
+`docker run --name <container_name> -d -p 4200:80 <image_name>`
+Optionally, you can specify a tag after the image name as <image_name>:<tag>
+ii) Connect to front-end from browser at http://localhost:4200/.
+iii) Stop container: `docker stop <container_name>`
+iv) Resume container: `docker restart <container_name>`

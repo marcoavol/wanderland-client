@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  url: "http://135.181.205.41"
+  url: "https://www.wanderland.dev"
 };
