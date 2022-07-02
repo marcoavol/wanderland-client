@@ -4,7 +4,7 @@ import { MapSettingsService } from '../map/map-settings.service';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { RangeSliderComponent } from '../range-slider/range-slider.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { map } from 'd3';
+import { MapSettings } from '../../types/settings.types';
 
 fdescribe('SettingsBarComponent', () => {
 
@@ -57,12 +57,10 @@ fdescribe('SettingsBarComponent', () => {
         expect(mapSettingsService.currentSettings.national).toBeTrue()
         expect(mapSettingsService.currentSettings.skillsHard).toBeTrue()
         expect(mapSettingsService.currentSettings.fitnessMedium).toBeTrue()
-        
         component.settingsForm.value.regional = false
         component.settingsForm.value.national = false
         component.settingsForm.value.skillsHard = false
         component.settingsForm.value.fitnessMedium = false
-        mapSettingsService.currentSettings = {regional: false, national: false, skillsHard: false, fitnessMedium: false}
         component.mapSettingsChanged()
         expect(mapSettingsService.currentSettings.regional).toBeFalse()
         expect(mapSettingsService.currentSettings.national).toBeFalse()
@@ -72,9 +70,19 @@ fdescribe('SettingsBarComponent', () => {
         expect(mapSettingsService.currentSettings).toEqual(mapSettingsService['DEFAULT_SETTINGS'])
     })
 
-    // it('should determine toggle switch stages/routes', () => {
-        
-    // })
-
+    it('should determine the toggle switch stages/routes', () => {
+        expect(mapSettingsService.currentSettings.includeStages).toBeTrue()
+        expect(mapSettingsService.currentSettings.durationMax).toBe(mapSettingsService['DEFAULT_SETTINGS'].durationMax)
+        expect(mapSettingsService.currentSettings.distanceMax).toBe(mapSettingsService['DEFAULT_SETTINGS'].distanceMax)
+        expect(mapSettingsService.currentSettings.elevationMax).toBe(mapSettingsService['DEFAULT_SETTINGS'].elevationMax)
+        expect(mapSettingsService.currentSettings.descendingMax).toBe(mapSettingsService['DEFAULT_SETTINGS'].descendingMax)
+        component.settingsForm.value.includeStages = false
+        component.handleIncludeStagesChange()
+        expect(mapSettingsService.currentSettings.includeStages).toBeFalse()
+        expect(mapSettingsService.currentSettings.durationMax).toBe(17280)
+        expect(mapSettingsService.currentSettings.distanceMax).toBe(700000)
+        expect(mapSettingsService.currentSettings.elevationMax).toBe(50000)
+        expect(mapSettingsService.currentSettings.descendingMax).toBe(50000)
+    })
 
 });
