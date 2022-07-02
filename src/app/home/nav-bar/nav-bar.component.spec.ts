@@ -12,9 +12,7 @@ fdescribe('NavBarComponent', () => {
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             declarations: [NavBarComponent],
-            imports: [
-                NgbTypeaheadModule
-            ],  
+            imports: [NgbTypeaheadModule],  
         }).compileComponents();       
     }))
 
@@ -50,6 +48,11 @@ fdescribe('NavBarComponent', () => {
         component.searchInput.nativeElement.value = cantonName
         component.searchByName(submitEvent)
         expect(mapSettingsService.currentSettings.cantonId).toBe(1)
+
+        cantonName = "Jura"
+        component.searchInput.nativeElement.value = cantonName
+        component.searchByName(submitEvent)
+        expect(mapSettingsService.currentSettings.cantonId).toBe(26)
     })
 
     it('should reset search method called', () => {
