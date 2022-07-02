@@ -2,6 +2,8 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.12.
 
+Please refer to the [companion repository](https://github.com/marcoavol/wanderland-server/tree/master) for more information on how to run the app.
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/` or run `ng serve -o` and the browser opens automatically. The app will automatically reload if you change any of the source files.
@@ -74,8 +76,9 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ## How to dockerize
 Tutorial:  https://wkrzywiec.medium.com/build-and-run-angular-application-in-a-docker-container-b65dbbc50be8
 
-1) Compile Angular app: In root folder of the app run
-`ng build`
+1) Compile Angular app
+- For local use: In root folder of the app run `ng build --configuration=local`. This will use the variables specified in environments/environment.local.ts.  
+- For deployment to our Hetzner server: In root folder of the app run `ng build --configuration=deploy`. This will use the variables specified in environments/environment.deploy.ts.  
 
 Creates a ./dist/wanderland-client folder with the compiled files
 
@@ -96,13 +99,20 @@ http {
         }
 }
 ```
+Note that this is a basic configuration for local use.
+
 
 3) In the root folder of the app, create a file called Dockerfile containing:   
 ```
 FROM nginx:1.22.0
-COPY nginx.conf /etc/nginx/nginx.conf
+# To produce an image to run locally:
+COPY local-nginx.conf /etc/nginx/nginx.conf
+# To produce an image to deploy to our Hetzner server:
+# COPY deploy-nginx.conf /etc/nginx/nginx.conf
 COPY /dist/wanderland-client /usr/share/nginx/html
 ```
+A different nginx configuration file needs to be included for an image that will be used locally or on the Hetzner server. Comment out one of these two lines, depending on your use case: `COPY local-nginx.conf /etc/nginx/nginx.conf` or `COPY deploy-nginx.conf /etc/nginx/nginx.conf`. In the example above, an image for local use will be created.
+
 
 The following steps, I run from Powershell but it should be the same anywhere you have docker installed:  
 4) Create image: `docker build -t wanderland-client-image .`  
@@ -118,5 +128,3 @@ Optionally, you can specify a tag after the image name, e.g. wanderland-client-c
 
 7) Stop container: `docker stop wanderland-client-container`
 8) Resume container: `docker restart wanderland-client-container`
-
-

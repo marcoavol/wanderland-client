@@ -7,6 +7,7 @@ import ExifReader from 'exifreader';
 import imageCompression from 'browser-image-compression';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PhotoCarouselComponent } from '../photo-carousel/photo-carousel.component';
+import { environment } from '../../../environments/environment';
 
 interface ValidationResult {
     valid: boolean;
@@ -23,7 +24,7 @@ interface UploadResult {
 })
 export class MapPhotosService {
 
-    private readonly BASE_PATH = 'http://localhost:8080/photos'
+    private readonly BASE_PATH = environment.url + ':8080/photos'
 
     private readonly COMPRESSION_OPTIONS = {
         maxSizeMB: 1,
@@ -35,7 +36,7 @@ export class MapPhotosService {
     private uploadSubject = new Subject<void>()
     public uploadObservable = this.uploadSubject.asObservable()
 
-    private cachedPhotosByRouteId = new Map<number, Photo[]>() 
+    private cachedPhotosByRouteId = new Map<number, Photo[]>()
 
     constructor(
         private http: HttpClient,
@@ -114,7 +115,7 @@ export class MapPhotosService {
             await lastValueFrom(this.http.get(this.BASE_PATH + '/' + routeId))
                 .then(response => this.cachedPhotosByRouteId.set(routeId, <Photo[]>response))
                 .catch((error: HttpErrorResponse) => console.error(`Error while loading photos for routeId ${routeId}: ${error.error}`))
-        }           
+        }
         return this.cachedPhotosByRouteId.get(routeId) ?? []
     }
 
