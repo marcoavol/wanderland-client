@@ -4,14 +4,8 @@ import { MapSettingsService } from '../map/map-settings.service';
 import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { RangeSliderComponent } from '../range-slider/range-slider.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MapSettings } from '../../types/settings.types';
 
 fdescribe('SettingsBarComponent', () => {
-
-    /*TODO test create:
-
-        + Range slider => Wert ändern => mit Output vergleichen
-    */
 
     let component: SettingsBarComponent
     let fixture: ComponentFixture<SettingsBarComponent>
@@ -83,6 +77,8 @@ fdescribe('SettingsBarComponent', () => {
         expect(mapSettingsService.currentSettings.distanceMax).toBe(700000)
         expect(mapSettingsService.currentSettings.elevationMax).toBe(50000)
         expect(mapSettingsService.currentSettings.descendingMax).toBe(50000)
+        component.resetFiltersToDefault()
+        expect(mapSettingsService.currentSettings).toEqual(mapSettingsService['DEFAULT_SETTINGS'])
     })
 
 });
