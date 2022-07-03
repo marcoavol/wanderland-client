@@ -9,7 +9,7 @@ import Gemeindeverzeichnis from '../../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../../assets/kantonsfarben.json';
 import { MapSettingsService } from './map-settings.service';
 import { MapPhotosService } from './map-photos.service';
-import {  Coordinate, RouteDatum, RouteGeometry } from '../../types/map.types';
+import { RouteDatum, RouteGeometry } from '../../types/map.types';
 import { MapTooltipContentService } from './map-tooltip-content.service';
 
 @Component({
@@ -80,7 +80,6 @@ export class MapComponent implements OnInit, OnDestroy {
         return nearKnownRouteIds
     }
 
-    // TODO: remove if not used anymore
     /**
      * Takes (WGS84) coordinates of a point and converts it (with the same projection as used for the topology) 
      * to a DOMPoint representing the position of the given coordinates within the main SVG element.

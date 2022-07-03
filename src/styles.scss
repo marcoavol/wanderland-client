@@ -10,72 +10,82 @@
     }
 }
 
-.btn-light {
-    color: #EEE5E5 !important;
-    border-color: #20728E !important; 
+.btn-primary {
+    color: #DDCECD !important;
+    border-color: #DDCECD !important;
     background: #20728E !important;
+}
+
+.btn-primary:hover {
+    background-color: #DDCECD !important;
+    border-color: #20728E !important;
+    background-image: none !important;
+    color: #20728E !important;
 }
 
 .btn-outline-primary {
     color: #DDCECD !important;
-    border-color: #DDCECD !important; 
- }
- 
+    border-color: #DDCECD !important;
+}
+
 .btn-outline-primary:hover {
-     background-color: #DDCECD !important;
-     border-color: #DDCECD !important;
-     background-image: none !important;
-     color: #20728E !important;
- }
- 
-.btn-outline-dark {
-     color: #adb5bd !important;
-     border-color: #adb5bd !important;
- }
- 
-.btn-outline-dark:hover {
-     color: #EEE5E5 !important;
-     border-color: black !important;
- }
+    background-color: #DDCECD !important;
+    border-color: #DDCECD !important;
+    background-image: none !important;
+    color: #20728E !important;
+}
 
 .form-switch .form-check-input:focus {
-    border-color: rgba(0, 0, 0, 0.25) !important; 
+    border-color: rgba(0, 0, 0, 0.25) !important;
     background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(221, 206, 205, 1)'/></svg>") !important;
 }
+
 .form-switch .form-check-input:checked {
     background-color: #BE5A38 !important;
     border-color: #BE5A38 !important;
     border: none !important;
     background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgb(238, 229, 229)'/></svg>") !important;
 }
- 
+
 .offcanvas {
-     background-color: #003a52 !important;
- }
- 
+    background-color: #003a52 !important;
+}
+
 .dropdown-menu {
     background-color: #EEE5E5 !important;
-    color: #20728E !important; 
- }
+    border-color: #EEE5E5 !important;
+    color: #20728E !important;
+}
+
+.dropdown-item.active, .dropdown-item:active {
+    background-image: none !important;
+    color: #EEE5E5 !important;
+    background-color: #20728E !important;
+}
+
+.form-control {
+    color: #EEE5E5 !important;
+    background-color: #20728E !important;
+    border-color: #EEE5E5 !important;
+}
+
+.form-control::placeholder {
+    color: #DDCECD !important;
+}
 
 .modal-content {
     background-color: #DDCECD !important;
     color: #003a52 !important;
 }
 
-.form-control {
-    background-color: #EEE5E5 !important;
-    color: #003a52 !important;
-}
-
 .modal-footer {
     background-color: #DDCECD !important;
     color: #003a52 !important;
-    border-bottom: none !important; 
+    border-bottom: none !important;
 }
 
 .title {
-    color: #DDCECD !important;
+    color: #EEE5E5 !important;
 }
 
 /* Override Bootstrap styles here */
@@ -93,4 +103,3 @@
 /* Importing Bootstrap files */
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-icons/font/bootstrap-icons';
-

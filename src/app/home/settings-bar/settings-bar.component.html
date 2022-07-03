@@ -1,4 +1,10 @@
-<form [formGroup]="settingsForm">
+<form [formGroup]="settingsForm" style="position: relative;">
+    <button type="button" class="btn btn-outline-primary" style="margin: 0 auto; position: absolute; top: 16px; right: 16px" (click)="offcanvas.close('Close click')">
+        <i class="bi bi-x-lg"></i>
+    </button>
+
+    <h2 class="title">Filtern nach:</h2>
+
     <section>
         <p>Streckentypen</p>
         <div class="checkbox-group">
@@ -134,10 +140,9 @@
     </section>
 
     <div style="display: flex; align-items: center; margin-top: 16px">
-        <button type="button" class="btn btn-outline-primary" style="margin: 0 auto;" (click)="resetFiltersToDefault()">Filter zurücksetzen</button>
-    </div>
-
-    <div style="display: flex; align-items: center; margin-top: 16px">
-        <button type="button" class="btn btn-outline-dark" style="width: 100px; margin: 0 auto;" (click)="offcanvas.close('Close click')">Schliessen</button>
+        <button type="button" class="btn btn-outline-primary" style="margin: 0 auto;" (click)="resetFiltersToDefault()">
+            <i class="bi bi-arrow-counterclockwise"></i>
+            Zurücksetzen
+        </button>
     </div>
 </form>

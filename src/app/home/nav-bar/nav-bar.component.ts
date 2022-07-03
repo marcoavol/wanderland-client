@@ -38,7 +38,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.mapSettingsService.mapSettingsObservable.pipe(takeWhile(() => this.isAlive)).subscribe(_ => {
-            if (this.mapSettingsService.currentSettings.cantonId == undefined) {
+            if (this.mapSettingsService.currentSettings.cantonId == undefined && this.searchInput) {
                 this.resetSearchInput()
             }
         })

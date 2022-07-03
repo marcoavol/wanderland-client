@@ -1,4 +1,4 @@
-<button class="btn btn-lg btn-outline-primary" (click)="openModal(modalContent)">
+<button class="btn btn-lg btn-primary" (click)="openModal(modalContent)">
     <i class="bi bi-upload"></i>
     Foto-Upload
 </button>
@@ -6,7 +6,9 @@
 <ng-template #modalContent>
     <div class="modal-header">
         <h4 class="modal-title">Foto-Upload</h4>
-        <button type="button" class="btn-close" style="margin-right: 4px" aria-label="Schliessen" (click)="closeModal()"></button>
+        <button type="button" class="btn btn-primary" style="margin-right: 4px" aria-label="Schliessen" (click)="closeModal()">
+            <i class="bi bi-x-lg"></i>
+        </button>
     </div>
     <div class="modal-body text-center">
         <div *ngIf="fileInput.value && photoPreviewURL" class="" style="padding: 0 16px 16px; display: flex; justify-content: center; align-items: center;">
@@ -16,7 +18,7 @@
         <input #fileInput type="file" accept=".jpg, .jpeg," class="form-control" (change)="handlePhotoInputAsync($event)">
     </div>
     <div class="modal-footer">
-        <button class="btn btn-light" (click)="submitAsync()" [disabled]="!fileInput.value || errorMessage">Übermitteln</button>
+        <button class="btn btn-primary" (click)="submitAsync()" [disabled]="!fileInput.value || errorMessage">Übermitteln</button>
     </div>
 </ng-template>
 

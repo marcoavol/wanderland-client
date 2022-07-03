@@ -83,7 +83,7 @@ export class SettingsBarComponent implements OnInit, OnDestroy {
     public handleIncludeStagesChange(): void {
         const value = this.settingsForm.value.includeStages
         this.rangeSliderMaxValues = this.mapSettingsService.getMaxValuesDependingOnIncludeStagesSetting(value)
-        setTimeout(() => this.rangsSliders.forEach(rangeSlider => rangeSlider.reset()), 0) // TODO: Necessary to give rangesliders a chance to update min max values based on rangeSliderMaxValues first, but hacky; find better solution!
+        setTimeout(() => this.rangsSliders.forEach(rangeSlider => rangeSlider.reset()), 0)
         this.settingsForm.reset({ ...this.mapSettingsService.DEFAULT_SETTINGS, ...this.rangeSliderMaxValues, includeStages: value })
     } 
 

@@ -1,7 +1,9 @@
 <nav class="nav-bar d-flex">
-    <button class="btn btn-md btn-outline-primary" (click)="open()">
+    <h1 class="title">Wanderland</h1>
+
+    <button class="btn btn-md btn-outline-primary" style="margin: 0 8px 0 auto" (click)="open()">
         <i class="bi bi-sliders"></i>
-        Filter
+        Filtern
     </button>
 
     <form (submit)="searchByName($event)">
@@ -12,19 +14,15 @@
                 class="form-control"
                 id="canton-search" 
                 type="text" 
-                placeholder="Suche nach Kanton..."
+                placeholder="Nach Kanton suchen..."
                 [ngbTypeahead]="search"
                 [resultFormatter]="formatter"
                 [inputFormatter]="formatter"
                 (selectItem)="searchById($event.item.id)"
             />
             <button class="btn btn-md btn-outline-primary"> 
-                <i class="bi bi-search me-2"></i> 
-                Suche
+                <i class="bi bi-search"></i> 
             </button>
         </div>
     </form>
-
-    <h2 class="title">Wanderland</h2>
-
 </nav>
