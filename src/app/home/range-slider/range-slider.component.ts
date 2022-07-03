@@ -63,6 +63,12 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
         this.updateValueLabels(lowerValue, upperValue)
     }
 
+    public reset(): void {
+        this.rangeForm.reset({ limitOne: this.min, limitTwo: this.max })
+        this.resetSelectedRange()
+        this.updateValueLabels(this.min, this.max)
+    }
+
     private updateSelectedRange(lowerValue: number, upperValue: number): void {
         const selectedRangeElement = (this.selectedRange.nativeElement as HTMLElement)
         if (lowerValue < upperValue) {
@@ -115,11 +121,4 @@ export class RangeSliderComponent implements OnInit, AfterViewInit {
             upperValueLabelElement.innerHTML = this.unitUtilsService.convertToUnitString(upperValue, this.unit)
         }
     }
-
-    public reset(): void {
-        this.rangeForm.reset({ limitOne: this.min, limitTwo: this.max })
-        this.resetSelectedRange()
-        this.updateValueLabels(this.min, this.max)
-    }
-
 }
