@@ -7,7 +7,7 @@
 }
 
 .background {
-    fill: #1B3B6F;
+    fill: #20728E;
     pointer-events: visible;
     z-index: -1;
 }
@@ -46,18 +46,18 @@
 }
 
 .route {
-    stroke: red;
+    stroke: #FE5F55;
     stroke-width: 0.7;
     cursor: pointer;
 }
 
 .route.active {
-    stroke: green !important;
+    stroke: #7FB069 !important;
     filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.5)); 
 }
 
 .route:not(.active):hover {
-    stroke: yellow !important;
+    stroke: #4ce0b3ff !important;
     transition: 0.075s;
     filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.5)); 
 }
@@ -78,7 +78,7 @@
 }
 
 .stage:hover {
-    stroke: yellow !important;
+    stroke: #4ce0b3ff !important;
     stroke-opacity: 100%;
     transition: 0.075s;
 }
@@ -93,7 +93,7 @@
 }
 
 .photo-location {
-    fill: red;
+    fill: #FE5F55;
     stroke: black;
     stroke-width: 2;
     cursor: pointer;

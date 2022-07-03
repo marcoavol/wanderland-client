@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, OnDestroy } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit, OnDestroy } from '@angular/core';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { SettingsBarComponent } from '../settings-bar/settings-bar.component';
 import { Observable, takeWhile } from 'rxjs';
@@ -11,7 +11,7 @@ import { MapSettingsService } from '../map/map-settings.service';
     templateUrl: './nav-bar.component.html',
     styleUrls: ['./nav-bar.component.scss']
 })
-export class NavBarComponent implements OnDestroy {
+export class NavBarComponent implements OnInit, OnDestroy {
 
     @ViewChild('searchInput')
     searchInput: ElementRef
@@ -36,9 +36,17 @@ export class NavBarComponent implements OnDestroy {
         private mapSettingsService: MapSettingsService,
     ) { }
 
+    ngOnInit(): void {
+        this.mapSettingsService.mapSettingsObservable.pipe(takeWhile(() => this.isAlive)).subscribe(_ => {
+            if (this.mapSettingsService.currentSettings.cantonId == undefined) {
+                this.resetSearchInput()
+            }
+        })
+    }
+
     public open() {
         this.offcanvasService.open(SettingsBarComponent);
-        this.resetSearchInput()
+        this.mapSettingsService.currentSettings = { cantonId: undefined }
     }
 
     public searchByName(event: Event): void {
@@ -53,7 +61,6 @@ export class NavBarComponent implements OnDestroy {
     }
 
     public resetSearchInput(): void {
-        this.mapSettingsService.currentSettings = { cantonId: undefined }
         this.searchInput.nativeElement.value = ""
     }
 
