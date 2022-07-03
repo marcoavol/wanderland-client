@@ -6,8 +6,6 @@ import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import Gemeindeverzeichnis from '../../../assets/gemeindeverzeichnis.json';
 import { MapSettingsService } from '../map/map-settings.service';
 
-//TODO connect input to map => zoom or show selected canton
-
 @Component({
     selector: 'app-nav-bar',
     templateUrl: './nav-bar.component.html',
