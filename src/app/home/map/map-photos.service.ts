@@ -24,7 +24,7 @@ interface UploadResult {
 })
 export class MapPhotosService {
 
-    private readonly BASE_PATH = environment.url + ':8080/photos'
+    private readonly BASE_PATH = environment.apiBaseUrl + '/photos'
 
     private readonly COMPRESSION_OPTIONS = {
         maxSizeMB: 1,
