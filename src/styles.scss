@@ -10,6 +10,12 @@
     }
 }
 
+.btn-light {
+    color: #EEE5E5 !important;
+    border-color: #20728E !important; 
+    background: #20728E !important;
+}
+
 .btn-outline-primary {
     color: #DDCECD !important;
     border-color: #DDCECD !important; 
@@ -53,14 +59,18 @@
  }
 
 .modal-content {
-    background-color: #003a52 !important;
-    color: #EEE5E5 !important;
-    // border-bottom: 1px solid #c1b2b2 !important; 
+    background-color: #DDCECD !important;
+    color: #003a52 !important;
+}
+
+.form-control[type=file] {
+    background-color: #EEE5E5 !important;
+    color: #003a52 !important;
 }
 
 .modal-footer {
-    background-color: #003a52 !important;
-    color: #EEE5E5 !important;
+    background-color: #DDCECD !important;
+    color: #003a52 !important;
     border-bottom: none !important; 
 }
 
