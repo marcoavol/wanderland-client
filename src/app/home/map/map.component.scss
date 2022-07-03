@@ -7,7 +7,7 @@
 }
 
 .background {
-    fill: #19647E;// #1B3B6F;
+    fill: #20728E;
     pointer-events: visible;
     z-index: -1;
 }
@@ -129,34 +129,4 @@
 
 #tooltip.hidden {
     display: none;
-}
-
-.btn-outline-primary {
-   color: #DDCECD;
-   border-color: #DDCECD; 
-}
-
-.btn-outline-primary:hover {
-    background-color: #DDCECD !important;
-    border-color: #DDCECD !important;
-    background-image: none !important;
-    color: #19647E;
-}
-
-.btn-outline-dark {
-    color: #adb5bd;
-    border-color: #adb5bd;
-}
-
-.btn-outline-dark:hover {
-    color: #EEE5E5;
-}
-
-.form-control {
-    background-color: #EEE5E5;
-    //border: #EEE5E5;
-}
-
-.offcanvas {
-    background-color: #003a52;
 }

@@ -10,6 +10,65 @@
     }
 }
 
+.btn-outline-primary {
+    color: #DDCECD !important;
+    border-color: #DDCECD !important; 
+ }
+ 
+.btn-outline-primary:hover {
+     background-color: #DDCECD !important;
+     border-color: #DDCECD !important;
+     background-image: none !important;
+     color: #20728E !important;
+ }
+ 
+.btn-outline-dark {
+     color: #adb5bd !important;
+     border-color: #adb5bd !important;
+ }
+ 
+.btn-outline-dark:hover {
+     color: #EEE5E5 !important;
+     border-color: black !important;
+ }
+ 
+.form-control {
+     background-color: #EEE5E5 !important;
+ }
+
+.form-check-input {
+    background-color: #DDCECD !important;
+}
+
+.form-check-input:checked {
+    background-color: #BE5A38 !important;
+    border-color: #BE5A38 !important;
+}
+ 
+.offcanvas {
+     background-color: #003a52 !important;
+ }
+ 
+.dropdown-menu {
+    background-color: #EEE5E5 !important;
+    color: #20728E !important; 
+ }
+
+.modal-content {
+    background-color: #003a52 !important;
+    color: #EEE5E5 !important;
+    // border-bottom: 1px solid #c1b2b2 !important; 
+}
+
+.modal-footer {
+    background-color: #003a52 !important;
+    color: #EEE5E5 !important;
+    border-bottom: none !important; 
+}
+
+.title {
+    color: #DDCECD !important;
+}
 
 /* Override Bootstrap styles here */
 // $theme-colors: (
