@@ -46,7 +46,7 @@
 }
 
 .route {
-    stroke: #F95738;//red;
+    stroke: #FE5F55;
     stroke-width: 0.7;
     cursor: pointer;
 }
@@ -67,7 +67,7 @@
 }
 
 .stage {
-    stroke: #3F612D !important;
+    stroke: green !important;
     stroke-width: 0.7;
     pointer-events: stroke;
     cursor: pointer;
@@ -93,7 +93,7 @@
 }
 
 .photo-location {
-    fill: red;
+    fill: #FE5F55;
     stroke: black;
     stroke-width: 2;
     cursor: pointer;
