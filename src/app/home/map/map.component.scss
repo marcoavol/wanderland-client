@@ -28,7 +28,7 @@
 
 .municipality.active {
     fill: #D6FFD6;
-    stroke: green;
+    stroke: #69995D;
     stroke-width: 0.5;
 }
 
@@ -46,18 +46,18 @@
 }
 
 .route {
-    stroke: #FE5F55;
+    stroke: #F26419;
     stroke-width: 0.7;
     cursor: pointer;
 }
 
 .route.active {
-    stroke: #7FB069 !important;
+    stroke: #69995D !important;
     filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.5)); 
 }
 
 .route:not(.active):hover {
-    stroke: #4ce0b3ff !important;
+    stroke: #E9CE2C !important;
     transition: 0.075s;
     filter: drop-shadow(1px 1px 1px rgb(0 0 0 / 0.5)); 
 }
@@ -67,7 +67,7 @@
 }
 
 .stage {
-    stroke: green !important;
+    stroke: #69995D !important;
     stroke-width: 0.7;
     pointer-events: stroke;
     cursor: pointer;
@@ -78,14 +78,14 @@
 }
 
 .stage:hover {
-    stroke: #4ce0b3ff !important;
+    stroke: #E9CE2C !important;
     stroke-opacity: 100%;
     transition: 0.075s;
 }
 
 .stage-endpoint {
-    fill: green;
-    fill-opacity: 50%;
+    fill: #69995D;
+    fill-opacity: 75%;
     stroke: black;
     stroke-width: 2;
     pointer-events: none;
