@@ -11,9 +11,9 @@
 }
 
 .btn-primary {
-    color: #DDCECD !important;
-    border-color: #DDCECD !important;
-    background: #20728E !important;
+    color: #20728E !important;
+    border-color: #20728E !important;
+    background: #DDCECD !important;
 }
 
 .btn-primary:hover {
@@ -48,7 +48,7 @@
 }
 
 .offcanvas {
-    background-color: #003a52 !important;
+    background-color: #004760 !important;
 }
 
 .dropdown-menu {
@@ -70,18 +70,23 @@
     border-color: #EEE5E5 !important;
 }
 
+.form-control[type=file] {
+    background-color: #EEE5E5 !important;
+    color: #004760 !important;
+}
+
 .form-control::placeholder {
     color: #DDCECD !important;
 }
 
 .modal-content {
     background-color: #DDCECD !important;
-    color: #003a52 !important;
+    color: #004760 !important;
 }
 
 .modal-footer {
     background-color: #DDCECD !important;
-    color: #003a52 !important;
+    color: #004760 !important;
     border-bottom: none !important;
 }
 
