@@ -74,12 +74,11 @@
 }
 
 .stage.inactive {
-    stroke-opacity: 50%;
+    stroke: #2C3F27 !important;
 }
 
 .stage:hover {
     stroke: #E9CE2C !important;
-    stroke-opacity: 100%;
     transition: 0.075s;
 }
 
