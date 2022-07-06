@@ -345,7 +345,6 @@ export class MapComponent implements OnInit, OnDestroy {
         D3.selectAll(this.ROUTE_SELECTOR).classed('hidden', (datum: any) => !this.mapSettingsService.routeOrStageMeetsCurrentSettings(datum))
     }
 
-
     private displayTooltip(event: MouseEvent, html: string): void {
         const isInBottomHalf = event.pageY > window.innerHeight / 2
         const offsetY = isInBottomHalf ? 25 : 40
