@@ -61,7 +61,7 @@ export class MapPhotosService {
         }
         const lon = parseFloat(GPSLongitude.description)
         const lat = parseFloat(GPSLatitude.description)
-        const routeIds = MapComponent.nearKnownRoutes([lon, lat])
+        const routeIds = MapComponent.nearRoutes([lon, lat])
         if (!routeIds.length) {
             result.errorMessage = 'Das Foto wurde auf keiner bekannten Route aufgenommen'
             return result
@@ -126,9 +126,11 @@ export class MapPhotosService {
         return date.toISOString()
     }
 
-    public openPhotoCarouselModal(photos: Photo[]): void {
+    public openPhotoCarouselModal(photos: Photo[], title?: string, subtitle?: string): void {
         const modalRef = this.modalService.open(PhotoCarouselComponent, { centered: true, windowClass: 'photo-carousel' })
         modalRef.componentInstance.photos = photos
+        modalRef.componentInstance.title = title
+        modalRef.componentInstance.subtitle = subtitle
     }
 
     public closePhotoCarouselModal(): void {

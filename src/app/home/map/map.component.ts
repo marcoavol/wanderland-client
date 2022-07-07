@@ -9,8 +9,9 @@ import Gemeindeverzeichnis from '../../../assets/gemeindeverzeichnis.json';
 import Kantonsfarben from '../../../assets/kantonsfarben.json';
 import { MapSettingsService } from './map-settings.service';
 import { MapPhotosService } from './map-photos.service';
-import { RouteDatum, RouteGeometry } from '../../types/map.types';
+import { RouteDatum, Geometry, StageProperties, StageDatum, Coordinate } from '../../types/map.types';
 import { MapTooltipContentService } from './map-tooltip-content.service';
+import { Photo } from 'src/app/types/photo.types';
 
 @Component({
     selector: 'app-map',
@@ -20,7 +21,7 @@ import { MapTooltipContentService } from './map-tooltip-content.service';
 })
 export class MapComponent implements OnInit, OnDestroy {
 
-    private static readonly NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS = 200
+    private static readonly NEAR_ROUTE_OR_STAGE_THRESHOLD_IN_METERS = 200
 
     private readonly COUTRY_CONTAINER_SELECTOR = '.country-container'
     private readonly LAKES_CONTAINER_SELECTOR = '.lakes-container'
@@ -67,17 +68,22 @@ export class MapComponent implements OnInit, OnDestroy {
      * @param coordinates a two-element array containing longitude and latitude (in this order) of a point in degrees.
      * @returns an array containing the id of each route that is considered near.
      */
-    public static nearKnownRoutes(coordinates: [number, number]): number[] {
-        const nearKnownRouteIds: number[] = []
+    public static nearRoutes(coordinate: Coordinate): number[] {
+        const nearRouteIds: number[] = []
         D3.selectAll('.route').each((datum: any, index: number, nodes: any) => {
             if (datum.geometry) {
-                const distance = pointToLineDistance(coordinates, datum.geometry.coordinates, { units: 'meters' })
-                if (distance <= MapComponent.NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS) {
-                    nearKnownRouteIds.push(datum.properties.OBJECTID)
+                const distance = pointToLineDistance(coordinate, datum.geometry.coordinates, { units: 'meters' })
+                if (distance <= MapComponent.NEAR_ROUTE_OR_STAGE_THRESHOLD_IN_METERS) {
+                    nearRouteIds.push(datum.properties.OBJECTID)
                 }
             }
         })
-        return nearKnownRouteIds
+        return nearRouteIds
+    }
+
+    public nearStage(coordinate: Coordinate, stageCoordinates: any): boolean {
+        const distance = pointToLineDistance(coordinate, stageCoordinates, { units: 'meters' })
+        return distance <= MapComponent.NEAR_ROUTE_OR_STAGE_THRESHOLD_IN_METERS
     }
 
     /**
@@ -286,19 +292,29 @@ export class MapComponent implements OnInit, OnDestroy {
             .attr('class', this.STAGE_SELECTOR.slice(1))
             .classed('inactive', (datum: any) => !this.mapSettingsService.stageMeetsCurrentSettings(datum.properties))
             .on('mouseenter', (event: MouseEvent, datum: any) => {
-                this.displayTooltip(event, this.mapTooltipContentService.getStageTooltipHTML(routeDatum.properties, routeDatum.stages.length, datum.properties))
+                const stageDatum = <StageDatum>datum
+                this.displayTooltip(event, this.mapTooltipContentService.getStageTooltipHTML(routeDatum.properties, routeDatum.stages.length, stageDatum.properties))
             })
             .on('mouseout', (event: MouseEvent, datum: any) => {
                 this.hideTooltip()
             })
-            .raise()
+            .on('click', async (event: PointerEvent, datum: any) => {
+                const photos = await this.mapPhotosService.getPhotosByRouteId(routeDatum.properties.OBJECTID)
+                const photosNearStage = photos.filter(photo => this.nearStage([photo.lon, photo.lat], datum.geometry.coordinates))
+                if (photosNearStage.length) {
+                    const stageProperties = <StageProperties>datum.properties
+                    const title = `${routeDatum.properties.TourNameR}`
+                    const subtitle = `Etappe ${stageProperties.NrEtappe}: ${stageProperties.NameE}`
+                    this.mapPhotosService.openPhotoCarouselModal(photos, title, subtitle)
+                }
+            })
         D3.select(this.STAGES_CONTAINER_SELECTOR).selectAll('g')
             .data(routeDatum.stages)
             .enter()
             .append('g')
             .selectAll('circle')
             .data((datum: any) => {
-                const stageCoordinates = (datum.geometry as RouteGeometry).coordinates
+                const stageCoordinates = (datum.geometry as Geometry).coordinates
                 const startCoordinates = stageCoordinates[0]
                 const endCoordinates = stageCoordinates[stageCoordinates.length - 1]
                 return [{ lon: startCoordinates[0], lat: startCoordinates[1] }, { lon: endCoordinates[0], lat: endCoordinates[1] }]

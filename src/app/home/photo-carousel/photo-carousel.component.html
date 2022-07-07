@@ -1,8 +1,12 @@
 <div>
-    <ngb-carousel [showNavigationArrows]="photos.length > 1" [showNavigationIndicators]="photos.length > 1" [wrap]="true">
+    <ngb-carousel [showNavigationArrows]="photos.length > 1" [showNavigationIndicators]="photos.length > 1" [wrap]="true" [animation]="false" [interval]="0">
         <ng-template ngbSlide *ngFor="let photo of photos; let i = index">
             <div style="display: flex; justify-content: center; align-items: center;">
                 <img class="rounded-2 shadow" [src]="photo.src" [draggable]="false" style="max-height: 70vh; max-width: 100%" [alt]="'Foto '+(i+1)">
+            </div>
+            <div class="carousel-caption">
+                <h4>{{title}}</h4>
+                <p>{{subtitle}}</p>
             </div>
         </ng-template>
     </ngb-carousel>

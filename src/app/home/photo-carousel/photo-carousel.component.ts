@@ -11,6 +11,12 @@ export class PhotoCarouselComponent implements OnInit {
     @Input()
     photos: Photo[]
 
+    @Input()
+    title: string
+
+    @Input()
+    subtitle: string
+
     constructor(
 
     ) { }
