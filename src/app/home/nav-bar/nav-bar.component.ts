@@ -20,9 +20,12 @@ export class NavBarComponent implements OnInit, OnDestroy {
         takeWhile(() => this.isAlive),
         debounceTime(200),
         distinctUntilChanged(),
-        map(term => term.length < 1 
+        map(searchTerm => searchTerm.length < 1 
             ? []
-            : this.cantonNamesAndIDs.filter(item => item.name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10))
+            : this.cantonNamesAndIDs
+                .filter(item => item.name.toLowerCase().replace(/\s/g, '').includes(searchTerm.toLowerCase().replace(/\s/g, '')))
+                .slice(0, 10)
+        )
      )
 
     public formatter = (item: { name: string, id: number }) => item.name
