@@ -26,10 +26,9 @@ You should now see the image when you run `docker image ls`
 
 The image will then be used with docker compose as explained [here](https://github.com/marcoavol/wanderland-server)
 
-The following steps can be used to start a container manually. Note that this will work only if you set up your image for local use as explained above.
+The following steps can be used to start a container manually. Note that this will work only if you set up your image for local use as explained above.  
 i) Start up container from image, running in the background:  
 `docker run --name <container_name> -d -p 4200:80 <image_name>`  
-Optionally, you can specify a tag after the image name as <image_name>:<tag>  
 ii) Connect to front-end from browser at http://localhost:4200/.  
 iii) Stop container: `docker stop <container_name>`  
 iv) Resume container: `docker restart <container_name>`  
