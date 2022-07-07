@@ -51,10 +51,6 @@
     cursor: pointer;
 }
 
-.route.active {
-    stroke: #69995D !important;
-}
-
 .route:not(.active):hover {
     stroke: #E9CE2C !important;
     transition: 0.075s;

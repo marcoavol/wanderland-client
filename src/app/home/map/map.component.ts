@@ -20,7 +20,7 @@ import { MapTooltipContentService } from './map-tooltip-content.service';
 })
 export class MapComponent implements OnInit, OnDestroy {
 
-    private static readonly NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS = 500
+    private static readonly NEAR_KNOWN_ROUTE_THRESHOLD_IN_METERS = 200
 
     private readonly COUTRY_CONTAINER_SELECTOR = '.country-container'
     private readonly LAKES_CONTAINER_SELECTOR = '.lakes-container'
@@ -268,7 +268,7 @@ export class MapComponent implements OnInit, OnDestroy {
                 const routeDatum = <RouteDatum>(datum)
                 const routeProperties = routeDatum.properties
                 D3.selectAll(this.ROUTE_SELECTOR).classed('active', false)
-                D3.select(event.target as Element).classed('active', this.mapSettingsService.routeMeetsCurrentSettings(routeProperties)).raise()
+                D3.select(event.target as Element).classed('active', true).raise()
                 this.renderSelectedRouteStages(routeDatum)
                 this.renderSelectedRoutePhotoLocationsAsync(routeProperties.OBJECTID)
             })
