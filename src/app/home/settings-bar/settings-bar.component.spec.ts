@@ -5,7 +5,7 @@ import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { RangeSliderComponent } from '../range-slider/range-slider.component';
 import { ReactiveFormsModule } from '@angular/forms';
 
-fdescribe('SettingsBarComponent', () => {
+describe('SettingsBarComponent', () => {
 
     let component: SettingsBarComponent
     let fixture: ComponentFixture<SettingsBarComponent>

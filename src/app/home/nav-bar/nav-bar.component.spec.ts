@@ -3,7 +3,7 @@ import { NavBarComponent } from './nav-bar.component';
 import { MapSettingsService } from '../map/map-settings.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 
-fdescribe('NavBarComponent', () => {
+describe('NavBarComponent', () => {
 
     let component: NavBarComponent
     let fixture: ComponentFixture<NavBarComponent>

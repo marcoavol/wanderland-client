@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { MapSettingsService } from './map-settings.service';
 import { RouteProperties } from '../../types/map.types';
 
-fdescribe('MapSettingsService', () => {
+describe('MapSettingsService', () => {
     let service: MapSettingsService
 
     const mockRouteProperties: RouteProperties = {

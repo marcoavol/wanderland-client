@@ -342,7 +342,12 @@ export class MapComponent implements OnInit, OnDestroy {
     private handleSettingsChange(): void {
         this.resetMap()
         D3.selectAll(this.CANTON_SELECTOR).filter((datum: any) => datum.id == this.mapSettingsService.currentSettings.cantonId).classed('active', true)
-        D3.selectAll(this.ROUTE_SELECTOR).classed('hidden', (datum: any) => !this.mapSettingsService.routeOrStageMeetsCurrentSettings(datum))
+        D3.selectAll(this.ROUTE_SELECTOR).classed('hidden', (datum: any) => {
+            const routeDatum = <RouteDatum>(datum)
+            return this.mapSettingsService.currentSettings.includeStages ?
+                !this.mapSettingsService.routeOrStageMeetsCurrentSettings(routeDatum) :
+                !this.mapSettingsService.routeMeetsCurrentSettings(routeDatum.properties)
+        })
     }
 
     private displayTooltip(event: MouseEvent, html: string): void {

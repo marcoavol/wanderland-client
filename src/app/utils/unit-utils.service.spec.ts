@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { UnitUtilsService } from './unit-utils.service';
 
-fdescribe('UnitUtilsService', () => {
+describe('UnitUtilsService', () => {
   let service: UnitUtilsService
 
   beforeEach(() => {
