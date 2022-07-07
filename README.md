@@ -1,5 +1,8 @@
 # wanderland-client
 
+The companion Github repository with the back-end code is available [here](https://github.com/marcoavol/wanderland-server)
+
+
 ## How to dockerize
 Tutorial:  https://wkrzywiec.medium.com/build-and-run-angular-application-in-a-docker-container-b65dbbc50be8
 
@@ -9,83 +12,12 @@ Tutorial:  https://wkrzywiec.medium.com/build-and-run-angular-application-in-a-d
 
 Creates a ./dist/wanderland-client folder with the compiled files
 
-2) In the root folder of the app, create nginx configuration files for use with local or deployment mode.  
-Local:
-```
-events{}
-http {
-        include /etc/nginx/mime.types;
-        server {
-                listen 80;
-                server_name localhost;
-                root /usr/share/nginx/html;
-                index index.html;
+2) In the root folder of the app, create nginx configuration files for use with [local](nginx-local.conf) or [deployment mode](nginx-deploy.conf).  
 
-                location / {
-                    try_files $uri $uri/ /index.html;
-                }
-        }
-}
-```
-Deployment (including the use of an SSL certificate):
-```
-events {}
 
-http {
-	include /etc/nginx/mime.types;
+3) In the root folder of the app, create a [Dockerfile](Dockerfile) with the instructions for Docker on how to create the image. Starting from an image containing nginx, we add the nginx configuration file and the `dist` folder produced in step 1.   
 
-    server {
-        listen 80;
-        listen [::]:80;
-        server_name wanderland.dev www.wanderland.dev;
-        server_tokens off;
-        return 301 https://$server_name$request_uri;
-    }
-
-    server {
-        listen 443 ssl http2;
-        listen [::]:443 ssl http2;
-        server_name wanderland.dev www.wanderland.dev;
-
-        ssl_certificate /etc/letsencrypt/live/www.wanderland.dev/fullchain.pem;
-        ssl_certificate_key /etc/letsencrypt/live/www.wanderland.dev/privkey.pem;
-
-        ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
-        ssl_prefer_server_ciphers on;
-        ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
-        ssl_ecdh_curve secp384r1;
-        ssl_session_cache shared:SSL:10m;
-        ssl_session_tickets off;
-        ssl_stapling on;
-        ssl_stapling_verify on;
-        resolver 8.8.8.8 8.8.4.4 valid=300s;
-        resolver_timeout 5s;
-        add_header Strict-Transport-Security "max-age=63072000; includeSubdomains";
-        add_header X-Frame-Options SAMEORIGIN;
-        add_header X-Content-Type-Options nosniff;
-
-        root /usr/share/nginx/html;
-        index index.html;
-
-        location /.well-known/acme-challenge/ {
-            root /var/www/certbot;
-        }
-
-    }
-}
-```
-
-3) In the root folder of the app, create a file called Dockerfile containing:   
-```
-FROM nginx:1.22.0
-# To produce an image to run locally:
-COPY nginx-local.conf /etc/nginx/nginx.conf
-# To produce an image to deploy to our Hetzner server:
-# COPY nginx-deploy.conf /etc/nginx/nginx.conf
-COPY /dist/wanderland-client /usr/share/nginx/html
-```
-A different nginx configuration file needs to be included for an image that will be used locally or on the Hetzner server. Comment out one of these two lines, depending on your use case: `COPY nginx-local.conf /etc/nginx/nginx.conf` or `COPY nginx-deploy.conf /etc/nginx/nginx.conf`. In the example above, an image for local use will be created.
-
+A different nginx configuration file needs to be included for an image that will be used locally or on the Hetzner server. Comment out one of these two lines, depending on your use case: `COPY nginx-local.conf /etc/nginx/nginx.conf` or `COPY nginx-deploy.conf /etc/nginx/nginx.conf`.
 
 4) Create image: `docker build -t <dockerhub_username>/<image_name>:<tag_name> .`  
 You should now see the image when you run `docker image ls`
@@ -96,11 +28,11 @@ The image will then be used with docker compose as explained [here](https://gith
 
 The following steps can be used to start a container manually. Note that this will work only if you set up your image for local use as explained above.
 i) Start up container from image, running in the background:  
-`docker run --name <container_name> -d -p 4200:80 <image_name>`
-Optionally, you can specify a tag after the image name as <image_name>:<tag>
-ii) Connect to front-end from browser at http://localhost:4200/.
-iii) Stop container: `docker stop <container_name>`
-iv) Resume container: `docker restart <container_name>`
+`docker run --name <container_name> -d -p 4200:80 <image_name>`  
+Optionally, you can specify a tag after the image name as <image_name>:<tag>  
+ii) Connect to front-end from browser at http://localhost:4200/.  
+iii) Stop container: `docker stop <container_name>`  
+iv) Resume container: `docker restart <container_name>`  
 
 ## Quellenangaben
 
