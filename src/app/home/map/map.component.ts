@@ -304,7 +304,7 @@ export class MapComponent implements OnInit, OnDestroy {
                 if (photosNearStage.length) {
                     const stageProperties = <StageProperties>datum.properties
                     const title = `${routeDatum.properties.TourNameR}`
-                    const subtitle = `Etappe ${stageProperties.NrEtappe}: ${stageProperties.NameE}`
+                    const subtitle = routeDatum.stages.length > 1 ? `Etappe ${stageProperties.NrEtappe}: ${stageProperties.NameE}` : stageProperties.NameE
                     this.mapPhotosService.openPhotoCarouselModal(photos, title, subtitle)
                 }
             })
