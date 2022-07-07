@@ -305,7 +305,7 @@ export class MapComponent implements OnInit, OnDestroy {
                     const stageProperties = <StageProperties>datum.properties
                     const title = `${routeDatum.properties.TourNameR}`
                     const subtitle = routeDatum.stages.length > 1 ? `Etappe ${stageProperties.NrEtappe}: ${stageProperties.NameE}` : stageProperties.NameE
-                    this.mapPhotosService.openPhotoCarouselModal(photos, title, subtitle)
+                    this.mapPhotosService.openPhotoCarouselModal(photosNearStage, title, subtitle)
                 }
             })
         D3.select(this.STAGES_CONTAINER_SELECTOR).selectAll('g')
