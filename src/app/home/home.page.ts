@@ -7,8 +7,6 @@ import { MapSettings } from '../types/settings.types';
 })
 export class HomePage implements OnInit {
 
-    public displayedRouteTypes: MapSettings
-
     constructor() { }
 
     ngOnInit(): void {
