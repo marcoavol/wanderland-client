@@ -19,7 +19,7 @@ Creates a ./dist/wanderland-client folder with the compiled files
 
 A different nginx configuration file needs to be included for an image that will be used locally or on the Hetzner server. Comment out one of these two lines, depending on your use case: `COPY nginx-local.conf /etc/nginx/nginx.conf` or `COPY nginx-deploy.conf /etc/nginx/nginx.conf`.
 
-4) Create image: `docker build -t <dockerhub_username>/<image_name>:<tag_name> .`  
+4) Create image: `docker build -t <dockerhub_username>/<image_name>:<tag_name> .` or `docker buildx build --platform linux/amd64 -t <dockerhub_username>/<image_name>:<tag_name> .` on Macs with ARM chip (M1, ...) ([see here](https://stackoverflow.com/questions/66920645/exec-format-error-when-running-containers-build-with-apple-m1-chip-arm-based))!
 You should now see the image when you run `docker image ls`
 
 5) Push the image to dockerhub: `docker push <dockerhub_username>/<image_name>:<tag_name>`
