@@ -59,6 +59,7 @@ export class MapPhotosService {
             result.errorMessage = 'Das Foto verfügt nicht über die notwendigen EXIF-Daten'
             return result
         }
+        console.warn(DateTimeOriginal)
         const lon = parseFloat(GPSLongitude.description)
         const lat = parseFloat(GPSLatitude.description)
         const routeIds = MapComponent.nearRoutes([lon, lat])
@@ -89,6 +90,7 @@ export class MapPhotosService {
         const formData = new FormData()
         formData.append('photoFile', compressedPhoto, compressedPhoto.name)
         formData.append('photoInfo', new Blob([JSON.stringify(this.photoUpload.info)], { type: 'application/json' }))
+        console.warn(formData)
         await lastValueFrom(this.http.post(this.BASE_PATH, formData))
             .then(response => {
                 (<Photo>response).routeIds.forEach(routeId => this.cachedPhotosByRouteId.delete(routeId))
@@ -120,9 +122,9 @@ export class MapPhotosService {
     }
 
     private exifDateToIsoString(exifDate: string): string {
-        const dateAndTimeStrings = exifDate.split(" ")
-        const dateStringFormatted = dateAndTimeStrings[0].replace(/:/g, "-")
-        const date = new Date(dateStringFormatted + " " + dateAndTimeStrings[1])
+        const dateAndTimeStrings = exifDate.split(' ')
+        const dateStringFormatted = dateAndTimeStrings[0].replace(/:/g, '-')
+        const date = new Date(dateStringFormatted + 'T' + dateAndTimeStrings[1])
         return date.toISOString()
     }
 
